@@ -1,12 +1,7 @@
-Read Seed Module for Moodle
+PChat Module for Moodle
 =============
 
-Read Seed is an online testing system designed to assist teachers in evaluating their students reading fluency as WPM(Words Per Minute) scores.
-
-The teacher assigns a reading passage and the student is required to record themselves reading the passage aloud. Read Seed incorporates AI features so that student attempts can be evaluated automatically. The teacher can later grade/re-grade passages manually via the online interface. The student is able to see both their scores and the words that were marked as incorrectly spoken.
-
-Read Seed requires a Cloud Poodll API username and secret from https://poodll.com. See here: https://poodll.freshdesk.com/solution/articles/19000083076-cloud-poodll-api-secret
-
+PChat as a formative assessment tool for Moodle. It is under development for Sojo University
 
 Justin Hunt
 poodllsupport@gmail.com
