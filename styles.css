@@ -48,3 +48,9 @@ div.mod_pchat_mbuttons {
 .btn.mod_pchat_videombutton {
 	background-color: DarkCyan;
 }
+
+.mod_pchat_targetwordtag {
+	border: solid black 1px;
+	padding: 3px;
+	border-radius: 40%;
+}

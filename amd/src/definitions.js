@@ -14,6 +14,8 @@ This file contains class and ID definitions.
         C_KEYFORMAT: 'vs_keyformat',
         C_ATTRFORMAT: 'vs_attrformat',
         C_FILENAMETEXT: 'vs_filenametext',
-        C_UPDATECONTROL: 'customtext1',
+        C_UPDATECONTROL: 'filename',
+        topicscontainer: 'topicscontainer',
+        topiccheckbox: 'topicscheckbox'
     };//end of return value
 });

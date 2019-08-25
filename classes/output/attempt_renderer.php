@@ -43,10 +43,15 @@ class attempt_renderer extends \plugin_renderer_base {
         $output = $this->output->heading(get_string("whatdonow", "pchat"), 3);
         $links = array();
 
+     $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
+             array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_AUDIORECORDING));
+     $links[] = \html_writer::link($addurl, '<i class="fa fa-microphone"></i> ' . get_string('addaudiorecording', constants::M_COMPONENT),
+             array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' . constants::M_COMPONENT .'_audiombutton'));
+
 		$addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
-			array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_AUDIORECORDING));
-        $links[] = \html_writer::link($addurl, '<i class="fa fa-microphone"></i> ' . get_string('addstandardattempt', constants::M_COMPONENT),
-            array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' . constants::M_COMPONENT .'_audiombutton'));
+			array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_USERSELECTIONS));
+        $links[] = \html_writer::link($addurl, get_string('adduserselections', constants::M_COMPONENT),
+            array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' ));
 
 
 
@@ -71,15 +76,14 @@ class attempt_renderer extends \plugin_renderer_base {
 
 
 		$table->head = array(
-			get_string('attemptname', constants::M_COMPONENT),
-			get_string('attempttype', constants::M_COMPONENT),
+			get_string('username', constants::M_COMPONENT),
             get_string('timemodified', constants::M_COMPONENT),
 			get_string('actions', constants::M_COMPONENT),
             ''
 		);
-		$table->headspan = array(1,1,1,1,1);
+		$table->headspan = array(1,1,1,1);
 		$table->colclasses = array(
-			'attemptname', 'attempttype','timemodified', 'edit','delete'
+			'username','timemodified', 'edit','delete'
 		);
 
 		//sort by start date
@@ -92,20 +96,9 @@ class attempt_renderer extends \plugin_renderer_base {
             $currentattempt++;
             $row = new \html_table_row();
 
-            //attempt name
-            $attemptnamecell = new \html_table_cell($attempt->name);
+            //user name
+            $attemptnamecell = new \html_table_cell($attempt->userid);
 
-            //attempt type
-            switch ($attempt->type) {
-
-                case constants::TYPE_AUDIORECORDING:
-                    $attempttype = get_string('audiorecording', constants::M_COMPONENT);
-                    break;
-
-                default:
-                    $attempttype = "unknown";
-            }
-            $attempttypecell = new \html_table_cell($attempttype);
 
             //modify date
             $datecell_content = date("Y-m-d H:i:s",$attempt->timemodified);
@@ -113,9 +106,14 @@ class attempt_renderer extends \plugin_renderer_base {
 
             //attempt edit
             $actionurl = '/mod/pchat/attempt/manageattempts.php';
-            $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id));
-            $editlink = \html_writer::link($editurl, get_string('editattempt', constants::M_COMPONENT));
-            $editcell = new \html_table_cell($editlink);
+
+            $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id,'type'=>constants::TYPE_USERSELECTIONS));
+            $edituserselections = \html_writer::link($editurl, get_string('editattempt', constants::M_COMPONENT));
+
+            $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id,'type'=>constants::TYPE_AUDIORECORDING));
+            $editaudio = \html_writer::link($editurl, get_string('editattempt', constants::M_COMPONENT));
+
+            $editcell = new \html_table_cell($edituserselections . ' ' . $editaudio);
 
 		    //attempt delete
 			$deleteurl = new \moodle_url($actionurl, array('id'=>$cm->id,'attemptid'=>$attempt->id,'action'=>'confirmdelete'));
@@ -123,7 +121,7 @@ class attempt_renderer extends \plugin_renderer_base {
 			$deletecell = new \html_table_cell($deletelink);
 
 			$row->cells = array(
-				$attemptnamecell, $attempttypecell,$attemptdatecell, $editcell, $deletecell
+				$attemptnamecell, $attemptdatecell, $editcell, $deletecell
 			);
 			$table->data[] = $row;
 		}
@@ -142,8 +140,6 @@ class attempt_renderer extends \plugin_renderer_base {
         $columns[1]=null;
         $columns[2]=null;
         $columns[3]=null;
-        $columns[4]=array('orderable'=>false);
-        $columns[5]=array('orderable'=>false);
         $tableprops['columns']=$columns;
 
         //default ordering

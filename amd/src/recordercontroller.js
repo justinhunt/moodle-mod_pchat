@@ -63,31 +63,21 @@ define(['jquery', 'core/log','mod_pchat/definitions','mod_pchat/cloudpoodllloade
             //contains no meaningful data
             //See https://api.poodll.com
             var on_recording_start= function(eventdata){
-
-                /*
-                    dd.rec_time_start = new Date().getTime();
-                    dd.dopassagelayout();
-                    dd.controls.passagecontainer.show(1000,dd.beginall);
-                */
+                //do something
             };
 
             //originates from the recording:ended event
             //contains no meaningful data
             //See https://api.poodll.com
             var on_recording_end= function(eventdata){
-                //its a bit hacky but the rec end event can arrive immed. somehow probably when the mic test ends
-               /* var now = new Date().getTime();
-                if((now - dd.rec_time_start) < 3000){
-                    return;
-                }
-                dd.douploadlayout();
-                */
+                //do something
             };
 
             //data sent here originates from the awaiting_processing event
             //See https://api.poodll.com
             var on_media_processing= function(eventdata){
-                $('#' + dd.updatecontrolid).val(eventdata.mediaurl);
+                var updatecontrol = $('#' + dd.updatecontrolid);
+                updatecontrol.val(eventdata.mediaurl);
             };
 
             //init the recorder
@@ -102,9 +92,7 @@ define(['jquery', 'core/log','mod_pchat/definitions','mod_pchat/cloudpoodllloade
             var opts = this.activitydata;
             //these css classes/ids are all passed in from php in
             //renderer.php::fetch_activity_amd
-            var controls ={
-                langcontrol: $('#' + this.widgetid +  '_' + def.C_POLLYLANG)
-            };
+            var controls ={};
             this.controls = controls;
 
             //init drop downs

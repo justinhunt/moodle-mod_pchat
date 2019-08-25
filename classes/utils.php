@@ -293,4 +293,32 @@ class utils{
        );
 
    }
+
+    public static function fetch_topic_levels(){
+        return array(
+                constants::M_TOPICLEVEL_COURSE=>get_string('topiclevelcourse',constants::M_COMPONENT),
+                constants::M_TOPICLEVEL_CUSTOM=>get_string('topiclevelcustom',constants::M_COMPONENT)
+        );
+
+    }
+
+    public static function get_conversationlength_options(){
+        return array(
+                '3'=>get_string('xminutes',constants::M_COMPONENT,3),
+                '4'=>get_string('xminutes',constants::M_COMPONENT,4),
+                '5'=>get_string('xminutes',constants::M_COMPONENT,5),
+                '6'=>get_string('xminutes',constants::M_COMPONENT,6),
+                '7'=>get_string('xminutes',constants::M_COMPONENT,7),
+                '8'=>get_string('xminutes',constants::M_COMPONENT,8),
+                '9'=>get_string('xminutes',constants::M_COMPONENT,9),
+                '10'=>get_string('xminutes',constants::M_COMPONENT,10)
+        );
+
+    }
+
+    public static function fetch_fonticon($fonticon, $size='fa-2x'){
+        if(empty($fonticon)){return '';}
+        if(strlen($fonticon)<5){return $fonticon;}
+        return '<i class="fa ' . $fonticon . ' ' . $size . '"></i>';
+    }
 }

@@ -1,5 +1,7 @@
 <?php
 
+namespace mod_pchat\topic;
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,22 +17,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of pchat
+ * Internal library of functions for module pchat
  *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
+ * All the pchat specific functions, needed to implement the module
+ * logic, should go here. Never include this file from your lib.php!
  *
  * @package    mod_pchat
- * @copyright  2019 Justin Hunt (poodllsupport@gmail.com)
+ * @copyright  COPYRIGHTNOTICE
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   =  2019082000;
-$plugin->requires  = 2016052300;      // Requires Moodle 3.1
-$plugin->component = 'mod_pchat';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.0.3 (Build 2019082000)';
+use \mod_pchat\constants;
+
+class helper
+{
+
+    public static function delete_topic($moduleid, $topicid, $context)
+    {
+        global $DB;
+        $ret = false;
+
+        //remove records
+        if (!$DB->delete_records(constants::M_TOPIC_TABLE, array('id' => $topicid))) {
+            print_error("Could not delete topic");
+            return $ret;
+        }
+
+        $ret = true;
+        return $ret;
+    }
+
+}

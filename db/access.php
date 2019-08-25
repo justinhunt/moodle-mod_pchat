@@ -70,6 +70,29 @@ $capabilities = array(
 			),
 			'clonepermissionsfrom' => 'moodle/course:manageactivities'
 	),
+        'mod/pchat:selecttopics' => array(
+                'riskbitmask' => RISK_XSS,
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_COURSE,
+                'archetypes' => array(
+                        'teacher' => CAP_ALLOW,
+                        'editingteacher' => CAP_ALLOW,
+                        'manager' => CAP_ALLOW
+                ),
+                'clonepermissionsfrom' => 'moodle/course:manageactivities'
+        ),
+
+        'mod/pchat:managetopics' => array(
+                'riskbitmask' => RISK_XSS,
+                'captype' => 'write',
+                'contextlevel' => CONTEXT_COURSE,
+                'archetypes' => array(
+                        'teacher' => CAP_ALLOW,
+                        'editingteacher' => CAP_ALLOW,
+                        'manager' => CAP_ALLOW
+                ),
+                'clonepermissionsfrom' => 'moodle/course:manageactivities'
+        ),
 	
 	'mod/pchat:manageattempts' => array(
 			'riskbitmask' => RISK_XSS,
@@ -119,16 +142,7 @@ $capabilities = array(
 			),
 			'clonepermissionsfrom' => 'moodle/course:manageactivities'
 	), 
-	'mod/pchat:tts' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-            'student' => CAP_ALLOW
-        )
-    ),
+
     'mod/pchat:view' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,

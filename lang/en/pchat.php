@@ -202,8 +202,8 @@ $string['attemptdetails'] = 'attempt Details: {$a}';
 $string['attemptsummary'] = 'attempt Summary: {$a}';
 $string['viewreport'] = 'view report';
 
-$string['addstandardattempt'] = 'Standard Attempt';
-$string['standardattempt'] = 'Standard Attempt';
+$string['addaudiorecording'] = 'Audio Recording';
+$string['adduserselections'] = 'User Selections';
 
 $string['addaudiorecordingattempt'] = 'Record Audio';
 $string['addaudiouploaditem'] = 'Upload Audio';
@@ -211,19 +211,13 @@ $string['addaudiodataitem'] = 'Create Audio Data';
 $string['addvideorecordingitem'] = 'Record Video';
 $string['addvideouploaditem'] = 'Upload Video';
 $string['addvideodataitem'] = 'Create Video Data';
-$string['addpollybasicitem'] = 'Machine Speech(TEXT)';
-$string['addpollyaceitem'] = 'Machine Speech(SSML)';
-$string['addpollyquillitem'] = 'Machine Speech(GUI)';
-
 $string['audiorecording'] = 'Audio Recording';
 $string['audioupload'] = 'Audio Upload';
 $string['audiodata'] = 'Audio Data';
 $string['videorecording'] = 'Video Recording';
 $string['videoupload'] = 'Video Upload';
 $string['videodata'] = 'Video Data';
-$string['pollybasic'] = 'Polly Text';
-$string['pollyace'] = 'Polly SSML(text)';
-$string['pollyquill'] = 'Polly SSML (GUI)';
+
 $string['readtext'] = 'Text to read';
 $string['language_voice'] = 'Language and voice';
 $string['listen'] = 'Listen';
@@ -248,10 +242,46 @@ $string['shuffleanswers'] = 'Shuffle Answers';
 $string['shufflequestions'] = 'Shuffle Questions';
 $string['pchat:attemptview'] = 'View attempts';
 $string['pchat:attemptedit'] = 'Edit attempts';
-$string['attemptname'] = 'Attem';
+$string['attemptname'] = 'Attempt';
 $string['nodataavailable'] = 'No data available';
 $string['transcriber'] = 'Transcriber';
+$string['transcriber_details'] = 'The transcription engine to use';
+$string['transcriber_amazontranscribe'] = 'Standard transcription';
+$string['transcriber_googlechrome'] = 'Instant transcription (Chrome only)';
+$string['transcriber_googlecloud'] = 'Fast transcription (audio only, less than 60 seconds)';
+$string['transcriber_none'] = 'No transcription';
+$string['transcriptnotready'] = 'Transcript not ready yet';
+$string['transcripttitle'] = 'Transcript';
 
+$string['createattempt'] = 'Create Attempt';
+$string['addtopic'] = 'Add Topic';
+$string['deletetopic'] = 'Delete Topic';
+$string['edittopic'] = 'Edit Topic';
+$string['editingtopic'] = 'Editing Topic';
+$string['savetopic'] = 'Save Topic';
+$string['createtopic'] = 'Create Topic';
+$string['topicformtitle'] = 'Add/edit Topic';
+$string['topiclevelcustom'] = 'Custom';
+$string['topiclevelcourse'] = 'Course';
+$string['topics'] = 'Topic';
+$string['managetopics'] = 'Manage Topics';
+$string['topicselected'] = 'Selected';
+$string['topicname'] = 'Topic';
+$string['topiclevel'] = 'Level';
+$string['topicicon'] = 'Icon';
+$string['topictargetwords'] = 'Target Words';
+$string['targetwords'] = 'Target Words';
+$string['tips'] = 'Tips';
+$string['confirmtopicdelete'] = 'Do you really want to delete topic: {$a}';
+$string['choosetopic'] = 'Choose Topic';
 
+$string['userselections'] = 'User Selection';
+$string['saveitem'] = 'Save';
+$string['xminutes'] = '{$a}:00 minutes';
+$string['convlength'] = 'Conversation Length';
+$string['mywords'] = 'My Words';
+$string['speakingtips'] = 'Speaking Tips';
+$string['speakingtips_details'] = '';
+$string['chooseusers'] = 'Choose Users';
 
 

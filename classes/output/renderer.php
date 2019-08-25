@@ -113,4 +113,11 @@ class renderer extends \plugin_renderer_base {
         return $ret_html;
     }
 
+    public function imagecombo(){
+
+        $opts=array();
+        $this->page->requires->js_call_amd("mod_pchat/niceform", 'init', array($opts));
+        $this->page->requires->css('/mod/pchat/3rdparty/semantic/Semantic-UI-CSS-master/semantic.min.css');
+    }
+
 }
