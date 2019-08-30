@@ -16,6 +16,14 @@ This file contains class and ID definitions.
         C_FILENAMETEXT: 'vs_filenametext',
         C_UPDATECONTROL: 'filename',
         topicscontainer: 'topicscontainer',
-        topiccheckbox: 'topicscheckbox'
+        topiccheckbox: 'topicscheckbox',
+        C_BUTTONAPPLY: 'poodllsubtitle_edapply',
+        C_BUTTONDELETE: 'poodllsubtitle_eddelete',
+        C_BUTTONMOVEUP: 'poodllsubtitle_edmoveup',
+        C_BUTTONMOVEDOWN: 'poodllsubtitle_edmovedown',
+        C_BUTTONCANCEL: 'poodllsubtitle_edcancel',
+        C_EDITFIELD: 'poodllsubtitle_edpart',
+
+
     };//end of return value
 });

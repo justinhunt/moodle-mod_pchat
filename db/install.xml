@@ -29,7 +29,7 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="pchat_attempts" COMMENT="pchat_items table retrofitted from MySQL">
+    <TABLE NAME="pchat_attempts" COMMENT="pchat_attempt table retrofitted from MySQL">
         <FIELDS>
             <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
             <FIELD NAME="pchat" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
@@ -39,7 +39,9 @@
             <FIELD NAME="interlocutors" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
             <FIELD NAME="filename" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
             <FIELD NAME="transcript" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The text transcript." />
-            <FIELD NAME="fulltranscript" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The full TTS result (JSON)" />
+            <FIELD NAME="jsontranscript" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The full TTS result (JSON)" />
+            <FIELD NAME="vtttranscript" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The full TTS result (JSON)" />
+            <FIELD NAME="selftranscript" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="The full TTS result (JSON)" />
             <FIELD NAME="topicid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
             <FIELD NAME="topicname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
             <FIELD NAME="topicfonticon" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"/>
@@ -67,6 +69,27 @@
             <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         </KEYS>
     </TABLE>
+      <TABLE NAME="pchat_attemptstats" COMMENT="pchat_attempt stats table">
+          <FIELDS>
+              <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+              <FIELD NAME="pchat" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+              <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="userid of entry" />
+              <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="attemptid of stats" />
+              <FIELD NAME="turns" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="" />
+              <FIELD NAME="words" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="" />
+              <FIELD NAME="avturn" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="" />
+              <FIELD NAME="longestturn" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="" />
+              <FIELD NAME="targetwords" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="" />
+              <FIELD NAME="totaltargetwords" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="" />
+              <FIELD NAME="questions" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="" />
+              <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+              <FIELD NAME="createdby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+              <FIELD NAME="modifiedby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+          </FIELDS>
+          <KEYS>
+              <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+          </KEYS>
+      </TABLE>
       <TABLE NAME="pchat_topics" COMMENT="pchat_topics table">
           <FIELDS>
               <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>

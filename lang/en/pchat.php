@@ -204,6 +204,9 @@ $string['viewreport'] = 'view report';
 
 $string['addaudiorecording'] = 'Audio Recording';
 $string['adduserselections'] = 'User Selections';
+$string['addselftranscribe'] = 'Self Transcribe';
+$string['addcomparetranscripts'] = 'Compare Transcripts';
+
 
 $string['addaudiorecordingattempt'] = 'Record Audio';
 $string['addaudiouploaditem'] = 'Upload Audio';
@@ -276,6 +279,9 @@ $string['confirmtopicdelete'] = 'Do you really want to delete topic: {$a}';
 $string['choosetopic'] = 'Choose Topic';
 
 $string['userselections'] = 'User Selection';
+$string['selftranscribe'] = 'Transcribe Conversation';
+$string['transcriptscompare'] = 'Compare Transcriptions';
+$string['comparetranscripts'] = 'Compare Transcriptions';
 $string['saveitem'] = 'Save';
 $string['xminutes'] = '{$a}:00 minutes';
 $string['convlength'] = 'Conversation Length';
@@ -283,5 +289,27 @@ $string['mywords'] = 'My Words';
 $string['speakingtips'] = 'Speaking Tips';
 $string['speakingtips_details'] = '';
 $string['chooseusers'] = 'Choose Users';
+$string['editattempt_partone'] = 'One';
+$string['editattempt_parttwo'] = 'Two';
+$string['editattempt_partthree'] = 'Three';
+$string['editattempt_partfour'] = 'Four';
+
+$string['savesubtitles'] = 'Save Conversation';
+$string['removesubtitles'] = 'Remove Conversation';
+$string['addnew'] = 'Add new';
+$string['stepback'] = 'Step back';
+$string['stepahead'] = 'Step ahead';
+$string['playpause'] = 'Play/pause';
+$string['now'] = 'Now';
+$string['cancel'] = 'Cancel';
+$string['selftranscript'] = 'Self Transcript';
+$string['autotranscript'] = 'Auto Transcript';
+$string['stats'] = 'Stats';
+$string['stats_words'] = 'Words';
+$string['stats_turns'] = 'Turns';
+$string['stats_avturn'] = 'ATL';
+$string['stats_longestturn'] = 'LTL';
+$string['stats_targetwords'] = 'TW';
+
 
 

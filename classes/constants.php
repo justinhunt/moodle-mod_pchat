@@ -34,11 +34,13 @@ const NONE=0;
 const TYPE_AUDIORECORDING= 1;
 const TYPE_USERSELECTIONS= 2;
 const TYPE_SELFTRANSCRIBE= 3;
-const TYPE_COMPARETRANSCRIBE= 4;
+const TYPE_COMPARETRANSCRIPTS= 4;
 
 
 const T_AUDIORECORDING= "audiorecording";
 const T_USERSELECTIONS= "userselections";
+const T_SELFTRANSCRIBE= "selftranscribe";
+const T_COMPARETRANSCRIPTS= "comparetranscripts";
 const TEXTDESCR = 'itemtext';
 const TEXTDESCR_FILEAREA = 'itemarea';
 

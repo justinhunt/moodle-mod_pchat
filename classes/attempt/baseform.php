@@ -248,23 +248,40 @@ abstract class baseform extends \moodleform {
     }
 
     protected final function add_transcript_editor($name, $label){
-        global $PAGE;
+        global $OUTPUT, $PAGE, $CFG;
 
         $this->_form->addElement('hidden', $name);
         $this->_form->setType($name,PARAM_TEXT);
 
-        $display=\html_writer::div('',constants::M_C_TRANSCRIPTDISPLAY);
-        $editor=\html_writer::div('',constants::M_C_TRANSCRIPTEDITOR);
+        $tdata=array();
+        $tdata['imgpath']=$CFG->wwwroot . constants::M_URL .'/pix/e/';
 
-        $staticcontent = \html_writer::div($display . $editor,constants::M_C_CONVERSATION,array());
+        $conversationeditor = $OUTPUT->render_from_template( constants::M_COMPONENT . '/convcontainer', $tdata);
+        $staticcontent = \html_writer::div($conversationeditor,constants::M_C_CONVERSATION,array());
         $this->_form->addElement('static', 'control_' . $name, $label, $staticcontent);
 
         $opts =Array();
-        $opts['displayclass']=constants::M_C_TRANSCRIPTDISPLAY;
-        $opts['editorclass']=constants::M_C_TRANSCRIPTEDITOR;
         $opts['updatecontrol']=$name;
-
+        $opts['mediaurl']=$this->filename;
         $PAGE->requires->js_call_amd("mod_pchat/transcripteditor", 'init', array($opts));
+
+    }
+
+    protected final function add_comparison_field($name, $label) {
+        global $OUTPUT, $PAGE, $CFG;
+        $tdata=array();
+        $tdata['selftranscript']=$this->selftranscript;
+        $tdata['autotranscript']=$this->autotranscript;
+        $transcriptscompare = $OUTPUT->render_from_template( constants::M_COMPONENT . '/transcriptscompare', $tdata);
+
+        $this->_form->addElement('static', 'combo_' . $name, $label, $transcriptscompare);
+
+    }
+
+    protected final function add_stats_field($name, $label) {
+        global $OUTPUT, $PAGE, $CFG;
+        $stats = $OUTPUT->render_from_template( constants::M_COMPONENT . '/transcriptstats', $this->stats);
+        $this->_form->addElement('static', 'combo_' . $name, $label, $stats);
 
     }
 
@@ -296,6 +313,14 @@ abstract class baseform extends \moodleform {
         }
 
 	}
+
+    protected final function add_audio_player($name, $label = null, $required = false) {
+            $player_html = "<audio src='" . $this->filename . "' controls></audio>";
+            $this->_form->addElement('static', $name, $label, $player_html, '');
+
+    }
+
+
     protected final function add_audio_recording($name, $label = null, $required = false) {
         $recordingurlfield =& $this->_form->getElement(constants::RECORDINGURLFIELD);
         $recordingorplayerfield =& $this->_form->getElement(constants::RECORDERORPLAYERFIELD);
@@ -305,16 +330,16 @@ abstract class baseform extends \moodleform {
             $recordingurl=false;
         }
 
+        $player_html ='';
         if($recordingurl && !empty($recordingurl)){
             $player_html = "<audio src='" . $recordingurl . "' controls></audio>";
             $recordingorplayerfield->setValue($player_html);
-
-        }else{
-            $width=450;
-            $height=380;
-            $recorder_html = $this->fetch_recorder($this->moduleinstance,'audio','fresh',$this->token, $width,$height);
-            $recordingorplayerfield->setValue($recorder_html);
         }
+
+        $width=450;
+        $height=380;
+        $recorder_html = $this->fetch_recorder($this->moduleinstance,'audio','fresh',$this->token, $width,$height);
+        $recordingorplayerfield->setValue($player_html . $recorder_html);
 
     }
 

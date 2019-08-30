@@ -57,6 +57,7 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('course');
 
 //are we in new or edit mode?
+$attempt=false;
 if ($attemptid) {
     $attempt = $DB->get_record(constants::M_QTABLE, array('id'=>$attemptid,constants::M_MODNAME => $cm->instance), '*', MUST_EXIST);
     if(!$attempt){
@@ -114,9 +115,31 @@ switch($type){
         $users = get_enrolled_users($context);
         $mform = new \mod_pchat\attempt\userselectionsform(null,
                 array('moduleinstance'=>$moduleinstance,
-                        'token'=>$token,
                         'topics'=>$topics,
                         'users'=>$users));
+        break;
+
+    case constants::TYPE_SELFTRANSCRIBE:
+        $audiofilename = '';
+        if($attempt){
+            $audiofilename =$attempt->filename;
+        }
+        $mform = new \mod_pchat\attempt\selftranscribeform(null,
+                array('moduleinstance'=>$moduleinstance,'filename'=>$audiofilename));
+        break;
+    case constants::TYPE_COMPARETRANSCRIPTS:
+        $selftranscript='';
+        $autotranscript='';
+        $stats = utils::calculate_stats($attempt->selftranscript, $attempt);
+        if($attempt){
+            if(!empty($attempt->transcript)){$autotranscript=$attempt->transcript;}
+            if(!empty($attempt->selftranscript)){$selftranscript=utils::extract_simple_transcript($attempt->selftranscript);}
+        }
+        $mform = new \mod_pchat\attempt\comparetranscriptsform(null,
+                array('moduleinstance'=>$moduleinstance,
+                        'selftranscript'=>$selftranscript,
+                        'autotranscript'=>$autotranscript,
+                        'stats'=>$stats));
         break;
 
     case constants::NONE:
@@ -173,10 +196,16 @@ if ($data = $mform->get_data()) {
             break;
 
         case constants::TYPE_AUDIORECORDING:
+            if(!empty($theattempt->filename)) {
+                utils::register_aws_task($moduleinstance->id, $theattempt->id, $context->id);
+            }
+            break;
+        case constants::TYPE_SELFTRANSCRIBE:
+        case constants::TYPE_COMPARETRANSCRIPTS:
         default:
     }
 
-    //now update the db once we have saved files and stuff
+    //now update the db
     if (!$DB->update_record(constants::M_QTABLE,$theattempt)){
         print_error("Could not update pchat attempt!");
         redirect($redirecturl);
@@ -207,9 +236,9 @@ $attemptrenderer = $PAGE->get_renderer('mod_pchat','attempt');
 $amd_data='';
 switch($type){
     case constants::TYPE_AUDIORECORDING:
-        //do something
-        break;
     case constants::TYPE_USERSELECTIONS:
+    case constants::TYPE_SELFTRANSCRIBE:
+    case constants::TYPE_COMPARETRANSCRIPTS:
     default:
 }
 $mform->set_data($data);

@@ -54,3 +54,23 @@ div.mod_pchat_mbuttons {
 	padding: 3px;
 	border-radius: 40%;
 }
+
+.mod_pchat_comparetranscripts{
+	display: flex;
+}
+.mod_pchat_ct_title{
+	margin: auto;
+	text-align: center;
+	font-weight: bold;
+}
+
+.mod_pchat_ct_body{
+	border: 1px solid gray;
+	padding: 5px;
+	border-radius: 5px;
+	margin: 7px;
+}
+.mod_pchat_ct_right, .mod_pchat_ct_left {
+	flex-grow: 1;
+	width: 50%;
+}

@@ -41,21 +41,31 @@ class attempt_renderer extends \plugin_renderer_base {
         $attemptid = 0;
 
         $output = $this->output->heading(get_string("whatdonow", "pchat"), 3);
-        $links = array();
+        $parts = array();
 
      $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
              array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_AUDIORECORDING));
-     $links[] = \html_writer::link($addurl, '<i class="fa fa-microphone"></i> ' . get_string('addaudiorecording', constants::M_COMPONENT),
+     $parts[] = \html_writer::link($addurl, '<i class="fa fa-microphone"></i> ' . get_string('addaudiorecording', constants::M_COMPONENT),
              array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' . constants::M_COMPONENT .'_audiombutton'));
 
-		$addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
-			array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_USERSELECTIONS));
-        $links[] = \html_writer::link($addurl, get_string('adduserselections', constants::M_COMPONENT),
-            array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' ));
+     $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
+        array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_USERSELECTIONS));
+     $parts[] = \html_writer::link($addurl, get_string('adduserselections', constants::M_COMPONENT),
+        array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' ));
+
+     $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
+             array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_SELFTRANSCRIBE));
+     $parts[] = \html_writer::link($addurl, get_string('addselftranscribe', constants::M_COMPONENT),
+             array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' ));
+
+     $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
+             array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_COMPARETRANSCRIPTS));
+     $parts[] = \html_writer::link($addurl, get_string('addcomparetranscripts', constants::M_COMPONENT),
+             array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' ));
 
 
 
-    $buttonsdiv = \html_writer::div(implode('', $links),constants::M_COMPONENT .'_mbuttons');
+    $buttonsdiv = \html_writer::div(implode('', $parts),constants::M_COMPONENT .'_mbuttons');
      return $this->output->box($output . $buttonsdiv, 'generalbox firstpageoptions');
     }
 	
@@ -107,13 +117,26 @@ class attempt_renderer extends \plugin_renderer_base {
             //attempt edit
             $actionurl = '/mod/pchat/attempt/manageattempts.php';
 
+            //attempt part (stages) links
+            $parts = array();
+
             $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id,'type'=>constants::TYPE_USERSELECTIONS));
-            $edituserselections = \html_writer::link($editurl, get_string('editattempt', constants::M_COMPONENT));
+            $edituserselections = \html_writer::link($editurl, get_string('editattempt_partone', constants::M_COMPONENT));
+            $parts[] = $edituserselections;
 
             $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id,'type'=>constants::TYPE_AUDIORECORDING));
-            $editaudio = \html_writer::link($editurl, get_string('editattempt', constants::M_COMPONENT));
+            $editaudio = \html_writer::link($editurl, get_string('editattempt_parttwo', constants::M_COMPONENT));
+            $parts[] = $editaudio;
 
-            $editcell = new \html_table_cell($edituserselections . ' ' . $editaudio);
+            $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id,'type'=>constants::TYPE_SELFTRANSCRIBE));
+            $edittranscript = \html_writer::link($editurl, get_string('editattempt_partthree', constants::M_COMPONENT));
+            $parts[] = $edittranscript;
+
+            $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id,'type'=>constants::TYPE_COMPARETRANSCRIPTS));
+            $comparetranscripts = \html_writer::link($editurl, get_string('editattempt_partfour', constants::M_COMPONENT));
+            $parts[] = $comparetranscripts;
+
+            $editcell = new \html_table_cell(implode(' ', $parts));
 
 		    //attempt delete
 			$deleteurl = new \moodle_url($actionurl, array('id'=>$cm->id,'attemptid'=>$attempt->id,'action'=>'confirmdelete'));

@@ -36,20 +36,6 @@ use \mod_pchat\constants;
  */
 class utils{
 
-    //we need to consider legacy client side URLs and cloud hosted ones
-    public static function make_audio_URL($filename, $contextid, $component, $filearea, $itemid){
-        //we need to consider legacy client side URLs and cloud hosted ones
-        if(strpos($filename,'http')===0){
-            $ret = $filename;
-        }else {
-            $ret = \moodle_url::make_pluginfile_url($contextid, $component,
-                $filearea,
-                $itemid, '/',
-                $filename);
-        }
-        return $ret;
-    }
-
 
     //are we willing and able to transcribe submissions?
     public static function can_transcribe($instance)
@@ -77,6 +63,85 @@ class utils{
         return $ret;
     }
 
+    public static function extract_simple_transcript($selftranscript){
+        if(!$selftranscript || empty($selftranscript)){
+            return '';
+        }else{
+            $transcriptarray=json_decode($selftranscript);
+            $ret = '';
+            foreach($transcriptarray as $turn){
+                $ret .= $turn->part . ' ' ;
+            }
+            return $ret;
+        }
+    }
+
+    public static function calculate_stats($usetranscript, $attempt){
+        $ret= new \stdClass();
+        $ret->turns=0;
+        $ret->words=0;
+        $ret->avturn=0;
+        $ret->longestturn=0;
+        $ret->targetwords=0;
+        $ret->totaltargetwords=0;
+        $ret->questions=0;
+
+        if(!$usetranscript || empty($usetranscript)){
+            return $ret;
+        }
+
+        $transcriptarray=json_decode($usetranscript);
+        $totalturnlengths=0;
+        $fulltranscript = '';
+
+        foreach($transcriptarray as $turn){
+            $part = $turn->part;
+            $wordcount = str_word_count($part,0);
+            if($wordcount===0){continue;}
+            $fulltranscript = $turn->part . ' ' ;
+            $ret->turns++;
+            $ret->words+= $wordcount;
+            $totalturnlengths += $wordcount;
+            if($ret->longestturn < $wordcount){$ret->longestturn = $wordcount;}
+            $ret->questions+= substr_count($turn->part,"?");
+        }
+        if($ret->turns){
+            return $ret;
+        }
+        $ret->avturn= round($totalturnlengths  / $ret->turns);
+        $topictargetwords = explode(',',$attempt->topictargetwords);
+        $mywords = explode(',',$attempt->mywords);
+        $targetwords = array_unique(array_merge($topictargetwords, $mywords));
+        $ret->totaltargetwords = count($targetwords);
+
+
+        $searchpassage = strtolower($fulltranscript);
+        foreach($targetwords as $theword){
+            $usecount = substr_count($searchpassage, strtolower($theword));
+            if($usecount){$ret->targetwords++;}
+        }
+
+        return $ret;
+
+    }
+
+    //register an adhoc task to pick up transcripts
+    public static function register_aws_task($activityid, $attemptid,$modulecontextid){
+        $s3_task = new \mod_pchat\task\pchat_s3_adhoc();
+        $s3_task->set_component('mod_pchat');
+
+        $customdata = new \stdClass();
+        $customdata->activityid = $activityid;
+        $customdata->attemptid = $attemptid;
+        $customdata->modulecontextid = $modulecontextid;
+        $customdata->taskcreationtime = time();
+
+        $s3_task->set_custom_data($customdata);
+        // queue it
+        \core\task\manager::queue_adhoc_task($s3_task);
+        return true;
+    }
+
     //we use curl to fetch transcripts from AWS and Tokens from cloudpoodll
     //this is our helper
     //we use curl to fetch transcripts from AWS and Tokens from cloudpoodll
@@ -102,7 +167,6 @@ class utils{
         //refresh token
         $refresh = \html_writer::link($CFG->wwwroot . constants::M_URL . '/refreshtoken.php',
                 get_string('refreshtoken',constants::M_COMPONENT)) . '<br>';
-
 
         $message = '';
         $apiuser = trim($apiuser);
