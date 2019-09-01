@@ -54,6 +54,13 @@ abstract class basereport {
     abstract function process_raw_data($formdata);
     abstract function fetch_formatted_heading();
 
+    public function __construct($cm) {
+        global $DB;
+        $this->cm = $cm;
+        //$this->mod = $DB->get_record(constants::M_TABLE, ['id' => $cm->instance], '*', MUST_EXIST);
+        //$this->context = \context_module::instance($cm->id);
+    }
+
     public function fetch_fields(){
         return $this->fields;
     }

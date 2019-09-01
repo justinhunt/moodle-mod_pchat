@@ -15,7 +15,8 @@ class constants
 //component name, db tables, things that define app
 const M_COMPONENT='mod_pchat';
 const M_TABLE='pchat';
-const M_QTABLE='pchat_attempts';
+const M_ATTEMPTSTABLE='pchat_attempts';
+const M_STATSTABLE='pchat_attemptstats';
 const M_TOPIC_TABLE='pchat_topics';
 const M_TOPICSELECTED_TABLE='pchat_selectedtopics';
 const M_MODNAME='pchat';
@@ -30,17 +31,17 @@ const M_RECORDERID='therecorder';
 const M_WIDGETID='therecorder_opts_9999';
 
 //Constants for Attempt Steps
-const NONE=0;
-const TYPE_AUDIORECORDING= 1;
-const TYPE_USERSELECTIONS= 2;
-const TYPE_SELFTRANSCRIBE= 3;
-const TYPE_COMPARETRANSCRIPTS= 4;
-
+const STEP_NONE=0;
+const STEP_USERSELECTIONS= 1;
+const STEP_AUDIORECORDING= 2;
+const STEP_SELFTRANSCRIBE= 3;
+const STEP_SELFREVIEW= 4;
 
 const T_AUDIORECORDING= "audiorecording";
 const T_USERSELECTIONS= "userselections";
 const T_SELFTRANSCRIBE= "selftranscribe";
-const T_COMPARETRANSCRIPTS= "comparetranscripts";
+const T_SELFREVIEW= "selfreview";
+
 const TEXTDESCR = 'itemtext';
 const TEXTDESCR_FILEAREA = 'itemarea';
 
@@ -60,6 +61,7 @@ CONST C_LANGSELECT = 'vs_langselect';
 CONST C_VOICESELECT = 'vs_voiceselect';
 CONST C_PLAYBUTTON = 'vs_playbutton';
 CONST C_FILENAMETEXT = 'vs_filenametext';
+CONST C_TARGETWORDSDISPLAY = 'mod_pchat_targetwordsdisplay';
 
 const RECORDINGURLFIELD='filename';
 const RECORDERORPLAYERFIELD='recorderorplayer';

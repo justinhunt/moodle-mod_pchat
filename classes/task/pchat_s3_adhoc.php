@@ -57,43 +57,26 @@ class pchat_s3_adhoc extends \core\task\adhoc_task {
              return;
          }
 
-         $attempt = $DB->get_record(constants::M_QTABLE, array('id'=>$cd->attemptid));
+         $attempt = $DB->get_record(constants::M_ATTEMPTSTABLE, array('id'=>$cd->attemptid));
          if($attempt){
 
              if(!$attempt->filename){
                  $this->do_retry_soon('Audio file appears to not be ready yet',$trace,$cd);
                  return;
              }
-
-             $jsontranscripturl = $attempt->filename . '.json';
-             $vtttranscripturl = $attempt->filename . '.vtt';
-             $transcripturl = $attempt->filename . '.txt';
-             $postdata = array();
-             $jsontranscript = utils::curl_fetch($jsontranscripturl,$postdata);
-             $vtttranscript = utils::curl_fetch($vtttranscripturl,$postdata);
-             $transcript = utils::curl_fetch($transcripturl,$postdata);
-
-
-             //if we got here, we have transcripts and we do not need to come back
-             if($jsontranscript && $vtttranscript && $transcript) {
-                 $updateattempt = new \stdClass();
-                 $updateattempt->id=$attempt->id;
-                 $updateattempt->jsontranscript = $jsontranscript;
-                 $updateattempt->vtttranscript = $vtttranscript;
-                 $updateattempt->transcript = $transcript;
-                 $success = $DB->update_record(constants::M_QTABLE, $updateattempt);
-                 if($success) {
-                     $trace->output("Transcripts are fetched for " . $cd->attemptid . " ...all ok");
-                 }else{
-                     $this->do_retry_soon('Transcripts fetched but failed to save. Will retry.',$trace,$cd);
-                 }
-                 return;
-             }else{
-                 $this->do_retry_soon('Transcripts are not ready yet',$trace,$cd);
+             if(!$attempt->transcript){
+                 //woa!! Its already been got. This can happen if user goes to selfreview page which will try and do the
+                 //retrieve if transcripts are not back. Too many users do not have cron going, so this helps.
+                 $trace->output("Transcript has already been fetched. Nothing to do");
                  return;
              }
 
-
+             $attempt_with_transcripts = utils::retrieve_transcripts($attempt);
+             if($attempt_with_transcripts){
+                 $trace->output("Transcripts are fetched for " . $cd->attemptid . " ...all ok");
+             }else{
+                 $this->do_retry_soon('Transcripts are not ready yet',$trace,$cd);
+             }
 
          }else{
              $this->do_forever_fail('This attempt could not be found: ' . $cd->attemptid,$trace);

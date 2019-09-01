@@ -47,12 +47,9 @@ if (!isset($course)) {
 
 $tabs = $row = $inactive = $activated = array();
 
-
-$row[] = new tabobject('view', "$CFG->wwwroot/mod/pchat/view.php?id=$cm->id", get_string('view', constants::M_COMPONENT), get_string('preview', constants::M_COMPONENT, format_string($moduleinstance->name)));
-$row[] = new tabobject('attempts', "$CFG->wwwroot/mod/pchat/attempt/attempts.php?id=$cm->id", get_string('attempts', constants::M_COMPONENT), get_string('manageattempts', constants::M_COMPONENT));
+$row[] = new tabobject('attempts', "$CFG->wwwroot/mod/pchat/view.php?id=$cm->id", get_string('attempts', constants::M_COMPONENT), get_string('manageattempts', constants::M_COMPONENT));
 $row[] = new tabobject('topics', "$CFG->wwwroot/mod/pchat/topic/topics.php?id=$cm->id", get_string('topics', constants::M_COMPONENT), get_string('managetopics', constants::M_COMPONENT));
-
-//$row[] = new tabobject('reports', "$CFG->wwwroot/mod/pchat/reports.php?id=$cm->id", get_string('reports', constants::M_COMPONENT), get_string('viewreports', constants::M_COMPONENT));
+$row[] = new tabobject('reports', "$CFG->wwwroot/mod/pchat/reports.php?id=$cm->id", get_string('reports', constants::M_COMPONENT), get_string('viewreports', constants::M_COMPONENT));
 $tabs[] = $row;
 
 print_tabs($tabs, $currenttab, $inactive, $activated);

@@ -16,96 +16,104 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prints a particular instance of pchat
+ * Provides the main page for pchat
  *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
- *
- * @package    mod_pchat
- * @copyright  2015 Justin Hunt (poodllsupport@gmail.com)
+ * @package mod_pchat
+ * @copyright  2014 Justin Hunt  {@link http://poodll.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+ **/
 
+require_once('../../config.php');
+require_once($CFG->dirroot.'/mod/pchat/lib.php');
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-use \mod_pchat\constants;
+use mod_pchat\constants;
+use mod_pchat\utils;
 
-
-
-
-$id = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$retake = optional_param('retake', 0, PARAM_INT); // course_module ID, or
-$n  = optional_param('n', 0, PARAM_INT);  // pchat instance ID - it should be named as the first character of the module
+$id = optional_param('id',0, PARAM_INT); // course_module ID, or
+$n  = optional_param('n', 0, PARAM_INT);  // pchat instance ID
+$reattempt = optional_param('reattempt',0, PARAM_INT);
 
 if ($id) {
-    $cm         = get_coursemodule_from_id('pchat', $id, 0, false, MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $moduleinstance  = $DB->get_record('pchat', array('id' => $cm->instance), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_id(constants::M_MODNAME, $id, 0, false, MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $pchat = $DB->get_record(constants::M_TABLE, array('id' => $cm->instance), '*', MUST_EXIST);
 } elseif ($n) {
-    $moduleinstance  = $DB->get_record('pchat', array('id' => $n), '*', MUST_EXIST);
+    $moduleinstance  = $DB->get_record(constants::M_MODNAME, array('id' => $n), '*', MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $moduleinstance->course), '*', MUST_EXIST);
-    $cm         = get_coursemodule_from_instance('pchat', $moduleinstance->id, $course->id, false, MUST_EXIST);
+    $cm         = get_coursemodule_from_instance(constants::M_TABLE, $moduleinstance->id, $course->id, false, MUST_EXIST);
+    $id = $cm->id;
 } else {
-    error('You must specify a course_module ID or an instance ID');
+    print_error('You must specify a course_module ID or an instance ID');
 }
 
-$PAGE->set_url('/mod/pchat/view.php', array('id' => $cm->id));
-require_login($course, true, $cm);
-$modulecontext = context_module::instance($cm->id);
+$attempthelper = new \mod_pchat\attempthelper($cm);
+$attempts = $attempthelper->fetch_attempts();
 
-// Trigger module viewed event.
-$event = \mod_pchat\event\course_module_viewed::create(array(
-   'objectid' => $moduleinstance->id,
-   'context' => $modulecontext
-));
-$event->add_record_snapshot('course_modules', $cm);
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('pchat', $moduleinstance);
-$event->trigger();
+//mode is necessary for tabs
+$mode='attempts';
+//Set page url before require login, so post login will return here
+$PAGE->set_url(constants::M_URL . '/view.php', array('id'=>$cm->id,'mode'=>$mode));
 
+//require login for this page
+require_login($course, false, $cm);
+$context = context_module::instance($cm->id);
 
-//if we got this far, we can consider the activity "viewed"
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
-
-//are we a teacher or a student?
-$mode= "view";
-
-/// Set up the page header
-$PAGE->set_title(format_string($moduleinstance->name));
-$PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_context($modulecontext);
-$PAGE->set_pagelayout('course');
+$renderer = $PAGE->get_renderer(constants::M_COMPONENT);
+$attempt_renderer = $PAGE->get_renderer(constants::M_COMPONENT,'attempt');
 
 
 
-//Get an admin settings 
-$config = get_config(constants::M_COMPONENT);
 
-//Get our renderers
-$renderer = $PAGE->get_renderer('mod_pchat');
+// We need view permission to be here
+require_capability('mod/pchat:attemptview', $context);
+
+//Do we do continue an attempt or start a new one
+$start_or_continue=false;
+if(count($attempts)==0){
+    $start_or_continue=true;
+    $nextstep = constants::STEP_USERSELECTIONS;
+    $attemptid = 0;
+} elseif($reattempt==1){
+    $start_or_continue=true;
+    $nextstep = constants::STEP_USERSELECTIONS;
+    $attemptid = 0;
+}else{
+    $latestattempt = utils::fetch_latest_attempt($pchat);
+    if ($latestattempt && $latestattempt->completedsteps < constants::STEP_SELFREVIEW){
+        $start_or_continue=true;
+        $nextstep=$latestattempt->completedsteps+1;
+        $attemptid=$latestattempt->id;
+    }
+}
+
+//either redirect to a form handler for the attempt step, or show our attempt summary
+if($start_or_continue) {
+    $redirecturl = new moodle_url(constants::M_URL . '/attempt/manageattempts.php',
+            array('id'=>$cm->id, 'attemptid' => $attemptid, 'type' => $nextstep));
+    redirect($redirecturl);
 
 
-//From here we actually display the page.
-//this is core renderer stuff
+}else{
 
-//if we are teacher we see tabs. If student we just see the quiz
-//if(has_capability('mod/pchat:preview',$modulecontext)){
-	echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('view', constants::M_COMPONENT));
-//}else{
-//	echo $renderer->notabsheader();
-//}
+    //if we need datatables we need to set that up before calling $renderer->header
+    $tableid = '' . constants::M_CLASS_ITEMTABLE . '_' . '_opts_9999';
+    $attempt_renderer->setup_datatables($tableid);
 
-//fetch token
-$token = \mod_pchat\utils::fetch_token($config->apiuser,$config->apisecret);
+    $PAGE->navbar->add(get_string('attempts', constants::M_COMPONENT));
+    echo $renderer->header($pchat, $cm, $mode, null, get_string('attempts', constants::M_COMPONENT));
 
+    $attempt = utils::fetch_latest_finishedattempt($pchat);
+    if($attempt) {
+        $stats=utils::fetch_stats($attempt);
+        echo $attempt_renderer->show_summary($attempt, $stats);
+    }
 
-//show all the main parts. Many will be hidden and displayed by JS
-echo $renderer->show_intro($moduleinstance,$cm);
-//echo $renderer->show_recorder($moduleinstance,$token);
+    //all attempts by user table [good for debugging]
+    // do not delete this I think
+       echo $attempt_renderer->show_attempts_list($attempts,$tableid,$cm);
 
-//the module AMD code
-echo $renderer->fetch_activity_amd($cm, $moduleinstance);
-
-// Finish the page
+    if($pchat->multiattempts){
+        echo $attempt_renderer->fetch_reattempt_button($cm);
+    }
+}
 echo $renderer->footer();

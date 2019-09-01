@@ -1,4 +1,4 @@
-define(['jquery','core/log','mod_pchat/definitions', 'core/notification'], function($,log, def, notification) {
+define(['jquery','core/log','mod_pchat/definitions', 'core/notification', 'core/templates'], function($,log, def, notification,templates) {
     "use strict"; // jshint ;_;
 
 /*
@@ -23,8 +23,16 @@ This file contains class and ID definitions.
                     }
                 });
                 if(selectedtopic) {
-                    var targetwords =selectedtopic.targetwords;
-                    $('[name="' + update + '"]').val(targetwords);
+                    $('[name="' + update + '"]').val(selectedtopic.targetwords);
+                    if(selectedtopic.targetwords.trim()===''){return;}
+                    var tdata=[];
+                    tdata['targetwords'] =selectedtopic.targetwords.split('\n');
+                    templates.render('mod_pchat/targetwords',tdata).then(
+                        function(html,js){
+                            var d= $('#' + def.C_TARGETWORDSDISPLAY);
+                            d.html(html);
+                        }
+                    );
                 }
             });
         }

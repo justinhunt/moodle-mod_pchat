@@ -55,7 +55,7 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
         // XML interesting paths - user data
         ////////////////////////////////////////////////////////////////////////
         //items
-        $items = new restore_path_element(constants::M_QTABLE,
+        $items = new restore_path_element(constants::M_ATTEMPTSTABLE,
             '/activity/pchat/attempts/attempt');
         $paths[] = $items;
 
@@ -90,8 +90,8 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
 
 
         $data->{constants::M_MODNAME} = $this->get_new_parentid(constants::M_MODNAME);
-        $newquestionid = $DB->insert_record(constants::M_QTABLE, $data);
-        $this->set_mapping(constants::M_QTABLE, $oldid, $newquestionid, true); // Mapping with files
+        $newquestionid = $DB->insert_record(constants::M_ATTEMPTSTABLE, $data);
+        $this->set_mapping(constants::M_ATTEMPTSTABLE, $oldid, $newquestionid, true); // Mapping with files
     }
 
 
@@ -101,7 +101,7 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
 		//question stuff
 		 $userinfo = $this->get_setting_value('userinfo'); // are we including userinfo?
 		 if($userinfo){
-			$this->add_related_files(constants::M_COMPONENT, constants::M_FILEAREA_SUBMISSIONS, constants::M_QTABLE);
+			$this->add_related_files(constants::M_COMPONENT, constants::M_FILEAREA_SUBMISSIONS, constants::M_ATTEMPTSTABLE);
          }
     }
 }

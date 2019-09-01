@@ -181,14 +181,24 @@ abstract class baseform extends \moodleform {
         $this->_form->setDefault('convlength',constants::DEF_CONVLENGTH);
     }
 
-    protected final function add_wordsandtips_fields() {
-        global $PAGE;
-        $this->_form->addElement('textarea','targetwords',get_string('targetwords', constants::M_COMPONENT),'blha blah blah',array("class"=>'mod_pchat_targetwords mod_pchat_bordered mod_pchat_readonly','disabled'=>true));
+    protected final function add_targetwords_fields() {
+        global $PAGE, $OUTPUT;
+        $this->_form->addElement('hidden','targetwords');
+        $this->_form->setType('targetwords',PARAM_TEXT);
+
+        //we have to work quite hard to get target words displayed like tags.
+        if(empty($this->targetwords) || trim($this->targetwords)==''){
+            $targetwordcontent = '';
+        }else {
+            $tdata = array('targetwords' => explode(PHP_EOL, $this->targetwords));
+            $targetwordcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/targetwords', $tdata);
+        }
+        $this->_form->addElement('static','targetwordsdisplay',
+                get_string('targetwords', constants::M_COMPONENT),
+                "<div id='" . constants::C_TARGETWORDSDISPLAY. "'>$targetwordcontent</div>");
 
         $this->_form->addElement('text','mywords',get_string('mywords', constants::M_COMPONENT),array());
         $this->_form->setType('mywords',PARAM_TEXT);
-
-        $this->_form->addElement('static','tips',get_string('tips', constants::M_COMPONENT),'tip tip tip',array("class"=>'mod_pchat_bordered mod_pchat_readonly'));
 
         $opts =Array();
         $opts['topics']=$this->topics;
@@ -197,7 +207,15 @@ abstract class baseform extends \moodleform {
         $PAGE->requires->js_call_amd("mod_pchat/updatetargetwords", 'init', array($opts));
     }
 
+    protected final function add_tips_field() {
+        $this->_form->addElement('static','tips',get_string('tips', constants::M_COMPONENT),
+                get_config(constants::M_COMPONENT, 'speakingtips'),array("class"=>'mod_pchat_bordered mod_pchat_readonly'));
+
+    }
+
     protected final function set_targetwords() {
+        global $OUTPUT;
+
         $topicidelement =& $this->_form->getElement('topicid');
         $targetwordselement =& $this->_form->getElement('targetwords');
         if ($topicidelement && $targetwordselement) {
@@ -283,6 +301,17 @@ abstract class baseform extends \moodleform {
         $stats = $OUTPUT->render_from_template( constants::M_COMPONENT . '/transcriptstats', $this->stats);
         $this->_form->addElement('static', 'combo_' . $name, $label, $stats);
 
+    }
+
+    protected final function add_selfreview_fields() {
+        $this->_form->addElement('text','reviewquestions',get_string('reviewquestions', constants::M_COMPONENT),array());
+        $this->_form->setType('reviewquestions',PARAM_TEXT);
+
+        $this->_form->addElement('text','reviewlonganswers',get_string('reviewlonganswers', constants::M_COMPONENT),array());
+        $this->_form->setType('reviewlonganswers',PARAM_TEXT);
+
+        $this->_form->addElement('textarea','reviewimprove',get_string('reviewimprove', constants::M_COMPONENT),array());
+        $this->_form->setType('reviewimprove',PARAM_TEXT);
     }
 
     protected final function add_recordingurl_field() {
@@ -379,6 +408,7 @@ abstract class baseform extends \moodleform {
                         'data-timelimit'=> 0,//$moduleinstance->timelimit,
                         'data-transcode'=>"1",
                         'data-transcribe'=>$transcribe,
+                        'data-subtitle'=>$transcribe,
                         'data-language'=>$moduleinstance->ttslanguage,
                         'data-expiredays'=>$moduleinstance->expiredays,
                         'data-region'=>$moduleinstance->region,

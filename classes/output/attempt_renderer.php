@@ -21,6 +21,7 @@ namespace mod_pchat\output;
 defined('MOODLE_INTERNAL') || die();
 
 use \mod_pchat\constants;
+use \mod_pchat\utils;
 
 /**
  * A custom renderer class that extends the plugin_renderer_base.
@@ -36,37 +37,86 @@ class attempt_renderer extends \plugin_renderer_base {
  * @param lesson $lesson
  * @return string
  */
- public function add_edit_page_links($pchat) {
+ public function add_edit_page_links($pchat, $latestattempt=false, $thisstep) {
 		global $CFG;
-        $attemptid = 0;
 
-        $output = $this->output->heading(get_string("whatdonow", "pchat"), 3);
+
+        $output = $this->output->heading(get_string("letsgetstarted", "pchat"), 3);
         $parts = array();
+        $buttonclass = 'btn ' . constants::M_COMPONENT .'_menubutton ' . constants::M_COMPONENT;
 
-     $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
-             array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_AUDIORECORDING));
-     $parts[] = \html_writer::link($addurl, '<i class="fa fa-microphone"></i> ' . get_string('addaudiorecording', constants::M_COMPONENT),
-             array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' . constants::M_COMPONENT .'_audiombutton'));
-
-     $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
-        array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_USERSELECTIONS));
-     $parts[] = \html_writer::link($addurl, get_string('adduserselections', constants::M_COMPONENT),
-        array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' ));
-
-     $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
-             array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_SELFTRANSCRIBE));
-     $parts[] = \html_writer::link($addurl, get_string('addselftranscribe', constants::M_COMPONENT),
-             array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' ));
-
-     $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
-             array('id'=>$this->page->cm->id, 'attemptid'=>$attemptid, 'type'=>constants::TYPE_COMPARETRANSCRIPTS));
-     $parts[] = \html_writer::link($addurl, get_string('addcomparetranscripts', constants::M_COMPONENT),
-             array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' ));
+        //Set the attempt id
+        $attemptid = 0;
+        //because of the way attemot/data are managed in form handler (manageattempts.php) the true attemptid is at 'attemptid' not 'id'
+        if($latestattempt){$attemptid = $latestattempt->attemptid;}
 
 
+        //Step One Button (user selections)
+        $addurl = new \moodle_url(constants::M_URL . '/attempt/manageattempts.php',
+                array('id' => $this->page->cm->id, 'attemptid' => $attemptid, 'type' => constants::STEP_USERSELECTIONS));
+        $buttonopts =  array('class'=>$buttonclass . ($thisstep == constants::STEP_USERSELECTIONS ? '_activemenubutton' : '_completemenubutton'));
+         $parts[] = \html_writer::link($addurl, get_string('attempt_partone', constants::M_COMPONENT), $buttonopts);
 
-    $buttonsdiv = \html_writer::div(implode('', $parts),constants::M_COMPONENT .'_mbuttons');
+     //Step Two Button (conversation recording)
+     if($latestattempt && $latestattempt->completedsteps>=constants::STEP_USERSELECTIONS) {
+         $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
+                 array('id' => $this->page->cm->id, 'attemptid' => $attemptid, 'type' => constants::STEP_AUDIORECORDING));
+         $buttonopts =  array('class'=>$buttonclass . ($thisstep == constants::STEP_AUDIORECORDING ? '_activemenubutton' : '_completemenubutton'));
+     }else{
+         $addurl="#";
+         $buttonopts =  array('class'=>$buttonclass .'_deadmenubutton ');
+     }
+     $parts[] = \html_writer::link($addurl,get_string('attempt_parttwo', constants::M_COMPONENT), $buttonopts);
+
+     //Step Three Button (self transcribe)
+     if($latestattempt && $latestattempt->completedsteps>=constants::STEP_AUDIORECORDING) {
+         $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
+                 array('id' => $this->page->cm->id, 'attemptid' => $attemptid, 'type' => constants::STEP_SELFTRANSCRIBE));
+         $buttonopts =  array('class'=>$buttonclass . ($thisstep == constants::STEP_SELFTRANSCRIBE ? '_activemenubutton' : '_completemenubutton'));
+     }else{
+         $addurl="#";
+         $buttonopts =  array('class'=>$buttonclass .'_deadmenubutton ');
+     }
+     $parts[] = \html_writer::link($addurl, get_string('attempt_partthree', constants::M_COMPONENT), $buttonopts);
+
+     //Step Four Button (self REVIEW)
+     if($latestattempt && $latestattempt->completedsteps>=constants::STEP_SELFTRANSCRIBE) {
+         $addurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
+                 array('id' => $this->page->cm->id, 'attemptid' => $attemptid, 'type' => constants::STEP_SELFREVIEW));
+         $buttonopts =  array('class'=>$buttonclass . ($thisstep == constants::STEP_SELFREVIEW ? '_activemenubutton' : '_completemenubutton'));
+     }else{
+         $addurl="#";
+         $buttonopts =  array('class'=>$buttonclass .'_deadmenubutton ');
+     }
+     $parts[] = \html_writer::link($addurl, get_string('attempt_partfour', constants::M_COMPONENT), $buttonopts);
+
+
+
+    $buttonsdiv = \html_writer::div(implode('<i class="fa fa-arrow-right"></i>', $parts),constants::M_COMPONENT .'_mbuttons');
      return $this->output->box($output . $buttonsdiv, 'generalbox firstpageoptions');
+    }
+
+    /**
+     *
+     */
+    public function fetch_reattempt_button($cm){
+
+        $button = $this->output->single_button(new \moodle_url(constants::M_URL . '/view.php',
+                array('id'=>$cm->id,'reattempt'=>1)),get_string('reattempt',constants::M_COMPONENT));
+
+        $ret = \html_writer::div($button ,constants::M_CLASS  . '_reattempt_cont');
+        return $ret;
+
+    }
+
+    function show_summary($attempt,$stats){
+        $attempt->targetwords = utils::fetch_targetwords($attempt);
+        $attempt->interlocutornames = utils::fetch_interlocutor_names($attempt);
+        $attempt->selftranscriptparts = utils::fetch_selftranscript_parts($attempt);
+        $ret = $this->output->render_from_template( constants::M_COMPONENT . '/summarychoices', $attempt);
+        $tdata=array('a'=>$attempt, 's'=>$stats);
+        $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summaryresults', $tdata);
+        return $ret;
     }
 	
 	/**
@@ -76,7 +126,9 @@ class attempt_renderer extends \plugin_renderer_base {
 	 * @return string html of table
 	 */
 	function show_attempts_list($attempts,$tableid,$cm){
-	
+	    global $DB;
+
+
 		if(!$attempts){
 			return $this->output->heading(get_string('noattempts',constants::M_COMPONENT), 3, 'main');
 		}
@@ -86,19 +138,16 @@ class attempt_renderer extends \plugin_renderer_base {
 
 
 		$table->head = array(
-			get_string('username', constants::M_COMPONENT),
             get_string('timemodified', constants::M_COMPONENT),
+            get_string('topic', constants::M_COMPONENT),
+            get_string('users', constants::M_COMPONENT),
 			get_string('actions', constants::M_COMPONENT),
             ''
 		);
-		$table->headspan = array(1,1,1,1);
+		$table->headspan = array(1,1,1,1,1);
 		$table->colclasses = array(
-			'username','timemodified', 'edit','delete'
+                'timemodified','topic','users', 'actions','actions'
 		);
-
-		//sort by start date
-		//core_collator::asort_objects_by_property($attempts,'timecreated',core_collator::SORT_NUMERIC);
-		//core_collator::asort_objects_by_property($attempts,'name',core_collator::SORT_STRING);
 
 		//loop through the attempts and add to table
         $currentattempt=0;
@@ -106,37 +155,66 @@ class attempt_renderer extends \plugin_renderer_base {
             $currentattempt++;
             $row = new \html_table_row();
 
-            //user name
-            $attemptnamecell = new \html_table_cell($attempt->userid);
-
-
             //modify date
             $datecell_content = date("Y-m-d H:i:s",$attempt->timemodified);
             $attemptdatecell = new \html_table_cell($datecell_content);
 
+            //user names
+            $usernames = utils::fetch_interlocutor_names($attempt);
+            $usernamescell = new \html_table_cell(implode('<br>',$usernames));
+
+            //topic cell
+            $topiccell = new \html_table_cell($attempt->topicname);
+
+
             //attempt edit
-            $actionurl = '/mod/pchat/attempt/manageattempts.php';
+            $actionurl = constants::M_URL . '/attempt/manageattempts.php';
 
             //attempt part (stages) links
             $parts = array();
 
-            $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id,'type'=>constants::TYPE_USERSELECTIONS));
-            $edituserselections = \html_writer::link($editurl, get_string('editattempt_partone', constants::M_COMPONENT));
-            $parts[] = $edituserselections;
+            $itemtitle = get_string('attempt_partone', constants::M_COMPONENT);
+            if($attempt->completedsteps >= constants::STEP_NONE) {
+                $editurl = new \moodle_url($actionurl,
+                        array('id' => $cm->id, 'attemptid' => $attempt->id, 'type' => constants::STEP_USERSELECTIONS));
+                $edituserselections = \html_writer::link($editurl, $itemtitle);
+                $parts[] = $edituserselections;
+            }else{
+                $parts[] = $itemtitle;
+            }
 
-            $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id,'type'=>constants::TYPE_AUDIORECORDING));
-            $editaudio = \html_writer::link($editurl, get_string('editattempt_parttwo', constants::M_COMPONENT));
-            $parts[] = $editaudio;
+            $itemtitle = get_string('attempt_parttwo', constants::M_COMPONENT);
+            if($attempt->completedsteps >= constants::STEP_USERSELECTIONS) {
+                $editurl = new \moodle_url($actionurl,
+                        array('id' => $cm->id, 'attemptid' => $attempt->id, 'type' => constants::STEP_AUDIORECORDING));
+                $editaudio = \html_writer::link($editurl,$itemtitle);
+                $parts[] = $editaudio;
+            }else{
+                $parts[] = $itemtitle;
+            }
 
-            $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id,'type'=>constants::TYPE_SELFTRANSCRIBE));
-            $edittranscript = \html_writer::link($editurl, get_string('editattempt_partthree', constants::M_COMPONENT));
-            $parts[] = $edittranscript;
+            $itemtitle = get_string('attempt_partthree', constants::M_COMPONENT);
+            if($attempt->completedsteps >= constants::STEP_AUDIORECORDING) {
+                    $editurl = new \moodle_url($actionurl,
+                            array('id' => $cm->id, 'attemptid' => $attempt->id, 'type' => constants::STEP_SELFTRANSCRIBE));
+                    $edittranscript = \html_writer::link($editurl, $itemtitle);
+                    $parts[] = $edittranscript;
+            }else{
+                $parts[] = $itemtitle;
+            }
 
-            $editurl = new \moodle_url($actionurl, array('id' => $cm->id, 'attemptid' => $attempt->id,'type'=>constants::TYPE_COMPARETRANSCRIPTS));
-            $comparetranscripts = \html_writer::link($editurl, get_string('editattempt_partfour', constants::M_COMPONENT));
-            $parts[] = $comparetranscripts;
+            $itemtitle = get_string('attempt_partfour', constants::M_COMPONENT);
+            if($attempt->completedsteps >= constants::STEP_SELFTRANSCRIBE) {
+                    $editurl = new \moodle_url($actionurl,
+                            array('id' => $cm->id, 'attemptid' => $attempt->id, 'type' => constants::STEP_SELFREVIEW));
+                    $comparetranscripts = \html_writer::link($editurl, $itemtitle);
+                    $parts[] = $comparetranscripts;
+            }else{
+                $parts[] = $itemtitle;
+            }
 
-            $editcell = new \html_table_cell(implode(' ', $parts));
+
+            $editcell = new \html_table_cell(implode('<br />', $parts));
 
 		    //attempt delete
 			$deleteurl = new \moodle_url($actionurl, array('id'=>$cm->id,'attemptid'=>$attempt->id,'action'=>'confirmdelete'));
@@ -144,7 +222,7 @@ class attempt_renderer extends \plugin_renderer_base {
 			$deletecell = new \html_table_cell($deletelink);
 
 			$row->cells = array(
-				$attemptnamecell, $attemptdatecell, $editcell, $deletecell
+                    $attemptdatecell, $topiccell, $usernamescell, $editcell, $deletecell
 			);
 			$table->data[] = $row;
 		}
@@ -163,12 +241,13 @@ class attempt_renderer extends \plugin_renderer_base {
         $columns[1]=null;
         $columns[2]=null;
         $columns[3]=null;
+        $columns[4]=null;
         $tableprops['columns']=$columns;
 
         //default ordering
         $order = array();
-        $order[0] =array(3, "desc");
-        $tableprops['order']=$order;
+        //$order[0] =array(3, "desc");
+       //$tableprops['order']=$order;
 
         //here we set up any info we need to pass into javascript
         $opts =Array();

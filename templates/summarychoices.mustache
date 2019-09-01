@@ -1,0 +1,33 @@
+<div class="mod_pchat_summarychoices">
+    <div class="summarybox summarytopic">
+        <div class="summaryboxtitle">{{#str}}topic , mod_pchat{{/str}}</div>
+        <div class="summaryboxcontent">
+        {{topicname}}
+        </div>
+
+   </div>
+    <div class="summarybox summarytargetwords">
+        <div class="summaryboxtitle">{{#str}}targetwords , mod_pchat{{/str}}</div>
+        <div class="summaryboxcontent">
+        {{#targetwords}}
+            {{.}}<br/>
+        {{/targetwords}}
+        </div>
+
+    </div>
+    <div class="summarybox summaryusers">
+        <div class="summaryboxtitle">{{#str}}users , mod_pchat{{/str}}</div>
+        <div class="summaryboxcontent">
+            {{#interlocutornames}}
+            {{.}}<br/>
+        {{/interlocutornames}}</div>
+
+    </div>
+    <div class="summarybox summaryconvlength">
+        <div class="summaryboxtitle">{{#str}}convlength , mod_pchat{{/str}}</div>
+        <div class="summaryboxcontent">
+            {{#str}}xminutes , mod_pchat, {{convlength}}{{/str}}
+        </div>
+
+    </div>
+</div>

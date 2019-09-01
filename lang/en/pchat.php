@@ -173,7 +173,7 @@ $string['moveattemptdown']='Down';
 $string['attempts'] ='Attempts';
 $string['manageattempts'] ='Manage Attempts';
 $string['correctanswer'] ='Correct answer';
-$string['whatdonow'] = 'What would you like to do?';
+$string['letsgetstarted'] = 'Lets have a conversation';
 $string['addnewattempt'] = 'Add a New attempt';
 $string['addingattempt'] = 'Adding a New attempt';
 $string['editingattempt'] = 'Editing a attempt';
@@ -192,7 +192,7 @@ $string['actions'] = 'Actions';
 $string['editattempt'] = 'Edit attempt';
 $string['previewattempt'] = 'Preview attempt';
 $string['deleteattempt'] = 'Delete attempt';
-$string['confirmattemptdelete'] = 'Are you sure you want to <i>DELETE</i> attempt? : {$a}';
+$string['confirmattemptdelete'] = 'Are you sure you want to <i>DELETE</i> attempt?';
 $string['confirmattemptdeletetitle'] = 'Really Delete attempt?';
 $string['confirmattemptdelete'] = 'Are you sure you want to <i>DELETE</i> this attempt?';
 $string['confirmattemptdeletealltitle'] = 'Really Delete ALL Attempts?';
@@ -202,24 +202,11 @@ $string['attemptdetails'] = 'attempt Details: {$a}';
 $string['attemptsummary'] = 'attempt Summary: {$a}';
 $string['viewreport'] = 'view report';
 
-$string['addaudiorecording'] = 'Audio Recording';
+$string['addrecordconversation'] = 'Record Conversation';
 $string['adduserselections'] = 'User Selections';
 $string['addselftranscribe'] = 'Self Transcribe';
-$string['addcomparetranscripts'] = 'Compare Transcripts';
+$string['addselfreview'] = 'Self Review';
 
-
-$string['addaudiorecordingattempt'] = 'Record Audio';
-$string['addaudiouploaditem'] = 'Upload Audio';
-$string['addaudiodataitem'] = 'Create Audio Data';
-$string['addvideorecordingitem'] = 'Record Video';
-$string['addvideouploaditem'] = 'Upload Video';
-$string['addvideodataitem'] = 'Create Video Data';
-$string['audiorecording'] = 'Audio Recording';
-$string['audioupload'] = 'Audio Upload';
-$string['audiodata'] = 'Audio Data';
-$string['videorecording'] = 'Video Recording';
-$string['videoupload'] = 'Video Upload';
-$string['videodata'] = 'Video Data';
 
 $string['readtext'] = 'Text to read';
 $string['language_voice'] = 'Language and voice';
@@ -253,7 +240,7 @@ $string['transcriber_amazontranscribe'] = 'Standard transcription';
 $string['transcriber_googlechrome'] = 'Instant transcription (Chrome only)';
 $string['transcriber_googlecloud'] = 'Fast transcription (audio only, less than 60 seconds)';
 $string['transcriber_none'] = 'No transcription';
-$string['transcriptnotready'] = 'Transcript not ready yet';
+$string['transcriptnotready'] = '<i>Transcript not ready yet</i>';
 $string['transcripttitle'] = 'Transcript';
 
 $string['createattempt'] = 'Create Attempt';
@@ -266,7 +253,7 @@ $string['createtopic'] = 'Create Topic';
 $string['topicformtitle'] = 'Add/edit Topic';
 $string['topiclevelcustom'] = 'Custom';
 $string['topiclevelcourse'] = 'Course';
-$string['topics'] = 'Topic';
+$string['topics'] = 'Topics';
 $string['managetopics'] = 'Manage Topics';
 $string['topicselected'] = 'Selected';
 $string['topicname'] = 'Topic';
@@ -277,6 +264,7 @@ $string['targetwords'] = 'Target Words';
 $string['tips'] = 'Tips';
 $string['confirmtopicdelete'] = 'Do you really want to delete topic: {$a}';
 $string['choosetopic'] = 'Choose Topic';
+$string['topicinstructions']='Add or edit topics. Custom topics will only be available here. Course level topics will be available course wide. Selected topics will be available for students to choose from in this activity. ';
 
 $string['userselections'] = 'User Selection';
 $string['selftranscribe'] = 'Transcribe Conversation';
@@ -285,14 +273,16 @@ $string['comparetranscripts'] = 'Compare Transcriptions';
 $string['saveitem'] = 'Save';
 $string['xminutes'] = '{$a}:00 minutes';
 $string['convlength'] = 'Conversation Length';
-$string['mywords'] = 'My Words';
+$string['mywords'] = 'My Target Words';
 $string['speakingtips'] = 'Speaking Tips';
 $string['speakingtips_details'] = '';
 $string['chooseusers'] = 'Choose Users';
-$string['editattempt_partone'] = 'One';
-$string['editattempt_parttwo'] = 'Two';
-$string['editattempt_partthree'] = 'Three';
-$string['editattempt_partfour'] = 'Four';
+$string['users'] = 'Users';
+$string['topic'] = 'Topic';
+$string['attempt_partone'] = '1: User Selections';
+$string['attempt_parttwo'] = '2: Conversation';
+$string['attempt_partthree'] = '3: Transcribe ';
+$string['attempt_partfour'] = '4: Review';
 
 $string['savesubtitles'] = 'Save Conversation';
 $string['removesubtitles'] = 'Remove Conversation';
@@ -307,9 +297,25 @@ $string['autotranscript'] = 'Auto Transcript';
 $string['stats'] = 'Stats';
 $string['stats_words'] = 'Words';
 $string['stats_turns'] = 'Turns';
-$string['stats_avturn'] = 'ATL';
-$string['stats_longestturn'] = 'LTL';
-$string['stats_targetwords'] = 'TW';
+$string['stats_avturn'] = 'Av. Turn Length';
+$string['stats_longestturn'] = 'Longest Turn Length';
+$string['stats_targetwords'] = 'Target Words';
+$string['transcripteditor']= 'Transcript Editor';
+$string['selfreview']= 'Self Review';
+
+$string['reviewimprove']= 'How can you improve next time?';
+$string['reviewquestions']= 'How many questions did you ask?';
+$string['reviewlonganswers']= 'How many long answers did you give?';
+$string['multiattempts'] = 'Allow Multiple Attempts';
+$string['multiattempts_details'] = 'If checked a student can choose to overwrite an existing attempt with a new one.';
+$string['attemptsheading']= 'Attempts';
+$string['partners']= 'Partners';
+$string['turns']= 'Turns';
+$string['ATL']= 'ATL';
+$string['LTL']= 'LTL';
+$string['TW']= 'TW';
+
+$string['audiorecording']= 'Audio Recording';
 
 
 

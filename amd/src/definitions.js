@@ -23,6 +23,7 @@ This file contains class and ID definitions.
         C_BUTTONMOVEDOWN: 'poodllsubtitle_edmovedown',
         C_BUTTONCANCEL: 'poodllsubtitle_edcancel',
         C_EDITFIELD: 'poodllsubtitle_edpart',
+        C_TARGETWORDSDISPLAY: 'mod_pchat_targetwordsdisplay'
 
 
     };//end of return value

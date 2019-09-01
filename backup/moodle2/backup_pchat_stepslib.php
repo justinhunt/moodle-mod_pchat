@@ -76,7 +76,7 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
 
         //sources if including user info
         if ($userinfo) {
-            $item->set_source_table(constants::M_QTABLE,
+            $item->set_source_table(constants::M_ATTEMPTSTABLE,
                 array(constants::M_MODNAME => backup::VAR_PARENTID));
         }
 

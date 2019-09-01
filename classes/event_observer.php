@@ -46,7 +46,7 @@ class event_observer{
     public static function course_deleted(\core\event\course_deleted $event) {
        global $DB;
 
-        $ret = $DB->delete_records_select(constants::M_QTABLE, "pchat IN (SELECT id from {" . constants::M_TABLE . "} WHERE course = :course)",
+        $ret = $DB->delete_records_select(constants::M_ATTEMPTSTABLE, "pchat IN (SELECT id from {" . constants::M_TABLE . "} WHERE course = :course)",
                 array('course'=>$event->objectid));
         //constants::M_TABLE should be deleted elsewhere
 		//$ret = $DB->delete_records(constants::M_TABLE,array('course'=>$event->objectid));

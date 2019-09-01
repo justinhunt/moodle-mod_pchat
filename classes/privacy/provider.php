@@ -75,7 +75,7 @@ class provider implements
             'errorcount' => 'privacy:metadata:errorcount',
             'timemodified' => 'privacy:metadata:timemodified'
         ];
-        $collection->add_database_table(constants::M_QTABLE, $userdetail, 'privacy:metadata:itemtable');
+        $collection->add_database_table(constants::M_ATTEMPTSTABLE, $userdetail, 'privacy:metadata:itemtable');
 
 
         $collection->add_external_location_link('cloud.poodll.com', [
@@ -98,7 +98,7 @@ class provider implements
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
             INNER JOIN {" . constants::M_TABLE . "} actt ON actt.id = cm.instance
-            INNER JOIN {" . constants::M_QTABLE . "} usert ON usert.pchat = actt.id
+            INNER JOIN {" . constants::M_ATTEMPTSTABLE . "} usert ON usert.pchat = actt.id
                  WHERE usert.userid = :theuserid";
         $params = [
                 'contextlevel' => CONTEXT_MODULE,
@@ -131,7 +131,7 @@ class provider implements
                   JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modname
                   JOIN  {" . constants::M_TABLE . "} actt ON actt.id = cm.instance
-                  JOIN {" . constants::M_QTABLE . "} usert ON usert.pchat = actt.id
+                  JOIN {" . constants::M_ATTEMPTSTABLE . "} usert ON usert.pchat = actt.id
                  WHERE c.id = :contextid";
 
         $params = [
@@ -166,7 +166,7 @@ class provider implements
                        usert.userid AS userid,
                        usert.filename,
                        usert.timemodified
-                  FROM {" . constants::M_QTABLE . "} usert
+                  FROM {" . constants::M_ATTEMPTSTABLE . "} usert
                   JOIN {" . constants::M_TABLE . "} actt ON usert.pchat = actt.id
                   JOIN {course_modules} cm ON actt.id = cm.instance
                   JOIN {modules} m ON cm.module = m.id AND m.name = :modulename
@@ -229,7 +229,7 @@ class provider implements
         $instanceid = $cm->instance;
 
         // Now delete all attempts
-        $DB->delete_records(constants::M_QTABLE, [constants::M_MODNAME => $instanceid]);
+        $DB->delete_records(constants::M_ATTEMPTSTABLE, [constants::M_MODNAME => $instanceid]);
     }
 
     /**
@@ -250,7 +250,7 @@ class provider implements
 
                 $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
 
-                $entries = $DB->get_records(constants::M_QTABLE, [constants::M_MODNAME => $instanceid, 'userid' => $userid],
+                $entries = $DB->get_records(constants::M_ATTEMPTSTABLE, [constants::M_MODNAME => $instanceid, 'userid' => $userid],
                     '', 'id');
 
                 if (!$entries) {
@@ -260,7 +260,7 @@ class provider implements
                 list($insql, $inparams) = $DB->get_in_or_equal(array_keys($entries), SQL_PARAMS_NAMED);
 
                 // Now delete all user related entries.
-                $DB->delete_records(constants::M_QTABLE, [constants::M_MODNAME => $instanceid, 'userid' => $userid]);
+                $DB->delete_records(constants::M_ATTEMPTSTABLE, [constants::M_MODNAME => $instanceid, 'userid' => $userid]);
             }
         }
     }
@@ -281,7 +281,7 @@ class provider implements
         $attemptswhere = "pchat = :instanceid AND userid {$userinsql}";
         $userinstanceparams = $userinparams + ['instanceid' => $instanceid];
 
-        $attemptsset = $DB->get_recordset_select(constants::M_QTABLE, $attemptswhere, $userinstanceparams, 'id', 'id');
+        $attemptsset = $DB->get_recordset_select(constants::M_ATTEMPTSTABLE, $attemptswhere, $userinstanceparams, 'id', 'id');
         $attempts = [];
 
         foreach ($attemptsset as $attempt) {
@@ -295,6 +295,6 @@ class provider implements
         }
 
         $deletewhere = "pchat = :instanceid AND userid {$userinsql}";
-        $DB->delete_records_select(constants::M_QTABLE, $deletewhere, $userinstanceparams);
+        $DB->delete_records_select(constants::M_ATTEMPTSTABLE, $deletewhere, $userinstanceparams);
     }
 }

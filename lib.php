@@ -113,7 +113,7 @@ function pchat_reset_userdata($data) {
                         WHERE l.course=:course";
 
         $params = array ("course" => $data->courseid);
-        $DB->delete_records_select(constants::M_QTABLE, constants::M_MODNAME . " IN ($sql)", $params);
+        $DB->delete_records_select(constants::M_ATTEMPTSTABLE, constants::M_MODNAME . " IN ($sql)", $params);
 
 
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deletealluserdata', constants::M_COMPONENT), 'error'=>false);

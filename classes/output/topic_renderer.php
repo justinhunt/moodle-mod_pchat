@@ -41,13 +41,14 @@ class topic_renderer extends \plugin_renderer_base {
 		global $CFG;
         $topicid = 0;
 
-        $output = $this->output->heading(get_string("whatdonow", "pchat"), 3);
+        $output = $this->output->heading(get_string("managetopics", "pchat"), 3);
+        $output .=  \html_writer::div(get_string('topicinstructions',constants::M_COMPONENT ),constants::M_COMPONENT .'_instructions');
         $links = array();
 
-		$addurl = new \moodle_url('/mod/pchat/topic/managetopics.php',
+		$addurl = new \moodle_url(constants::M_URL . '/topic/managetopics.php',
 			array('moduleid'=>$this->page->cm->instance, 'id'=>$topicid));
         $links[] = \html_writer::link($addurl,  get_string('addtopic', constants::M_COMPONENT),
-            array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' . constants::M_COMPONENT .'_audiombutton'));
+            array('class'=>'btn ' . constants::M_COMPONENT .'_menubutton ' . constants::M_COMPONENT .'_activemenubutton'));
 
 
 
@@ -92,9 +93,6 @@ class topic_renderer extends \plugin_renderer_base {
 			'selected','topicname', 'topiclevel', 'topicicon', 'topictargetwords','timemodified', 'edit','delete'
 		);
 
-		//sort by start date
-		//core_collator::asort_objects_by_property($topics,'timecreated',core_collator::SORT_NUMERIC);
-		//core_collator::asort_objects_by_property($topics,'name',core_collator::SORT_STRING);
 
 		//loop through the topics and add to table
         $currenttopic=0;
@@ -126,11 +124,9 @@ class topic_renderer extends \plugin_renderer_base {
             $topiciconcell = new \html_table_cell($fonticon);
 
             //topic targetwords
-            $words = explode(PHP_EOL,$topic->targetwords);
-            $targetwords = '';
-            foreach($words as $word){
-                $targetwords .= '<span class="mod_pchat_targetwordtag">' . $word . '</span>';
-            }
+            $tdata=array();
+            $tdata['targetwords']=explode(PHP_EOL,$topic->targetwords);
+            $targetwords =  $this->output->render_from_template( constants::M_COMPONENT . '/targetwords', $tdata);
             $topictargetwordscell = new \html_table_cell($targetwords);
 
             //modify date

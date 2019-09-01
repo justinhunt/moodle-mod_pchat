@@ -13,12 +13,12 @@ use \mod_pchat\constants;
 class selftranscribeform extends baseform
 {
 
-    public $type = constants::TYPE_SELFTRANSCRIBE;
+    public $type = constants::STEP_SELFTRANSCRIBE;
     public $typestring = constants::T_SELFTRANSCRIBE;
     public function custom_definition() {
         $this->filename = $this->_customdata['filename'];
        // $this->add_audio_player('audioplayer','audioplayer');
-        $this->add_transcript_editor('selftranscript','Transcript Editor');
+        $this->add_transcript_editor('selftranscript',get_string('transcripteditor', constants::M_COMPONENT));
     }
     public function custom_definition_after_data() {
 

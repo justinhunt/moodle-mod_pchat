@@ -67,6 +67,10 @@ class mod_pchat_mod_form extends moodleform_mod {
         }else{
         	$this->standard_intro_elements();
 		}
+
+        //Enable AI
+        $mform->addElement('advcheckbox', 'multiattempts', get_string('multiattempts', constants::M_COMPONENT), get_string('multiattempts_details', constants::M_COMPONENT));
+        $mform->setDefault('multipleattempts',$config->enableai);
 		
 
         //Enable AI

@@ -36,6 +36,38 @@ use \mod_pchat\constants;
  */
 class utils{
 
+    //fetch the latest compeleted state
+    public static function fetch_latest_finishedattempt($pchat,$userid=false) {
+        global $DB, $USER;
+        if(!$userid){
+            $userid = $USER->id;
+        }
+        $attempts = $DB->get_records(constants::M_ATTEMPTSTABLE,
+                array('pchat'=>$pchat->id,'userid'=>$userid,'completedsteps'=>constants::STEP_SELFREVIEW),'timemodified DESC','*',0,1);
+        if($attempts){
+            $attempt=  array_shift($attempts);
+        }else {
+            $attempt = false;
+        }
+        return $attempt;
+    }
+
+    //Fetch latest attempt regardless of its completed state
+    public static function fetch_latest_attempt($pchat,$userid=false) {
+        global $DB, $USER;
+        if(!$userid){
+            $userid = $USER->id;
+        }
+        $attempts = $DB->get_records(constants::M_ATTEMPTSTABLE,
+                array('pchat'=>$pchat->id,'userid'=>$userid),'timemodified DESC','*',0,1);
+        if($attempts){
+            $attempt=  array_shift($attempts);
+        }else {
+            $attempt = false;
+        }
+        return $attempt;
+    }
+
 
     //are we willing and able to transcribe submissions?
     public static function can_transcribe($instance)
@@ -76,18 +108,159 @@ class utils{
         }
     }
 
+    //check if curl return from transcript url is valid
+    public static function is_valid_transcript($transcript){
+        if(strpos($transcript,"<Error><Code>AccessDenied</Code>")>0){
+            return false;
+        }
+        return true;
+    }
+
+    public static function retrieve_transcripts($attempt){
+        global $DB;
+
+        $jsontranscripturl = $attempt->filename . '.json';
+        $vtttranscripturl = $attempt->filename . '.vtt';
+        $transcripturl = $attempt->filename . '.txt';
+        $postdata = array();
+        //fetch transcripts, and bail out of they are not ready or wrong
+        $jsontranscript = self::curl_fetch($jsontranscripturl,$postdata);
+        if(!self::is_valid_transcript($jsontranscript)){return false;}
+
+        $vtttranscript = self::curl_fetch($vtttranscripturl,$postdata);
+        if(!self::is_valid_transcript($vtttranscript)){return false;}
+
+        $transcript = self::curl_fetch($transcripturl,$postdata);
+        if(!self::is_valid_transcript($transcript)){return false;}
+
+        //if we got here, we have transcripts and we do not need to come back
+        if($jsontranscript && $vtttranscript && $transcript) {
+            $updateattempt = new \stdClass();
+            $updateattempt->id=$attempt->id;
+            $updateattempt->jsontranscript = $jsontranscript;
+            $updateattempt->vtttranscript = $vtttranscript;
+            $updateattempt->transcript = $transcript;
+            $success = $DB->update_record(constants::M_ATTEMPTSTABLE, $updateattempt);
+
+            if($success){
+                $attempt->jsontranscript = $jsontranscript;
+                $attempt->vtttranscript = $vtttranscript;
+                $attempt->transcript = $transcript;
+
+                //update auto transcript stats
+                self::update_stats_for_autotranscript($attempt);
+
+                //return attempt
+                return $attempt;
+            }
+        }
+        return false;
+    }
+
+    //fetch stats, one way or the other
+    public static function update_stats_for_autotranscript($attempt) {
+        global $DB;
+        if($attempt->selftranscript && $attempt->transcript){
+            //do some stats work
+
+        }
+        return true;
+    }
+
+    //fetch interlocutor names
+    public static function fetch_interlocutor_names($attempt) {
+        global $DB;
+        //user names
+        $userids= explode(',',$attempt->interlocutors);
+        $usernames = array();
+        foreach($userids as $userid){
+            $user = $DB->get_record('user',array('id'=>$userid));
+            if($user){
+                $usernames[] =fullname($user);
+            }
+
+        }
+        return $usernames;
+    }
+    //fetch self transcript parts
+    public static function fetch_selftranscript_parts($attempt) {
+        global $DB;
+        //user names
+        $sc= $attempt->selftranscript;
+        if(!empty($sc)){
+            $sc_object = json_decode($sc);
+            $parts= array();
+            foreach($sc_object as $turn){
+                $parts[]=$turn->part;
+            }
+            return $parts;
+        }else{
+            return array();
+        }
+    }
+
+    public static function fetch_targetwords($attempt){
+        return explode(PHP_EOL,$attempt->topictargetwords);
+    }
+
+    public static function render_tags(){
+        $words = explode(PHP_EOL,$topic->targetwords);
+        $targetwords = '';
+        foreach($words as $word){
+            $targetwords .= '<span class="mod_pchat_targetwordtag">' . $word . '</span>';
+        }
+    }
+
+    //fetch stats, one way or the other
+    public static function fetch_stats($attempt) {
+        global $DB;
+        //if we have stats in the database, lets use those
+        $stats = $DB->get_record(constants::M_STATSTABLE,array('attemptid'=>$attempt->id));
+        if($stats){
+            return $stats;
+        }
+
+        $stats = self::calculate_stats($attempt->selftranscript, $attempt);
+        //if that worked, and why wouldn't it, lets save them too.
+        if ($stats) {
+            self::save_stats($stats, $attempt);
+        }
+        return $stats;
+    }
+
+    //save / update stats
+    public static function save_stats($stats, $attempt){
+        global $DB;
+        $stats->pchat=$attempt->pchat;
+        $stats->attemptid=$attempt->id;
+        $stats->userid=$attempt->userid;
+        $stats->timemodified=time();
+
+        $oldstats =$DB->get_record(constants::M_STATSTABLE,array('attemptid'=>$attempt->id));
+        if($oldstats){
+            $stats->id = $oldstats->id;
+            $DB->update_record(constants::M_STATSTABLE,$stats);
+        }else{
+            $stats->timecreated=time();
+            $stats->createdby=$attempt->userid;
+            $DB->insert_record(constants::M_STATSTABLE,$stats);
+        }
+        return;
+    }
+
+    //calculate stats of transcript (no db code)
     public static function calculate_stats($usetranscript, $attempt){
-        $ret= new \stdClass();
-        $ret->turns=0;
-        $ret->words=0;
-        $ret->avturn=0;
-        $ret->longestturn=0;
-        $ret->targetwords=0;
-        $ret->totaltargetwords=0;
-        $ret->questions=0;
+        $stats= new \stdClass();
+        $stats->turns=0;
+        $stats->words=0;
+        $stats->avturn=0;
+        $stats->longestturn=0;
+        $stats->targetwords=0;
+        $stats->totaltargetwords=0;
+        $stats->questions=0;
 
         if(!$usetranscript || empty($usetranscript)){
-            return $ret;
+            return false;
         }
 
         $transcriptarray=json_decode($usetranscript);
@@ -98,31 +271,34 @@ class utils{
             $part = $turn->part;
             $wordcount = str_word_count($part,0);
             if($wordcount===0){continue;}
-            $fulltranscript = $turn->part . ' ' ;
-            $ret->turns++;
-            $ret->words+= $wordcount;
+            $fulltranscript .= $turn->part . ' ' ;
+            $stats->turns++;
+            $stats->words+= $wordcount;
             $totalturnlengths += $wordcount;
-            if($ret->longestturn < $wordcount){$ret->longestturn = $wordcount;}
-            $ret->questions+= substr_count($turn->part,"?");
+            if($stats->longestturn < $wordcount){$stats->longestturn = $wordcount;}
+            $stats->questions+= substr_count($turn->part,"?");
         }
-        if($ret->turns){
-            return $ret;
+        if(!$stats->turns){
+            return false;
         }
-        $ret->avturn= round($totalturnlengths  / $ret->turns);
-        $topictargetwords = explode(',',$attempt->topictargetwords);
+        $stats->avturn= round($totalturnlengths  / $stats->turns);
+        $topictargetwords = utils::fetch_targetwords($attempt);
         $mywords = explode(',',$attempt->mywords);
         $targetwords = array_unique(array_merge($topictargetwords, $mywords));
-        $ret->totaltargetwords = count($targetwords);
+        $stats->totaltargetwords = count($targetwords);
 
 
         $searchpassage = strtolower($fulltranscript);
         foreach($targetwords as $theword){
-            $usecount = substr_count($searchpassage, strtolower($theword));
-            if($usecount){$ret->targetwords++;}
+            $searchword = self::cleanText($theword);
+            if(empty($searchword) || empty($searchpassage)){
+                $usecount=0;
+            }else {
+                $usecount = substr_count($searchpassage, $searchword);
+            }
+            if($usecount){$stats->targetwords++;}
         }
-
-        return $ret;
-
+        return $stats;
     }
 
     //register an adhoc task to pick up transcripts
@@ -140,6 +316,49 @@ class utils{
         // queue it
         \core\task\manager::queue_adhoc_task($s3_task);
         return true;
+    }
+
+    /*
+   * Clean word of things that might prevent a match
+    * i) lowercase it
+    * ii) remove html characters
+    * iii) replace any line ends with spaces (so we can "split" later)
+    * iv) remove punctuation
+   *
+   */
+    public static function cleanText($thetext){
+        //lowercaseify
+        $thetext=strtolower($thetext);
+
+        //remove any html
+        $thetext = strip_tags($thetext);
+
+        //replace all line ends with empty strings
+        $thetext = preg_replace('#\R+#', '', $thetext);
+
+        //remove punctuation
+        //see https://stackoverflow.com/questions/5233734/how-to-strip-punctuation-in-php
+        // $thetext = preg_replace("#[[:punct:]]#", "", $thetext);
+        //https://stackoverflow.com/questions/5689918/php-strip-punctuation
+        $thetext = preg_replace("/[[:punct:]]+/", "", $thetext);
+
+        //remove bad chars
+        $b_open="“";
+        $b_close="”";
+        $b_sopen='‘';
+        $b_sclose='’';
+        $bads= array($b_open,$b_close,$b_sopen,$b_sclose);
+        foreach($bads as $bad){
+            $thetext=str_replace($bad,'',$thetext);
+        }
+
+        //remove double spaces
+        //split on spaces into words
+        $textbits = explode(' ',$thetext);
+        //remove any empty elements
+        $textbits = array_filter($textbits, function($value) { return $value !== ''; });
+        $thetext = implode(' ',$textbits);
+        return $thetext;
     }
 
     //we use curl to fetch transcripts from AWS and Tokens from cloudpoodll

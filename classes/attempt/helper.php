@@ -42,7 +42,7 @@ class helper
         $ret = false;
 
         //remove records
-        if (!$DB->delete_records(constants::M_QTABLE, array('id' => $attemptid))) {
+        if (!$DB->delete_records(constants::M_ATTEMPTSTABLE, array('id' => $attemptid))) {
             print_error("Could not delete attempt");
             return $ret;
         }

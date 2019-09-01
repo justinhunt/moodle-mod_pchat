@@ -42,11 +42,14 @@ class attempthelper
        // return "$this->context->id pp $filearea pp $attempt->id";
     }
 
-    public function fetch_attempts()
+    public function fetch_attempts($userid=false)
     {
         global $DB,$USER;
+        if(!$userid){
+            $userid= $USER->id;
+        }
         if (!$this->attempts) {
-            $this->attempts = $DB->get_records(constants::M_QTABLE, [constants::M_MODNAME => $this->mod->id, 'userid'=>$USER->id],'timemodified ASC');
+            $this->attempts = $DB->get_records(constants::M_ATTEMPTSTABLE, [constants::M_MODNAME => $this->mod->id, 'userid'=>$userid],'timemodified DESC');
         }
         if($this->attempts){
             return $this->attempts;
@@ -58,7 +61,7 @@ class attempthelper
     public function fetch_latest_attempt($userid){
         global $DB;
 
-        $attempts = $DB->get_records(constants::M_QTABLE,array(constants::M_MODNAME => $this->mod->id,'userid'=>$userid),'id DESC');
+        $attempts = $DB->get_records(constants::M_ATTEMPTSTABLE,array(constants::M_MODNAME => $this->mod->id,'userid'=>$userid),'id DESC');
         if($attempts){
             $attempt = array_shift($attempts);
             return $attempt;

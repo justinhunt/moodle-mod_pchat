@@ -12,11 +12,12 @@ use \mod_pchat\constants;
 
 class userselectionsform extends baseform
 {
-    public $type = constants::TYPE_USERSELECTIONS;
+    public $type = constants::STEP_USERSELECTIONS;
     public $typestring = constants::T_USERSELECTIONS;
     public function custom_definition() {
         $this->topics = $this->_customdata['topics'];
         $this->users = $this->_customdata['users'];
+        $this->targetwords = $this->_customdata['targetwords'];
 
         //user combo
         $name='interlocutors';
@@ -28,11 +29,14 @@ class userselectionsform extends baseform
         $label=get_string('choosetopic',constants::M_COMPONENT);
         $this->add_fontawesomecombo_field($name,$label);
 
+        //add words
+        $this->add_targetwords_fields();
+
         //Conversation length
         $this->add_conversationlength_field();
 
-        //add words and tips
-        $this->add_wordsandtips_fields();
+        //add tips
+        $this->add_tips_field();
     }
     public function custom_definition_after_data() {
 

@@ -29,30 +29,42 @@ span.vs_attrformat {
 div.mod_pchat_mbuttons {
 	display: flex;
 }
+
 .btn.mod_pchat_menubutton {
-	background-color: DodgerBlue; /* Blue background */
 	border: none; /* Remove borders */
 	color: white; /* White text */
 	padding: 12px 16px; /* Some padding */
 	font-size: 16px; /* Set a font size */
-	cursor: pointer; /* Mouse pointer on hover */
 	margin: 5px;
 }
-.btn.mod_pchat_menubutton:hover {
+
+.btn.mod_pchat_deadmenubutton {
+	background-color: DarkGray; /* Blue background */
+}
+
+.btn.mod_pchat_activemenubutton {
+	background-color: DodgerBlue; /* Blue background */
+	cursor: pointer; /* Mouse pointer on hover */
+}
+.btn.mod_pchat_activemenubutton:hover {
 	background-color: RoyalBlue;
 
 }
-.btn.mod_pchat_audiombutton {
-	background-color: Indigo;
+
+.btn.mod_pchat_completemenubutton {
+	background-color: #51a351; /* Blue background */
+	cursor: pointer; /* Mouse pointer on hover */
 }
-.btn.mod_pchat_videombutton {
-	background-color: DarkCyan;
+.btn.mod_pchat_completemenubutton:hover {
+	background-color: #55bd57;
+
 }
 
 .mod_pchat_targetwordtag {
 	border: solid black 1px;
-	padding: 3px;
-	border-radius: 40%;
+	padding: 5px;
+	border-radius: 5px;
+	margin: 2px;
 }
 
 .mod_pchat_comparetranscripts{
@@ -73,4 +85,62 @@ div.mod_pchat_mbuttons {
 .mod_pchat_ct_right, .mod_pchat_ct_left {
 	flex-grow: 1;
 	width: 50%;
+}
+.mod_pchat_summarychoices .summarybox {
+	border: 1px solid;
+	border-radius: 3px;
+	padding: 5px;
+	flex-grow: 1;
+	text-align: center;
+}
+
+.mod_pchat_summarychoices {
+	display: flex;
+}
+
+.mod_pchat_summarychoices .summaryboxtitle {
+	background-color: aliceblue;
+	border-bottom: 1px solid;
+}
+.mod_pchat_summarychoices .summaryboxcontent {
+    position: relative;
+    top: 40%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.mod_pchat_summaryresults {
+	display: flex;
+}
+.mod_pchat_sr_title{
+	margin: auto;
+	text-align: center;
+	font-weight: bold;
+}
+
+.mod_pchat_sr_body{
+	border: 1px solid gray;
+	padding: 5px;
+	border-radius: 5px;
+	margin: 7px;
+}
+.mod_pchat_sr_right, .mod_pchat_sr_left {
+	flex-grow: 1;
+	width: 50%;
+}
+
+.mod_pchat_summarytranscript .summarytranscriptpart {
+	background-color: lightgreen;
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid green;
+	width: fit-content;
+	margin: 5px 2px;
+}
+
+.mod_pchat_summarytranscript {
+	background-color: lightblue;
+	display: flex;
+	flex-direction: column;
+	horiz-align: right;
 }

@@ -42,7 +42,8 @@ if ($ADMIN->fulltree) {
         get_string('apisecret', constants::M_COMPONENT),$tokeninfo , '', PARAM_TEXT));
 
 
-
+    $settings->add(new admin_setting_configcheckbox(constants::M_COMPONENT .  '/multipleattempts',
+            get_string('multiattempts', constants::M_COMPONENT), get_string('multiattempts_details',constants::M_COMPONENT), 0));
 
     $settings->add(new admin_setting_configcheckbox(constants::M_COMPONENT .  '/enableai',
         get_string('enableai', constants::M_COMPONENT), get_string('enableai_details',constants::M_COMPONENT), 1));

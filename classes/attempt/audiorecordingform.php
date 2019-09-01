@@ -13,7 +13,7 @@ use \mod_pchat\constants;
 class audiorecordingform extends baseform
 {
 
-    public $type = constants::TYPE_AUDIORECORDING;
+    public $type = constants::STEP_AUDIORECORDING;
     public $typestring = constants::T_AUDIORECORDING;
     public function custom_definition() {
         $this->token = $this->_customdata['token'];
