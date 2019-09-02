@@ -34,13 +34,13 @@ $string['someinstancesetting_details'] = 'More infor about Some Instance Setting
 $string['pchatsettings'] = 'pchat settings';
 $string['pchat:addinstance'] = 'Add a new PChat';
 $string['pchat:view'] = 'View PChat';
-$string['pchat:view'] = 'Preview PChat';
+$string['pchat:viewreports'] = 'View PChat reports';
+$string['pchat:selecttopics'] = 'Select topics for use in activity.';
+$string['pchat:managetopics'] = 'Manage topics (add/edit/delete)';
 $string['pchat:attemptview'] = 'View attempts';
 $string['pchat:attemptedit'] = 'Edit attempts';
-$string['pchat:tts'] = 'Can use Text To Speech(tts)';
 $string['pchat:manageattempts'] = 'Can manage PChat attempts';
 $string['pchat:manage'] = 'Can manage PChat instances';
-$string['pchat:preview'] = 'Can preview PChat activities';
 $string['pchat:submit'] = 'Can submit PChat attempts';
 $string['privacy:metadata'] = 'The Poodll PChat plugin does store personal data.';
 

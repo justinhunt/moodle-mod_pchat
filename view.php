@@ -100,7 +100,12 @@ if($start_or_continue) {
     $attempt_renderer->setup_datatables($tableid);
 
     $PAGE->navbar->add(get_string('attempts', constants::M_COMPONENT));
-    echo $renderer->header($pchat, $cm, $mode, null, get_string('attempts', constants::M_COMPONENT));
+
+    if(has_capability('mod/pchat:selecttopics', $context) || has_capability('mod/pchat:viewreports', $context) ){
+        echo $renderer->header($pchat, $cm, $mode, null, get_string('attempts', constants::M_COMPONENT));
+    }else{
+        echo $renderer->header($pchat->name);
+    }
 
     $attempt = utils::fetch_latest_finishedattempt($pchat);
     if($attempt) {

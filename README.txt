@@ -1,7 +1,8 @@
 PChat Module for Moodle
 =============
 
-PChat as a formative assessment tool for Moodle. It is under development for Sojo University
+PChat as a formative assessment tool for Moodle. It is developed for Sojo University.
+The nice app icon is from: http://www.onlinewebfonts.com
 
 Justin Hunt
 poodllsupport@gmail.com
