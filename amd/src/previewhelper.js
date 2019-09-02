@@ -36,7 +36,6 @@ define(["jquery","mod_pchat/conversationconstants"], function($, constants) {
                 this.mediatype=constants.mediatype_audio;
                 this.controls.mediaplayer.off('timeupdate');
                 this.controls.mediaplayer = this.controls.audioplayer;
-
                 this.controls.root.addClass('player-audio');
                 break;
 

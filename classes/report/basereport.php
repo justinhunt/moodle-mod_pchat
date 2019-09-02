@@ -58,7 +58,7 @@ abstract class basereport {
         global $DB;
         $this->cm = $cm;
         //$this->mod = $DB->get_record(constants::M_TABLE, ['id' => $cm->instance], '*', MUST_EXIST);
-        //$this->context = \context_module::instance($cm->id);
+        $this->context = \context_module::instance($cm->id);
     }
 
     public function fetch_fields(){

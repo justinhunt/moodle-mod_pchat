@@ -41,7 +41,8 @@ class attempt_renderer extends \plugin_renderer_base {
 		global $CFG;
 
 
-        $output = $this->output->heading(get_string("letsgetstarted", "pchat"), 3);
+        //$output = $this->output->heading(get_string("letsgetstarted", "pchat"), 3);
+        $output = '';
         $parts = array();
         $buttonclass = 'btn ' . constants::M_COMPONENT .'_menubutton ' . constants::M_COMPONENT;
 
@@ -113,7 +114,8 @@ class attempt_renderer extends \plugin_renderer_base {
         $attempt->targetwords = utils::fetch_targetwords($attempt);
         $attempt->interlocutornames = utils::fetch_interlocutor_names($attempt);
         $attempt->selftranscriptparts = utils::fetch_selftranscript_parts($attempt);
-        $ret = $this->output->render_from_template( constants::M_COMPONENT . '/summarychoices', $attempt);
+        $ret = $this->output->render_from_template( constants::M_COMPONENT . '/summaryheader', $attempt);
+        $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summarychoices', $attempt);
         $tdata=array('a'=>$attempt, 's'=>$stats);
         $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summaryresults', $tdata);
         return $ret;

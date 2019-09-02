@@ -41,7 +41,7 @@ class renderer extends \plugin_renderer_base {
         $this->page->set_heading($this->page->course->fullname);
         $output = $this->output->header();
 
-     //   if (has_capability('mod/pchat:manage', $context)) {
+        if (has_capability('mod/pchat:manage', $context) || has_capability('mod/pchat:grade', $context)) {
 
 
             if (!empty($currenttab)) {
@@ -50,9 +50,9 @@ class renderer extends \plugin_renderer_base {
                 $output .= ob_get_contents();
                 ob_end_clean();
             }
-    //    } else {
-     //       $output .= $this->output->heading($activityname);
-     //   }
+        } else {
+            $output .= $this->output->heading($activityname);
+        }
 
 
         return $output;

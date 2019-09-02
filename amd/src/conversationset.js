@@ -1,16 +1,16 @@
 define(["jquery"], function($) {
 
-    //subtitle set is the data layer for the subtitles. its an array of objects,
+    //transcription set is the data layer for the transcriptions. its an array of objects,
     // with methods to access and manipulate items and the array.
 
   return {
        stitles: [],
 
-      init: function(subtitledata){
-            this.stitles = subtitledata;
+      init: function(transcriptiondata){
+            this.stitles = transcriptiondata;
       },
 
-      fetchSubtitleData: function(){
+      fetchTranscriptionData: function(){
           return this.stitles;
       },
 

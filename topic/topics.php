@@ -59,10 +59,10 @@ echo $renderer->header($pchat, $cm, $mode, null, get_string('topics', constants:
 
 
 // We need view permission to be here
-require_capability('mod/pchat:manage', $context);
-
-echo $topic_renderer->add_edit_page_links($pchat);
-
+require_capability('mod/pchat:selecttopics', $context);
+if (has_capability('mod/pchat:managetopics', $context)){
+    echo $topic_renderer->add_edit_page_links($pchat);
+}
 
 
 //if we have topics, show em

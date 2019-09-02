@@ -276,13 +276,18 @@ $string['convlength'] = 'Conversation Length';
 $string['mywords'] = 'My Target Words';
 $string['speakingtips'] = 'Speaking Tips';
 $string['speakingtips_details'] = '';
-$string['chooseusers'] = 'Choose Users';
-$string['users'] = 'Users';
+$string['chooseusers'] = 'Choose Partner(s)';
+$string['users'] = 'Partners';
 $string['topic'] = 'Topic';
+
 $string['attempt_partone'] = '1: User Selections';
 $string['attempt_parttwo'] = '2: Conversation';
 $string['attempt_partthree'] = '3: Transcribe ';
 $string['attempt_partfour'] = '4: Review';
+$string['attempt_partone_instructions'] = 'Choose your partners, topic, target words and target speaking time from the options below. When you are ready, move to the next page and begin your conversation';
+$string['attempt_parttwo_instructions'] = 'Use the recorder below to record your conversation. Try to use the target words. Good luck.';
+$string['attempt_partthree_instructions'] = 'Listen to your conversation and enter what you said into the conversation editor below. Do not change what you said, when you type it.';
+$string['attempt_partfour_instructions'] = 'Compare your conversation transcript, to the automatically generated transcript. Are there many differences? Could you improve your speaking? Enter your self review in the text fields below.';
 
 $string['savesubtitles'] = 'Save Conversation';
 $string['removesubtitles'] = 'Remove Conversation';
@@ -316,6 +321,10 @@ $string['LTL']= 'LTL';
 $string['TW']= 'TW';
 
 $string['audiorecording']= 'Audio Recording';
+$string['summaryheadertitle']= 'Your Conversation Details';
+$string['summaryheaderintro']= 'Check the details and the results of your conversation below. How do you think? You should be getting better each time.';
+
+
 
 
 

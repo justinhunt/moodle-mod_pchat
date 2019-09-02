@@ -24,9 +24,9 @@ This file contains class and ID definitions.
             this.loadJSON(transcriptjson);
             //this.loadVTT(vtturl);
 
-            //this will poke subtitle data into our form field for saving
+            //this will poke transcription data into our form field for saving
             conversationeditor.doSave=function(){
-                var transcript = conversationeditor.fetchSubtitleData();
+                var transcript = conversationeditor.fetchTranscriptionData();
                 controls.updatecontrol.val(JSON.stringify(transcript));
             }
         },

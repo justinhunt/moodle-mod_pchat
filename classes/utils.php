@@ -283,7 +283,7 @@ class utils{
         }
         $stats->avturn= round($totalturnlengths  / $stats->turns);
         $topictargetwords = utils::fetch_targetwords($attempt);
-        $mywords = explode(',',$attempt->mywords);
+        $mywords = explode(PHP_EOL,$attempt->mywords);
         $targetwords = array_unique(array_merge($topictargetwords, $mywords));
         $stats->totaltargetwords = count($targetwords);
 

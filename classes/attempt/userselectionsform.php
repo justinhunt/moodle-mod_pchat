@@ -19,6 +19,10 @@ class userselectionsform extends baseform
         $this->users = $this->_customdata['users'];
         $this->targetwords = $this->_customdata['targetwords'];
 
+        //we set the title and instructions
+        $this->add_title(get_string('attempt_partone', constants::M_COMPONENT));
+        $this->add_instructions(get_string('attempt_partone_instructions', constants::M_COMPONENT));
+
         //user combo
         $name='interlocutors';
         $label=get_string('chooseusers',constants::M_COMPONENT);

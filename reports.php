@@ -61,7 +61,7 @@ $PAGE->set_url(constants::M_URL . '/reports.php',
 require_login($course, true, $cm);
 $modulecontext = context_module::instance($cm->id);
 
-require_capability('mod/pchat:manage', $modulecontext);
+require_capability('mod/pchat:viewreports', $modulecontext);
 
 //Get an admin settings 
 $config = get_config(constants::M_COMPONENT);

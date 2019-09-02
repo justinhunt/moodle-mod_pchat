@@ -50,7 +50,7 @@ define(["jquery"], function($) {
                             sections.push(that.clone(current));
 
                             //clear the current section ( so it is not added again)
-                            //this means very first subtitle can not have two lines ...nor last one ...ok
+                            //this means very first transcription can not have two lines ...nor last one ...ok
                             current.start = false;
                             current.end = false;
                             current.part = '';
@@ -60,7 +60,7 @@ define(["jquery"], function($) {
         });
 
          //if we got to the end but we have an unpushed current, we push that to our return array here
-          // If it's the last line of the subtitles
+          // If it's the last line of the transcriptions
           if (current.start) {
               sections.push(that.clone(current));
           }

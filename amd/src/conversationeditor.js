@@ -1,7 +1,7 @@
 define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "mod_pchat/vtthelper","mod_pchat/conversationset","mod_pchat/playerhelper","core/templates"],
-    function($, def, constants, vtthelper, subtitleset, playerhelper,templates) {
+    function($, def, constants, vtthelper, transcriptionset, playerhelper,templates) {
 
-    //pooodllsubtitle helper is about the subtitle tiles and editing
+    //pooodlltranscription helper is about the transcription tiles and editing
 
   return {
       controls: {},
@@ -10,9 +10,9 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
       editoropen: false,
       firstrender: true,
 
-      //set up the subtitle edit session
-      init: function(subtitledata,mediatype){
-          subtitleset.init(subtitledata);
+      //set up the transcription edit session
+      init: function(transcriptiondata,mediatype){
+          transcriptionset.init(transcriptiondata);
           playerhelper.init(mediatype);
           this.initControls();
           this.initTiles();
@@ -21,16 +21,16 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
 
       //set up our internal references to the elements on the page
       initControls: function(){
-          this.controls.container = $("#poodllsubtitle_tiles");
-          this.controls.editor = $("#poodllsubtitle_editor");
-          this.controls.number = $("#poodllsubtitle_editor .numb_song");
+          this.controls.container = $("#poodllconvedit_tiles");
+          this.controls.editor = $("#poodllconvedit_editor");
+          this.controls.number = $("#poodllconvedit_editor .numb_song");
           this.controls.edpart = $("#" + def.C_EDITFIELD);
           this.controls.buttondelete = $("#" + def.C_BUTTONDELETE);
           this.controls.buttonmoveup = $("#" + def.C_BUTTONMOVEUP);
           this.controls.buttonmovedown = $("#" + def.C_BUTTONMOVEDOWN);
           this.controls.buttonapply = $("#" + def.C_BUTTONAPPLY);
           this.controls.buttoncancel = $("#" + def.C_BUTTONCANCEL);
-          this.controls.buttonaddnew = $("#poodllsubtitle_addnew");
+          this.controls.buttonaddnew = $("#poodllconvedit_addnew");
 ;
       },
 
@@ -41,7 +41,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
       },
 
       restoreTile: function(){
-         var item = subtitleset.fetchItem(this.currentindex);
+         var item = transcriptionset.fetchItem(this.currentindex);
          var that=this;
 
           var onend = function(tile){
@@ -54,7 +54,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
 
       editorToTile: function(controls,currentindex,currentitemcontainer, onend){
           var part = $(controls.edpart).val();
-          subtitleset.updateItem(currentindex,part);
+          transcriptionset.updateItem(currentindex,part);
           this.doSave();
 
           var that = this;
@@ -74,9 +74,9 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
       //attach events to the elements on the page
       initEvents: function(){
           var that = this;
-          //this attaches event to classes of poodllsubtitle_tt in "container"
+          //this attaches event to classes of poodllconvedit_tt in "container"
           //so new items(created at runtime) get events by default
-          this.controls.container.on("click",'.poodllsubtitle_tt',function(){
+          this.controls.container.on("click",'.poodllconvedit_tt',function(){
               var newindex = parseInt($(this).parent().attr('data-id'));
               var theparent = $(this).parent();
               var do_next_tile_edit = function(){
@@ -101,7 +101,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
               result = confirm('Warning! This tile is going to be deleted!');
               if (result) {
                 that.restoreTile();
-                subtitleset.removeItem(that.currentindex);
+                transcriptionset.removeItem(that.currentindex);
                 that.syncFrom(that.currentindex);
 
               } else {
@@ -113,7 +113,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
           //editor button merge with prev tile click event
           this.controls.container.on("click",'#' + def.C_BUTTONMOVEUP,function(){
               var onend = function(){
-                  subtitleset.moveup(that.currentindex);
+                  transcriptionset.moveup(that.currentindex);
                   that.syncFrom(that.currentindex-1);
                   that.doSave();
               }
@@ -125,7 +125,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
           //editor button split current tile click event
           this.controls.container.on("click",'#' + def.C_BUTTONMOVEDOWN,function(){
               var onend = function(){
-                  subtitleset.movedown(that.currentindex);
+                  transcriptionset.movedown(that.currentindex);
                   that.syncFrom(that.currentindex);
                   that.doSave();
               }
@@ -147,15 +147,20 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
 
           //"Add new tile" button click event
           this.controls.buttonaddnew.click(function(){
-              var currentcount = subtitleset.fetchCount();
+              var currentcount = transcriptionset.fetchCount();
               var newdataid=currentcount;
               if(currentcount >0){
-                  var lastitem = subtitleset.fetchItem(currentcount-1);
+                  var lastitem = transcriptionset.fetchItem(currentcount-1);
               }
 
-              subtitleset.addItem(newdataid,'');
+              transcriptionset.addItem(newdataid,'');
 
-              var onend = function(newtile){that.controls.container.append(newtile);};
+              var onend = function(newtile){
+                  //append new tile
+                  that.controls.container.append(newtile);
+                  //its likely you want to edit it too, so we click it
+                  $('.poodllconvedit_itemcontainer[data-id="' + newdataid + '"] .poodllconvedit_tt').trigger('click');
+              };
               var newtile = that.fetchNewTextTileContainer(newdataid,'',onend);
 
           });
@@ -164,20 +169,20 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
       },
 
 
-      //each subtitle item has a "text tile" with transcript text that we display
+      //each transcription item has a "text tile" with transcript text that we display
       //when clicked we swap it out for the editor
-      //this takes all the subtitle json and creates one tiles on page for each transcript part
+      //this takes all the transcription json and creates one tiles on page for each transcript part
       initTiles: function(){
           var container = this.controls.container;
           var that = this;
-          var setcount = subtitleset.fetchCount();
+          var setcount = transcriptionset.fetchCount();
 
           //the first render of template takes time and puts the first tile rendered after subsequent tiles,
           // a better way might be force the order but for now we force an empty first render, and set reallyInitTiles to run after that
           var reallyInitTiles = function() {
               if (setcount > 0) {
                   for (var setindex = 0; setindex < setcount; setindex++) {
-                      var item = subtitleset.fetchItem(setindex);
+                      var item = transcriptionset.fetchItem(setindex);
                       var onend = function (newtile) {
                           container.append(newtile);
                       };
@@ -197,7 +202,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
           this.controls.editor.hide();
 
           //newitem
-          var newitem =subtitleset.fetchItem(newindex);
+          var newitem =transcriptionset.fetchItem(newindex);
 
           var part = newitem.part;
           $(this.controls.edpart).val(part);
@@ -212,7 +217,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
 
       },
 
-      //Merge a template text tile,  with the time and subtitle text data
+      //Merge a template text tile,  with the time and transcription text data
       fetchNewTextTile: function(dataid, part, onend){
           var tdata=[];
           tdata['imgpath'] = M.cfg.wwwroot + '/mod/pchat/pix/e/';
@@ -226,7 +231,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
           );
       },
 
-      //Merge a template text tile,  with the time and subtitle text data
+      //Merge a template text tile,  with the time and transcription text data
       fetchNewTextTileContainer: function(dataid, part, onend){
           var tdata=[];
           tdata['imgpath'] = M.cfg.wwwroot + '/mod/pchat/pix/e/';
@@ -245,19 +250,19 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
           this.controls.container.empty();
       },
 
-      resetData: function(subtitledata){
+      resetData: function(transcriptiondata){
           this.hideEditor();
           this.clearTiles();
-          subtitleset.init(subtitledata);
+          transcriptionset.init(transcriptiondata);
           this.initTiles();
           this.doSave();
       },
 
       syncFrom: function(index){
-          var setcount = subtitleset.fetchCount();
+          var setcount = transcriptionset.fetchCount();
           for(var setindex=index; setindex < setcount;setindex++){
-              var item =subtitleset.fetchItem(setindex);
-              var container = $('.poodllsubtitle_itemcontainer').filter(function() {
+              var item =transcriptionset.fetchItem(setindex);
+              var container = $('.poodllconvedit_itemcontainer').filter(function() {
                   return parseInt($(this).attr("data-id")) == setindex;
               });
               if(container.length > 0){
@@ -268,7 +273,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
               }
           }
           //remove any elements greater than the last data-id
-          $('.poodllsubtitle_itemcontainer').filter(function() {
+          $('.poodllconvedit_itemcontainer').filter(function() {
               return parseInt($(this).attr("data-id")) >= setcount;
           }).remove();
       },
@@ -277,13 +282,13 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
 
       },
       updateTextTile: function(container,item){
-          $(container).find('.poodllsubtitle_tt_part').text(item.part);
+          $(container).find('.poodllconvedit_tt_part').text(item.part);
           return;
       },
 
 
-      fetchSubtitleData: function(){
-          return subtitleset.fetchSubtitleData();
+      fetchTranscriptionData: function(){
+          return transcriptionset.fetchTranscriptionData();
       },
 
       //overwrite this in your calling class

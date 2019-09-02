@@ -145,24 +145,22 @@ abstract class baseform extends \moodleform {
     }
 
     protected final function add_fontawesomecombo_field($name, $label) {
-        global $PAGE;
+        global $PAGE, $OUTPUT;
 
         $radios = array();
         $this->_form->addElement('hidden', $name);
         $this->_form->setType($name,PARAM_TEXT);
 
-        $radiotemplate = '<label data-id="@@value@@" data-name="@@name@@" class="btn btn-secondary fonttoggleitem"><input type="radio" name="@@name@@-dummyradio">'
-                . '<span>@@topicname@@<span><br/><i class="fa @@fontcode@@ fa-2x"></i></label>';
-
         foreach ($this->topics as $topic){
-            $oneradio = str_replace('@@name@@',$name,$radiotemplate);
-            $oneradio = str_replace('@@fontcode@@',$topic->fonticon,$oneradio);
-            $oneradio = str_replace('@@topicname@@',$topic->name,$oneradio);
-            $oneradio = str_replace('@@value@@',$topic->id,$oneradio);
+            $oneradio=array();
+            $oneradio['name']=$name;
+            $oneradio['fontcode']=$topic->fonticon;
+            $oneradio['topicname']=$topic->name;
+            $oneradio['value']=$topic->id;
             $radios[] = $oneradio;
         }
+        $staticcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/fontawesomecombo', array('radios'=>$radios));
 
-        $staticcontent = \html_writer::div(implode(' ',$radios),'btn-group btn-group-toggle fonttogglegroup',array('data-toggle'=>'buttons'));
         $this->_form->addElement('static', 'combo_' . $name, $label, $staticcontent);
 
         $opts =Array();
@@ -182,22 +180,14 @@ abstract class baseform extends \moodleform {
     }
 
     protected final function add_targetwords_fields() {
-        global $PAGE, $OUTPUT;
+        global $PAGE;
         $this->_form->addElement('hidden','targetwords');
         $this->_form->setType('targetwords',PARAM_TEXT);
 
-        //we have to work quite hard to get target words displayed like tags.
-        if(empty($this->targetwords) || trim($this->targetwords)==''){
-            $targetwordcontent = '';
-        }else {
-            $tdata = array('targetwords' => explode(PHP_EOL, $this->targetwords));
-            $targetwordcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/targetwords', $tdata);
-        }
-        $this->_form->addElement('static','targetwordsdisplay',
-                get_string('targetwords', constants::M_COMPONENT),
-                "<div id='" . constants::C_TARGETWORDSDISPLAY. "'>$targetwordcontent</div>");
+        //display target words in a "tag" like way.
+        $this->add_targetwords_display($this->targetwords);
 
-        $this->_form->addElement('text','mywords',get_string('mywords', constants::M_COMPONENT),array());
+        $this->_form->addElement('textarea','mywords',get_string('mywords', constants::M_COMPONENT),array());
         $this->_form->setType('mywords',PARAM_TEXT);
 
         $opts =Array();
@@ -205,6 +195,33 @@ abstract class baseform extends \moodleform {
         $opts['triggercontrol']='topicid';
         $opts['updatecontrol']='targetwords';
         $PAGE->requires->js_call_amd("mod_pchat/updatetargetwords", 'init', array($opts));
+    }
+
+    //add a field to display target words in a "tag" like way.
+    //called from audiorecorder and userselections forms.
+    protected final function add_targetwords_display($targetwords) {
+        global $OUTPUT;
+
+        //we have to work quite hard to get target words displayed like tags.
+        if(empty($targetwords) || trim($targetwords)==''){
+            $targetwordcontent = '';
+        }else {
+            $tdata = array('targetwords' => explode(PHP_EOL, $targetwords));
+            $targetwordcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/targetwords', $tdata);
+        }
+        $this->_form->addElement('static','targetwordsdisplay',
+                get_string('targetwords', constants::M_COMPONENT),
+                "<div id='" . constants::C_TARGETWORDSDISPLAY. "'>$targetwordcontent</div>");
+    }
+
+    protected final function add_title($title) {
+        $titlediv = \html_writer::div($title,'mod_pchat_formtitle');
+        $this->_form->addElement('static','title','', $titlediv);
+    }
+
+    protected final function add_instructions($instructions) {
+        $instructionsdiv = \html_writer::div($instructions,'mod_pchat_forminstructions');
+        $this->_form->addElement('static','title','', $instructionsdiv);
     }
 
     protected final function add_tips_field() {
@@ -232,29 +249,27 @@ abstract class baseform extends \moodleform {
     }
 
     protected final function add_usercombo_field($name, $label) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $OUTPUT;
         require_once("$CFG->libdir/outputcomponents.php");
 
         $checks = array();
         $this->_form->addElement('hidden', $name);
         $this->_form->setType($name,PARAM_TEXT);
 
-        $checktemplate = '<label data-id="@@value@@" data-name="@@name@@" class="btn btn-secondary usertoggleitem"><input type="checkbox" name="@@name@@-dummycheckbox">'
-                . '<span>@@username@@<span><br/><img src="@@userpic@@"></label>';
-
-
         foreach ($this->users as $user){
             $user_picture=new \user_picture($user);
             $picurl = $user_picture->get_url($PAGE);
 
-            $onecheck = str_replace('@@name@@',$name,$checktemplate);
-            $onecheck = str_replace('@@userpic@@',$picurl,$onecheck);
-            $onecheck = str_replace('@@username@@',fullname($user),$onecheck);
-            $onecheck = str_replace('@@value@@',$user->id,$onecheck);
+            $onecheck=array();
+            $onecheck['name']=$name;
+            $onecheck['userpic']=$picurl;
+            $onecheck['username']=fullname($user);
+            $onecheck['value']=$user->id;
             $checks[] = $onecheck;
         }
-        $staticcontent = \html_writer::div(implode(' ',$checks),'btn-group btn-group-toggle usertogglegroup',array('data-toggle'=>'buttons'));
+        $staticcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/usercombo', array('checks'=>$checks));
         $this->_form->addElement('static', 'combo_' . $name, $label, $staticcontent);
+
 
         $opts =Array();
         $opts['container']='usertogglegroup';
@@ -317,7 +332,8 @@ abstract class baseform extends \moodleform {
     protected final function add_recordingurl_field() {
         $this->_form->addElement('hidden', constants::RECORDINGURLFIELD,null,array('id'=>constants::M_WIDGETID . constants::RECORDINGURLFIELD));
         $this->_form->setType(constants::RECORDINGURLFIELD, PARAM_TEXT);
-        $this->_form->addElement('static', constants::RECORDERORPLAYERFIELD, '', '','class="blahblahblah"');
+        $this->_form->addElement('static', constants::RECORDERORPLAYERFIELD, get_string('audiorecording', constants::M_COMPONENT), '','class="mod_pchat_audiorecordercont');
+
     }
 
     protected final function add_audio_upload($name, $label = null, $required = false)

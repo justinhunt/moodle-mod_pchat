@@ -65,7 +65,7 @@ $attempt_renderer = $PAGE->get_renderer(constants::M_COMPONENT,'attempt');
 
 
 // We need view permission to be here
-require_capability('mod/pchat:attemptview', $context);
+require_capability('mod/pchat:view', $context);
 
 //Do we do continue an attempt or start a new one
 $start_or_continue=false;
@@ -110,7 +110,7 @@ if($start_or_continue) {
 
     //all attempts by user table [good for debugging]
     // do not delete this I think
-       echo $attempt_renderer->show_attempts_list($attempts,$tableid,$cm);
+    // echo $attempt_renderer->show_attempts_list($attempts,$tableid,$cm);
 
     if($pchat->multiattempts){
         echo $attempt_renderer->fetch_reattempt_button($cm);

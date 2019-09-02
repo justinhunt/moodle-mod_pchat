@@ -17,12 +17,12 @@ This file contains class and ID definitions.
         C_UPDATECONTROL: 'filename',
         topicscontainer: 'topicscontainer',
         topiccheckbox: 'topicscheckbox',
-        C_BUTTONAPPLY: 'poodllsubtitle_edapply',
-        C_BUTTONDELETE: 'poodllsubtitle_eddelete',
-        C_BUTTONMOVEUP: 'poodllsubtitle_edmoveup',
-        C_BUTTONMOVEDOWN: 'poodllsubtitle_edmovedown',
-        C_BUTTONCANCEL: 'poodllsubtitle_edcancel',
-        C_EDITFIELD: 'poodllsubtitle_edpart',
+        C_BUTTONAPPLY: 'poodllconvedit_edapply',
+        C_BUTTONDELETE: 'poodllconvedit_eddelete',
+        C_BUTTONMOVEUP: 'poodllconvedit_edmoveup',
+        C_BUTTONMOVEDOWN: 'poodllconvedit_edmovedown',
+        C_BUTTONCANCEL: 'poodllconvedit_edcancel',
+        C_EDITFIELD: 'poodllconvedit_edpart',
         C_TARGETWORDSDISPLAY: 'mod_pchat_targetwordsdisplay'
 
 

@@ -50,7 +50,7 @@ class attempts extends basereport
                 foreach ($partners as $partner){
                     $users[] = fullname($this->fetch_cache('user', $partner));
                 }
-                //this is bad. WE use the targetwords tags for users. It just seemed like a good idea
+                //this is bad. We use the targetwords tags for users. It just seemed like a good idea
                 if ($withlinks) {
                     $tdata = array('targetwords' => $users);
                     $ret =$targetwordcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/targetwords', $tdata);
@@ -81,7 +81,7 @@ class attempts extends basereport
                 break;
 
             case 'deletenow':
-                if ($withlinks) {
+                if ($withlinks && has_capability('mod/pchat:manageattempts', $this->context)) {
                     $url = new \moodle_url(constants::M_URL . '/attempt/manageattempts.php',
                         array('action' => 'delete', 'id' => $this->cm->id, 'attemptid' => $record->id, 'source' => $this->report));
                     $btn = new \single_button($url, get_string('delete'), 'post');

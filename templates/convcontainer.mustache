@@ -1,8 +1,8 @@
-<div class="subtitlewrapper">
-    <div class="subtitlepreviewplayer" id="root">
-            <div id="poodllsubtitle_previewbox" class="poodllsubtitle_previewbox top-box">
-                    <audio id="poodllsubtitle_audio" class="poodllsubtitle_audio" width="100%" style="display: none"></audio>
-                    <div id="poodllsubtitle_previewline"  class="poodllsubtitle_previewline text-box"></div>
+<div class="transcriptionwrapper">
+    <div class="transcriptionpreviewplayer player-audio" id="root">
+            <div id="poodllconvedit_previewbox" class="poodllconvedit_previewbox top-box">
+                    <audio id="poodllconvedit_audio" class="poodllconvedit_audio" width="100%" style="display: none"></audio>
+                    <div id="poodllconvedit_previewline"  class="poodllconvedit_previewline text-box"></div>
             </div>
 
             <div class="bottom-box">
@@ -16,14 +16,14 @@
                                     <span class="time time-total">0:00</span>
                             </div>
                             <div class="buttons-group">
-                                    <a id="poodllsubtitle_addnew" class="poodllsubtitle_addnew btn add" title="{{#str}}addnew, mod_pchat{{/str}}"></a>
+                                    <a id="poodllconvedit_addnew" class="poodllconvedit_addnew btn add" title="{{#str}}addnew, mod_pchat{{/str}}"></a>
                                     <a class="btn prev" id="btn_prev" title="{{#str}}stepback, mod_pchat{{/str}}"></a>
                                     <a class="btn play" id="btn_play" title="{{#str}}playpause, mod_pchat{{/str}}"></a>
                                     <a class="btn next" id="btn_next" title="{{#str}}stepahead, mod_pchat{{/str}}"></a>
                                 </div>
                     </div>
-                    <div class="subtitleset_container">
-                            <div id='poodllsubtitle_tiles' class='poodllsubtitle_tiles subtitleset_list'></div>
+                    <div class="transcriptionset_container">
+                            <div id='poodllconvedit_tiles' class='poodllconvedit_tiles transcriptionset_list'></div>
                     </div>
             </div>
             {{> mod_pchat/conveditbox}}

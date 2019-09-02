@@ -103,9 +103,12 @@ $token= utils::fetch_token($siteconfig->apiuser,$siteconfig->apisecret);
 switch($type){
 
     case constants::STEP_AUDIORECORDING:
+        $targetwords = $attempt ? $attempt->topictargetwords : '';
+        $targetwords .= $attempt ? PHP_EOL . $attempt->mywords : '';
         $mform = new \mod_pchat\attempt\audiorecordingform(null,
                 array('moduleinstance'=>$moduleinstance,
-                        'token'=>$token));
+                        'token'=>$token,
+                        'targetwords'=>$targetwords));
         break;
 
     case constants::STEP_USERSELECTIONS:
