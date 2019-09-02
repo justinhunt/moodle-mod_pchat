@@ -47,7 +47,7 @@ $moduleinstance = $DB->get_record(constants::M_MODNAME, array('id' => $cm->insta
 //make sure we are logged in and can see this form
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
-require_capability('mod/pchat:attemptedit', $context);
+require_capability('mod/pchat:view', $context);
 
 //set up the page object
 $PAGE->set_url('/mod/pchat/attempt/manageattempts.php', array('attemptid'=>$attemptid, 'id'=>$id, 'type'=>$type));

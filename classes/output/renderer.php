@@ -41,7 +41,7 @@ class renderer extends \plugin_renderer_base {
         $this->page->set_heading($this->page->course->fullname);
         $output = $this->output->header();
 
-        if (has_capability('mod/pchat:manage', $context) || has_capability('mod/pchat:grade', $context)) {
+        if (has_capability('mod/pchat:selecttopics', $context) || has_capability('mod/pchat:viewreports', $context)) {
 
 
             if (!empty($currenttab)) {

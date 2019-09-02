@@ -187,8 +187,10 @@ abstract class baseform extends \moodleform {
         //display target words in a "tag" like way.
         $this->add_targetwords_display($this->targetwords);
 
-        $this->_form->addElement('textarea','mywords',get_string('mywords', constants::M_COMPONENT),array());
+        $this->_form->addElement('textarea','mywords',get_string('mywords', constants::M_COMPONENT),'wrap="virtual" rows="5" cols="50"');
         $this->_form->setType('mywords',PARAM_TEXT);
+        $this->_form->addElement('static','targetwordsexplanation','',
+                get_string('targetwordsexplanation',constants::M_COMPONENT));
 
         $opts =Array();
         $opts['topics']=$this->topics;

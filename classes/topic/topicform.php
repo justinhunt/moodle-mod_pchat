@@ -111,13 +111,16 @@ class topicform extends \moodleform {
         //fonticon
         $mform->addElement('text', 'fonticon', get_string('topicicon', constants::M_COMPONENT));
         $mform->setType('fonticon', PARAM_TEXT);
+        $mform->setDefault('fonticon', 'fa-star');
         $mform->addRule('fonticon', get_string('required'), 'required', null, 'client');
+        $mform->addElement('static','fonticonexplanation','',get_string('fonticonexplanation',constants::M_COMPONENT));
 
 
         //targetwords
-        $mform->addElement('textarea', 'targetwords', get_string('topictargetwords', constants::M_COMPONENT), 'wrap="virtual" rows="20" cols="50"');
+        $mform->addElement('textarea', 'targetwords', get_string('topictargetwords', constants::M_COMPONENT), 'wrap="virtual" rows="12" cols="50"');
         $mform->setType('targetwords', PARAM_TEXT);
         $mform->addRule('targetwords', get_string('required'), 'required', null, 'client');
+        $mform->addElement('static','targetwordsexplanation','',get_string('targetwordsexplanation',constants::M_COMPONENT));
 
         //level
         $topiclevels = utils::fetch_topic_levels();

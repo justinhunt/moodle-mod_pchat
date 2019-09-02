@@ -276,6 +276,7 @@ $string['convlength'] = 'Conversation Length';
 $string['mywords'] = 'My Target Words';
 $string['speakingtips'] = 'Speaking Tips';
 $string['speakingtips_details'] = '';
+$string['speakingtips_default'] = 'Speak simply and clearly. So that your partner can understand and reply.';
 $string['chooseusers'] = 'Choose Partner(s)';
 $string['users'] = 'Partners';
 $string['topic'] = 'Topic';
@@ -323,7 +324,10 @@ $string['TW']= 'TW';
 $string['audiorecording']= 'Audio Recording';
 $string['summaryheadertitle']= 'Your Conversation Details';
 $string['summaryheaderintro']= 'Check the details and the results of your conversation below. How do you think? You should be getting better each time.';
+$string['leaveedittopic']= 'Edit (diff. activity)';
+$string['fonticonexplanation']= 'Add an icon graphic to represent the topic. Use FontAwesome for this. The pattern is fa-xxx where xxx is the icon name. Search for icons at: <a href="https://fontawesome.com/v4.7.0/icons">https://fontawesome.com/v4.7.0/icons</a>';
 
+$string['targetwordsexplanation']= 'Add target words each on a new line.';
 
 
 

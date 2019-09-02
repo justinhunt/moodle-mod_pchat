@@ -70,7 +70,7 @@ if ($ADMIN->fulltree) {
 
 
     $settings->add(new admin_setting_confightmleditor(constants::M_COMPONENT . '/speakingtips',get_string('speakingtips', constants::M_COMPONENT),
-            get_string('speakingtips_details', constants::M_COMPONENT),''));
+            get_string('speakingtips_details', constants::M_COMPONENT),get_string('speakingtips_default', constants::M_COMPONENT)));
 
 	 $settings->add(new admin_setting_configtext(constants::M_COMPONENT .  '/attemptsperpage',
         get_string('attemptsperpage', constants::M_COMPONENT), get_string('attemptsperpage_details', constants::M_COMPONENT), 10, PARAM_INT));

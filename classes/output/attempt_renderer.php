@@ -92,8 +92,10 @@ class attempt_renderer extends \plugin_renderer_base {
      $parts[] = \html_writer::link($addurl, get_string('attempt_partfour', constants::M_COMPONENT), $buttonopts);
 
 
+    //$glue = '<i class="fa fa-arrow-right"></i>';
+     $glue = ' ';
 
-    $buttonsdiv = \html_writer::div(implode('<i class="fa fa-arrow-right"></i>', $parts),constants::M_COMPONENT .'_mbuttons');
+    $buttonsdiv = \html_writer::div(implode($glue, $parts),constants::M_COMPONENT .'_mbuttons');
      return $this->output->box($output . $buttonsdiv, 'generalbox firstpageoptions');
     }
 

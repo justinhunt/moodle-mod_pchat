@@ -11,26 +11,24 @@ This file contains class and ID definitions.
 
         init: function(opts) {
 
-            this.register_events();
+            this.register_events(opts['activityid']);
 
-           // var that = this;
-            //cloudpoodll.init(opts['recorderid']);
         },
 
-        register_events: function(){
+        register_events: function(activityid){
             var container = $('.' + def.topicscontainer);
             container.on('click', '.' + def.topiccheckbox, function(e) {
              //   e.preventDefault();
 
                 var topicNode = $(this);
-                var topicId = topicNode.data('topicid');
+                var topicid = topicNode.data('topicid');
 
-                // TODO Ajax.
-                topicNode.addClass('term-loading')
+                topicNode.addClass('term-loading');
                 ajax.call([{
                     'methodname': 'mod_pchat_toggle_topic_selected',
                     'args': {
-                        'topicid': topicId
+                        'topicid': topicid,
+                        'activityid': activityid,
                     }
                 }])[0].then(function(result) {
                     if (!result) {

@@ -69,7 +69,7 @@ class topic_renderer extends \plugin_renderer_base {
 		}
 
 		//prepare AMD
-        $opts=array();
+        $opts=array('activityid'=>$cm->instance);
         $this->page->requires->js_call_amd("mod_pchat/updateselectedtopic", 'init', array($opts));
 
         //prepare table with data
@@ -134,14 +134,25 @@ class topic_renderer extends \plugin_renderer_base {
             $topicdatecell = new \html_table_cell($datecell_content);
 
             //topic edit
+
             $actionurl = '/mod/pchat/topic/managetopics.php';
-            $editurl = new \moodle_url($actionurl, array('moduleid' => $cm->instance, 'id' => $topic->id));
-            $editlink = \html_writer::link($editurl, get_string('edittopic', constants::M_COMPONENT));
+            $editurl = new \moodle_url($actionurl, array('moduleid' => $topic->moduleid, 'id' => $topic->id));
+            //if its not this module we will be going elsewhere...
+            if($cm->instance==$topic->moduleid) {
+                $editlink = \html_writer::link($editurl, get_string('edittopic', constants::M_COMPONENT));
+            }else{
+                $editlink = \html_writer::link($editurl, get_string('leaveedittopic', constants::M_COMPONENT));
+            }
             $editcell = new \html_table_cell($editlink);
 
 		    //topic delete
-			$deleteurl = new \moodle_url($actionurl, array('moduleid'=>$cm->instance,'id'=>$topic->id,'action'=>'confirmdelete'));
-			$deletelink = \html_writer::link($deleteurl, get_string('deletetopic', constants::M_COMPONENT));
+            if($cm->instance==$topic->moduleid) {
+                $deleteurl = new \moodle_url($actionurl,
+                        array('moduleid' => $cm->instance, 'id' => $topic->id, 'action' => 'confirmdelete'));
+                $deletelink = \html_writer::link($deleteurl, get_string('deletetopic', constants::M_COMPONENT));
+            }else{
+                $deletelink='';
+            }
 			$deletecell = new \html_table_cell($deletelink);
 
 			$row->cells = array(

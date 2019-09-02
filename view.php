@@ -117,7 +117,7 @@ if($start_or_continue) {
     // do not delete this I think
     // echo $attempt_renderer->show_attempts_list($attempts,$tableid,$cm);
 
-    if($pchat->multiattempts){
+    if($pchat->multiattempts || has_capability('mod/pchat:manageattempts', $context) ){
         echo $attempt_renderer->fetch_reattempt_button($cm);
     }
 }
