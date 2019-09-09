@@ -107,7 +107,6 @@ if ($data = $mform->get_data()) {
     //$thetopic->topiclevel = $data->topiclevel;
     //$thetopic->targetwords=  $data->targetwords;
     //$thetopic->fonticon=  $data->fonticon;
-    $thetopic->modifiedby=$USER->id;
     $thetopic->timemodified=time();
 
     //first insert a new topic if we need to
@@ -115,9 +114,6 @@ if ($data = $mform->get_data()) {
     if(!$edit){
         $thetopic->id = null;
         $thetopic->timecreated=time();
-        $thetopic->createdby=$USER->id;
-
-
 
         //try to insert it
         if (!$thetopic->id = $DB->insert_record(constants::M_TOPIC_TABLE,$thetopic)){

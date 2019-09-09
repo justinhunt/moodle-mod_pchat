@@ -57,8 +57,6 @@ class external extends \external_api {
             $entry->topicid=$topicid;
             $entry->moduleid=$mod->id;
             $entry->timemodified=time();
-            $entry->modifiedby=$USER->id;
-            $entry->createdby=$USER->id;
 
             $DB->insert_record(constants::M_TOPICSELECTED_TABLE, $entry);
         }

@@ -260,6 +260,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
 
       syncFrom: function(index){
           var setcount = transcriptionset.fetchCount();
+          var that=this;
           for(var setindex=index; setindex < setcount;setindex++){
               var item =transcriptionset.fetchItem(setindex);
               var container = $('.poodllconvedit_itemcontainer').filter(function() {
@@ -268,7 +269,7 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
               if(container.length > 0){
                   this.updateTextTile(container,item);
               }else{
-                  var onend = function(newtile){this.controls.container.append(newtile);};
+                  var onend = function(newtile){that.controls.container.append(newtile);};
                   var newtile = this.fetchNewTextTileContainer(setindex,item.part,onend);
               }
           }

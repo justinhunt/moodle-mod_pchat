@@ -61,11 +61,11 @@ class backup_pchat_activity_task extends backup_activity_task {
 
         // Link to the list of modules
         $search = "/(" . $base . "\/mod\/pchat\/index.php\?id\=)([0-9]+)/";
-        $content = preg_replace($search, '$@READSEEDINDEX*$2@$', $content);
+        $content = preg_replace($search, '$@PCHATINDEX*$2@$', $content);
 
         //Link to view.pphp by moduleid
         $search = "/(" . $base . "\/mod\/pchat\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@READSEEDVIEWBYID*$2@$', $content);
+        $content= preg_replace($search, '$@PCHATVIEWBYID*$2@$', $content);
 
         return $content;
     }

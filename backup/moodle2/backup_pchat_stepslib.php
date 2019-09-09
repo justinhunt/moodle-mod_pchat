@@ -51,37 +51,82 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
         // root element describing pchat instance
         $oneactivity = new backup_nested_element(constants::M_MODNAME, array('id'), array(
             'course','name','intro','introformat','grade','gradeoptions','mingrade',
-            'ttslanguage','enableai','expiredays','region','transcriber','timecreated','timemodified'
+            'ttslanguage','enableai','expiredays','region','transcriber','multiattempts','timecreated','timemodified'
 			));
-		
 
         // attempt
         $attempts = new backup_nested_element('attempts');
         $attempt = new backup_nested_element('attempt', array('id'),array(
-            constants::M_MODNAME, 'name','userid', 'type','visible','filename', 'transcript','fulltranscript',
-            'customtext1', 'customtext1format','customtext2', 'customtext2format','customtext3',
-            'customtext3format','customtext4', 'customtext4format','currentint1','currentint2','currentint3','currentint4','currentint5',
-            'timecreated','timemodified','createdby','modifiedby'));
+            constants::M_MODNAME, 'userid', 'type','visible','interlocutors','filename', 'transcript','jsontranscript','vtttranscript',
+            'selftranscript','topicid','topicname','topicfonticon','topictargetwords','mywords','convlength',
+            'customtext1', 'customtext1format','reviewquestions', 'reviewlonganswers','reviewimprove','completedsteps',
+            'currentint1','currentint2','currentint3','currentint4',
+            'timemodified','createdby','modifiedby'));
+
+        //attemptstats
+        $attemptstats = new backup_nested_element('attemptstats');
+        $attemptstat = new backup_nested_element('attemptstat', array('id'),array(
+                constants::M_MODNAME, 'userid', 'attemptid','turns','words','avturn', 'longestturn','targetwords','totaltargetwords',
+                'questions', 'timemodified','createdby','modifiedby'));
+
+        //topics
+        $topics = new backup_nested_element('topics');
+        $topic = new backup_nested_element('topic', array('id'),array(
+                'topiclevel', 'courseid', 'moduleid','name','fonticon','targetwords', 'timemodified'));
 
 
-		// Build the tree.
-         //questions
+        //selected topics
+        $selectedtopics = new backup_nested_element('selectedtopics');
+        $selectedtopic = new backup_nested_element('selectedtopic', array('id'),array(
+                'moduleid','topicid', 'timemodified',
+                //we include some topic data for the restore processing
+                'topiclevel', 'name','fonticon','targetwords'));
+
+
+
+        // Build the tree.
+         //attempts
         $oneactivity->add_child($attempts);
-        $items->add_child($attempt);
+        $attempts->add_child($attempt);
+
+        //topics
+        $oneactivity->add_child($topics);
+        $topics->add_child($topic);
+
+        //selected topics
+        $oneactivity->add_child($selectedtopics);
+        $selectedtopics->add_child($selectedtopic);
+
+        //attempt stats
+        $attempt->add_child($attemptstats);
+        $attemptstats->add_child($attemptstat);
 
 
         // Define sources.
         $oneactivity->set_source_table(constants::M_TABLE, array('id' => backup::VAR_ACTIVITYID));
+        $topic->set_source_table(constants::M_TOPIC_TABLE, array('moduleid' => backup::VAR_ACTIVITYID));
+
+       // $selectedtopic->set_source_table(constants::M_TOPICSELECTED_TABLE, array('moduleid'=>backup::VAR_ACTIVITYID));
+        $selectedtopic->set_source_sql('
+            SELECT ts.*, topic.name, topic.topiclevel, topic.targetwords, topic.fonticon
+              FROM {'. constants::M_TOPICSELECTED_TABLE .'} ts
+              INNER JOIN {'. constants::M_TOPIC_TABLE .'} topic ON ts.topicid = topic.id
+             WHERE ts.moduleid = ?',
+                array(backup::VAR_ACTIVITYID));
 
 
         //sources if including user info
         if ($userinfo) {
-            $item->set_source_table(constants::M_ATTEMPTSTABLE,
+            $attempt->set_source_table(constants::M_ATTEMPTSTABLE,
                 array(constants::M_MODNAME => backup::VAR_PARENTID));
+            $attemptstat->set_source_table(constants::M_STATSTABLE,
+                    array('attemptid' => backup::VAR_PARENTID,
+                            constants::M_MODNAME => backup::VAR_ACTIVITYID));
         }
 
         // Define id annotations.
-        $item->annotate_ids('user', 'userid');
+        $attempt->annotate_ids('user', 'userid');
+        $attemptstat->annotate_ids('user', 'userid');
 
 
         // Define file annotations.
@@ -90,7 +135,7 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
 		
 		//file annotation if including user info
         if ($userinfo) {
-            $item->annotate_files(constants::M_COMPONENT, constants::M_FILEAREA_SUBMISSIONS, 'id');
+            $attempt->annotate_files(constants::M_COMPONENT, constants::M_FILEAREA_SUBMISSIONS, 'id');
         }
 		
         // Return the root element, wrapped into standard activity structure.

@@ -17,7 +17,7 @@
 
 /**
  * @package   mod_pchat
- * @copyright 2014 Justin Hunt poodllsupport@gmail.com
+ * @copyright 2019 Justin Hunt poodllsupport@gmail.com
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,10 @@ use \mod_pchat\constants;
  */
 class restore_pchat_activity_structure_step extends restore_activity_structure_step {
 
+
     protected function define_structure() {
+
+
 
         $paths = array();
 
@@ -44,7 +47,13 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
 
         // root element describing pchat instance
         $oneactivity = new restore_path_element(constants::M_MODNAME, '/activity/pchat');
+        $topics = new restore_path_element('topics', '/activity/pchat/topics/topic');
+        $selectedtopics = new restore_path_element('selectedtopics', '/activity/pchat/selectedtopics/selectedtopic');
+
         $paths[] = $oneactivity;
+        $paths[] = $topics;
+        $paths[] = $selectedtopics;
+
 
         // End here if no-user data has been selected
         if (!$userinfo) {
@@ -54,10 +63,10 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
         ////////////////////////////////////////////////////////////////////////
         // XML interesting paths - user data
         ////////////////////////////////////////////////////////////////////////
-        //items
-        $items = new restore_path_element(constants::M_ATTEMPTSTABLE,
-            '/activity/pchat/attempts/attempt');
-        $paths[] = $items;
+        $attempts = new restore_path_element('attempts', '/activity/pchat/attempts/attempt');
+        $attemptstats = new restore_path_element('attemptstats', '/activity/pchat/attemptstat/attemptstats');
+        $paths[] = $attempts;
+        $paths[] = $attemptstats;
 
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
@@ -75,12 +84,13 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
 
 
         // insert the activity record
-        $newitemid = $DB->insert_record(constants::M_TABLE, $data);
+        $newid = $DB->insert_record(constants::M_TABLE, $data);
+        $this->set_mapping(constants::M_MODNAME, $oldid, $newid, false);
         // immediately after inserting "activity" record, call this
-        $this->apply_activity_instance($newitemid);
+        $this->apply_activity_instance($newid);
     }
 
-    protected function process_pchat_attempts($data) {
+    protected function process_attempts($data) {
         global $DB;
 
         $data = (object)$data;
@@ -90,10 +100,99 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
 
 
         $data->{constants::M_MODNAME} = $this->get_new_parentid(constants::M_MODNAME);
-        $newquestionid = $DB->insert_record(constants::M_ATTEMPTSTABLE, $data);
-        $this->set_mapping(constants::M_ATTEMPTSTABLE, $oldid, $newquestionid, true); // Mapping with files
+        $newid = $DB->insert_record(constants::M_ATTEMPTSTABLE, $data);
+        //store id so that attemptstats can use it
+        $this->set_mapping('attempts', $oldid, $newid, false);
     }
 
+    protected function process_attemptstats($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
+
+
+        $data->{constants::M_MODNAME} = $this->get_new_parentid(constants::M_MODNAME);
+        $data->attemptid = $this->get_new_parentid('attempts');
+        $newid = $DB->insert_record(constants::M_ATTEMPTSTABLE, $data);
+    }
+
+    protected function process_topics($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->courseid = $this->get_courseid();
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
+        $data->moduleid = $this->get_new_parentid(constants::M_MODNAME);
+        $existingtopic =false;
+        if($data->topiclevel==constants::M_TOPICLEVEL_COURSE) {
+            //we do not want to add the same course topic if users are duplicating or restoring into a course with topic data
+            //so here we first check if topic exists.
+
+            //its logically possible for a user to add more than one course level topic of same name
+            //we don't complain so we just use IGNORE_MULTIPLE and take the first one
+            $existingtopic = $DB->get_record(constants::M_TOPIC_TABLE,
+                    array('name' => $data->name, 'topiclevel' => constants::M_TOPICLEVEL_COURSE),'*',IGNORE_MULTIPLE);
+        }
+        if(!$existingtopic) {
+            $newid = $DB->insert_record(constants::M_TOPIC_TABLE, $data);
+            $this->set_mapping('topics', $oldid, $newid, false);
+        }else {
+            //store id so that selectedtopics can use it
+            $this->set_mapping('topics', $oldid, $existingtopic->id, false);
+        }
+
+    }
+
+    protected function process_selectedtopics($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
+        $data->moduleid = $this->get_new_parentid(constants::M_MODNAME);
+
+        $topics = $DB->get_records(constants::M_TOPIC_TABLE,array('name'=>$data->name, 'courseid'=>$this->get_courseid()));
+        $topicid=false;
+        if($topics){
+            //if we have the same topic (prob. a duplicate activity in same course)
+            foreach($topics as $topic){
+                if($topic->id == $data->topicid){
+                    $topicid = $data->topicid;
+                    break;
+                }
+            }
+            //if we have the same topicname available in this course, just use it
+            if(!$topicid) {
+                foreach ($topics as $topic) {
+                    if ($topic->topiclevel == constants::M_TOPICLEVEL_COURSE) {
+                        $topicid=$topic->id;
+                        break;
+                    }
+                }
+            }
+            //create a new topic (sigh)
+            if(!$topicid){
+                $newtopic = new stdClass();
+                $newtopic->name = $data->name;
+                $newtopic->courseid = $this->get_courseid();
+                $newtopic->topiclevel = $data->topiclevel;
+                $newtopic->moduleid = $this->get_new_parentid(constants::M_MODNAME);
+                $newtopic->fonticon = $data->fonticon;
+                $newtopic->targetwords = $data->targetwords;
+                $newtopic->timemodified = time();
+                $topicid = $DB->insert_record(constants::M_TOPIC_TABLE,$newtopic);
+            }
+        }
+        //Add our selected topic
+        if($topicid) {
+            $data->topicid = $topicid;
+            $newid = $DB->insert_record(constants::M_TOPICSELECTED_TABLE, $data);
+        }
+    }
 
     protected function after_execute() {
         // Add module related files, no need to match by itemname (just internally handled context)
@@ -101,7 +200,7 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
 		//question stuff
 		 $userinfo = $this->get_setting_value('userinfo'); // are we including userinfo?
 		 if($userinfo){
-			$this->add_related_files(constants::M_COMPONENT, constants::M_FILEAREA_SUBMISSIONS, constants::M_ATTEMPTSTABLE);
+			//we do nothing here
          }
     }
 }

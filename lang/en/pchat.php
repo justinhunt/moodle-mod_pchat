@@ -329,6 +329,8 @@ $string['fonticonexplanation']= 'Add an icon graphic to represent the topic. Use
 
 $string['targetwordsexplanation']= 'Add target words each on a new line.';
 
+$string['confirmtopicdeletetitle']= 'Confirm Delete Topic:';
+
 
 
 
