@@ -36,7 +36,7 @@ $reattempt = optional_param('reattempt',0, PARAM_INT);
 if ($id) {
     $cm = get_coursemodule_from_id(constants::M_MODNAME, $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $pchat = $DB->get_record(constants::M_TABLE, array('id' => $cm->instance), '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $cm->instance), '*', MUST_EXIST);
 } elseif ($n) {
     $moduleinstance  = $DB->get_record(constants::M_MODNAME, array('id' => $n), '*', MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $moduleinstance->course), '*', MUST_EXIST);
@@ -54,14 +54,14 @@ $mode='attempts';
 //Set page url before require login, so post login will return here
 $PAGE->set_url(constants::M_URL . '/view.php', array('id'=>$cm->id,'mode'=>$mode));
 
+
 //require login for this page
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 
+
 $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
 $attempt_renderer = $PAGE->get_renderer(constants::M_COMPONENT,'attempt');
-
-
 
 
 // We need view permission to be here
@@ -78,7 +78,7 @@ if(count($attempts)==0){
     $nextstep = constants::STEP_USERSELECTIONS;
     $attemptid = 0;
 }else{
-    $latestattempt = utils::fetch_latest_attempt($pchat);
+    $latestattempt = utils::fetch_latest_attempt($moduleinstance);
     if ($latestattempt && $latestattempt->completedsteps < constants::STEP_SELFREVIEW){
         $start_or_continue=true;
         $nextstep=$latestattempt->completedsteps+1;
@@ -102,12 +102,12 @@ if($start_or_continue) {
     $PAGE->navbar->add(get_string('attempts', constants::M_COMPONENT));
 
     if(has_capability('mod/pchat:selecttopics', $context) || has_capability('mod/pchat:viewreports', $context) ){
-        echo $renderer->header($pchat, $cm, $mode, null, get_string('attempts', constants::M_COMPONENT));
+        echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('attempts', constants::M_COMPONENT));
     }else{
-        echo $renderer->header($pchat->name);
+        echo $renderer->header($moduleinstance->name);
     }
 
-    $attempt = utils::fetch_latest_finishedattempt($pchat);
+    $attempt = utils::fetch_latest_finishedattempt($moduleinstance);
     if($attempt) {
         $stats=utils::fetch_stats($attempt);
         echo $attempt_renderer->show_summary($attempt, $stats);
@@ -117,7 +117,7 @@ if($start_or_continue) {
     // do not delete this I think
     // echo $attempt_renderer->show_attempts_list($attempts,$tableid,$cm);
 
-    if($pchat->multiattempts || has_capability('mod/pchat:manageattempts', $context) ){
+    if($moduleinstance->multiattempts || has_capability('mod/pchat:manageattempts', $context) ){
         echo $attempt_renderer->fetch_reattempt_button($cm);
     }
 }

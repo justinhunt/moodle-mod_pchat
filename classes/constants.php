@@ -18,7 +18,7 @@ const M_TABLE='pchat';
 const M_ATTEMPTSTABLE='pchat_attempts';
 const M_STATSTABLE='pchat_attemptstats';
 const M_TOPIC_TABLE='pchat_topics';
-const M_TOPICSELECTED_TABLE='pchat_selectedtopics';
+const M_SELECTEDTOPIC_TABLE='pchat_selectedtopics';
 const M_MODNAME='pchat';
 const M_URL='/mod/pchat';
 const M_CLASS='mod_pchat';
@@ -29,6 +29,13 @@ const M_CLASS_TOPICSCHECKBOX = 'topicscheckbox';
 
 const M_RECORDERID='therecorder';
 const M_WIDGETID='therecorder_opts_9999';
+
+//grading options
+const M_GRADEHIGHEST= 0;
+const M_GRADELOWEST= 1;
+const M_GRADELATEST= 2; // we only use this one currently
+const M_GRADEAVERAGE= 3;
+const M_GRADENONE= 4;
 
 //Constants for Attempt Steps
 const STEP_NONE=0;

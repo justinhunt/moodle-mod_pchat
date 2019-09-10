@@ -59,7 +59,7 @@ class topichelper
     public function fetch_selected_topics()
     {
         global $DB;
-        $sql ='SELECT tt.* FROM {' . constants::M_TOPIC_TABLE . '} tt INNER JOIN {' . constants::M_TOPICSELECTED_TABLE . '} st' .
+        $sql ='SELECT tt.* FROM {' . constants::M_TOPIC_TABLE . '} tt INNER JOIN {' . constants::M_SELECTEDTOPIC_TABLE . '} st' .
           ' ON tt.id = st.topicid WHERE st.moduleid =:moduleid';
         $selectedtopics = $DB->get_records_sql($sql, ['moduleid' => $this->mod->id]);
         return $selectedtopics;

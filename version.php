@@ -29,8 +29,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   =  2019090100;
+$plugin->version   =  2019090101;
 $plugin->requires  = 2016052300;      // Requires Moodle 3.1
 $plugin->component = 'mod_pchat';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.0.4 (Build 2019090100)';
+$plugin->release = '1.0.5 (Build 2019090101)';

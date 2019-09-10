@@ -48,17 +48,17 @@ class external extends \external_api {
 
         // Require view and make sure the user did not previously mark as seen.
         $params = ['moduleid' => $mod->id, 'topicid' => $topicid];
-        $selected = $DB->record_exists(constants::M_TOPICSELECTED_TABLE, $params);
+        $selected = $DB->record_exists(constants::M_SELECTEDTOPIC_TABLE, $params);
 
         if($selected){
-            $DB->delete_records(constants::M_TOPICSELECTED_TABLE, $params);
+            $DB->delete_records(constants::M_SELECTEDTOPIC_TABLE, $params);
         }else{
             $entry = new \stdClass();
             $entry->topicid=$topicid;
             $entry->moduleid=$mod->id;
             $entry->timemodified=time();
 
-            $DB->insert_record(constants::M_TOPICSELECTED_TABLE, $entry);
+            $DB->insert_record(constants::M_SELECTEDTOPIC_TABLE, $entry);
         }
         return true;
     }

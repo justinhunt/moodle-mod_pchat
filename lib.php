@@ -51,7 +51,7 @@ function pchat_supports($feature) {
         case FEATURE_SHOW_DESCRIPTION:  return true;
 		case FEATURE_COMPLETION_HAS_RULES: return false;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return false;
-        case FEATURE_GRADE_HAS_GRADE:         return false;
+        case FEATURE_GRADE_HAS_GRADE:         return true;
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
         default:                        return null;
@@ -60,7 +60,7 @@ function pchat_supports($feature) {
 
 /**
  * Implementation of the function for printing the form elements that control
- * whether the course reset functionality affects the pchat.
+ * whether the course reset functionality affects the module.
  *
  * @param $mform form passed by reference
  */
@@ -93,6 +93,28 @@ function pchat_picturefile_options($context){
 }
 
 /**
+ * Removes all grades from gradebook
+ *
+ * @global stdClass
+ * @global object
+ * @param int $courseid
+ * @param string optional type
+ */
+function pchat_reset_gradebook($courseid, $type='') {
+    global $CFG, $DB;
+
+    $sql = "SELECT l.*, cm.idnumber as cmidnumber, l.course as courseid
+              FROM {" . constants::M_TABLE . "} l, {course_modules} cm, {modules} m
+             WHERE m.name='" . constants::M_MODNAME . "' AND m.id=cm.module AND cm.instance=l.id AND l.course=:course";
+    $params = array ("course" => $courseid);
+    if ($moduleinstances = $DB->get_records_sql($sql,$params)) {
+        foreach ($moduleinstances as $moduleinstance) {
+            pchat_grade_item_update($moduleinstance, 'reset');
+        }
+    }
+}
+
+/**
  * Actual implementation of the reset course functionality, delete all the
  * pchat attempts for course $data->courseid.
  *
@@ -114,7 +136,12 @@ function pchat_reset_userdata($data) {
 
         $params = array ("course" => $data->courseid);
         $DB->delete_records_select(constants::M_ATTEMPTSTABLE, constants::M_MODNAME . " IN ($sql)", $params);
+        $DB->delete_records_select(constants::M_STATSTABLE, constants::M_MODNAME . " IN ($sql)", $params);
 
+        // remove all grades from gradebook
+        if (empty($data->reset_gradebook_grades)) {
+            pchat_reset_gradebook($data->courseid);
+        }
 
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deletealluserdata', constants::M_COMPONENT), 'error'=>false);
     }
@@ -136,64 +163,77 @@ function pchat_get_editornames(){
 }
 
 /**
- * Saves a new instance of the pchat into the database
+ * Saves a new instance of the module into the database
  *
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @param object $pchat An object from the form in mod_form.php
+ * @param object $moduleinstance An object from the form in mod_form.php
  * @param mod_pchat_mod_form $mform
- * @return int The id of the newly inserted pchat record
+ * @return int The id of the newly inserted module record
  */
-function pchat_add_instance(stdClass $pchat, mod_pchat_mod_form $mform = null) {
+function pchat_add_instance(stdClass $moduleinstance, mod_pchat_mod_form $mform = null) {
     global $DB;
 
-    $pchat->timecreated = time();
-	$pchat = pchat_process_files($pchat,$mform);
-    $instanceid = $DB->insert_record(constants::M_TABLE, $pchat);
-	return $instanceid;
+    $moduleinstance->timecreated = time();
+	$moduleinstance = pchat_process_files($moduleinstance,$mform);
+    $moduleinstance->id = $DB->insert_record(constants::M_TABLE, $moduleinstance);
+    pchat_grade_item_update($moduleinstance);
+	return $moduleinstance->id;
 }
 
 
-function pchat_process_files(stdClass $pchat, mod_pchat_mod_form $mform = null) {
+function pchat_process_files(stdClass $moduleinstance, mod_pchat_mod_form $mform = null) {
 	global $DB;
-    $cmid = $pchat->coursemodule;
+    $cmid = $moduleinstance->coursemodule;
     $context = context_module::instance($cmid);
 	$editors = pchat_get_editornames();
 	$itemid=0;
 	$edoptions = pchat_editor_no_files_options($context);
 	foreach($editors as $editor){
-		$pchat = file_postupdate_standard_editor( $pchat, $editor, $edoptions,$context,constants::M_COMPONENT,$editor,$itemid);
+		$moduleinstance = file_postupdate_standard_editor( $moduleinstance, $editor, $edoptions,$context,constants::M_COMPONENT,$editor,$itemid);
 	}
 
-	return $pchat;
+	return $moduleinstance;
 }
 
 /**
- * Updates an instance of the pchat in the database
+ * Updates an instance of the module in the database
  *
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
- * @param object $pchat An object from the form in mod_form.php
+ * @param object $moduleinstance An object from the form in mod_form.php
  * @param mod_pchat_mod_form $mform
  * @return boolean Success/Fail
  */
-function pchat_update_instance(stdClass $pchat, mod_pchat_mod_form $mform = null) {
+function pchat_update_instance(stdClass $moduleinstance, mod_pchat_mod_form $mform = null) {
     global $DB;
 
-    $pchat->timemodified = time();
-    $pchat->id = $pchat->instance;
-	$pchat = pchat_process_files($pchat,$mform);
-	$success = $DB->update_record(constants::M_TABLE, $pchat);
+
+    $params = array('id' => $moduleinstance->instance);
+    $oldgradefield = $DB->get_field(constants::M_TABLE, 'grade', $params);
+
+    $moduleinstance->timemodified = time();
+    $moduleinstance->id = $moduleinstance->instance;
+
+	$moduleinstance = pchat_process_files($moduleinstance,$mform);
+	$success = $DB->update_record(constants::M_TABLE, $moduleinstance);
+    pchat_grade_item_update($moduleinstance);
+
+    $update_grades = ($moduleinstance->grade === $oldgradefield ? false : true);
+    if ($update_grades) {
+        pchat_update_grades($moduleinstance, 0, false);
+    }
+
 	return $success;
 }
 
 /**
- * Removes an instance of the pchat from the database
+ * Removes an instance of the module from the database
  *
  * Given an ID of an instance of this module,
  * this function will permanently delete the instance
@@ -205,13 +245,20 @@ function pchat_update_instance(stdClass $pchat, mod_pchat_mod_form $mform = null
 function pchat_delete_instance($id) {
     global $DB;
 
-    if (! $pchat = $DB->get_record(constants::M_TABLE, array('id' => $id))) {
+    if (! $moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $id))) {
         return false;
     }
 
     # Delete any dependent records here #
 
-    $DB->delete_records(constants::M_TABLE, array('id' => $pchat->id));
+    $DB->delete_records(constants::M_TABLE, array('id' => $moduleinstance->id));
+    $DB->delete_records(constants::M_ATTEMPTSTABLE, array(constants::M_MODNAME => $moduleinstance->id));
+    $DB->delete_records(constants::M_STATSTABLE, array(constants::M_MODNAME => $moduleinstance->id));
+    $DB->delete_records(constants::M_SELECTEDTOPIC_TABLE, array('moduleid' => $moduleinstance->id));
+    $DB->delete_records_select(constants::M_SELECTEDTOPIC_TABLE,
+            "topicid IN (SELECT id FROM {".constants::M_TOPIC_TABLE."} t WHERE t.moduleid = ?)",
+            array('moduleid' => $moduleinstance->id));
+    $DB->delete_records(constants::M_TOPIC_TABLE, array('moduleid' => $moduleinstance->id));
 
     return true;
 }
@@ -225,7 +272,7 @@ function pchat_delete_instance($id) {
  *
  * @return stdClass|null
  */
-function pchat_user_outline($course, $user, $mod, $pchat) {
+function pchat_user_outline($course, $user, $mod, $moduleinstance) {
 
     $return = new stdClass();
     $return->time = 0;
@@ -240,10 +287,10 @@ function pchat_user_outline($course, $user, $mod, $pchat) {
  * @param stdClass $course the current course record
  * @param stdClass $user the record of the user we are generating report for
  * @param cm_info $mod course module info
- * @param stdClass $pchat the module instance record
+ * @param stdClass $moduleinstance the module instance record
  * @return void, is supposed to echp directly
  */
-function pchat_user_complete($course, $user, $mod, $pchat) {
+function pchat_user_complete($course, $user, $mod, $moduleinstance) {
 }
 
 /**
@@ -415,7 +462,191 @@ function pchat_extend_navigation(navigation_node $navref, stdclass $course, stdc
  * so it is safe to rely on the $PAGE.
  *
  * @param settings_navigation $settingsnav {@link settings_navigation}
- * @param navigation_node $pchatnode {@link navigation_node}
+ * @param navigation_node $moduleinstancenode {@link navigation_node}
  */
-function pchat_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $pchatnode=null) {
+function pchat_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $moduleinstancenode=null) {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// API to update/select grades
+//////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Create grade item for given PChat
+ *
+ * @category grade
+ * @uses GRADE_TYPE_VALUE
+ * @uses GRADE_TYPE_NONE
+ * @param object $moduleinstance object with extra cmidnumber
+ * @param array|object $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @return int 0 if ok, error code otherwise
+ */
+function pchat_grade_item_update($moduleinstance, $grades=null) {
+    global $CFG;
+    require_once($CFG->dirroot.'/lib/gradelib.php');
+
+    $params = array('itemname' => $moduleinstance->name);
+    if (array_key_exists('cmidnumber', $moduleinstance)) {
+        $params['idnumber'] = $moduleinstance->cmidnumber;
+    }
+
+    if ($moduleinstance->grade > 0) {
+        $params['gradetype'] = GRADE_TYPE_VALUE;
+        $params['grademax'] = $moduleinstance->grade;
+        $params['grademin'] = 0;
+    } else if ($moduleinstance->grade < 0) {
+        $params['gradetype'] = GRADE_TYPE_SCALE;
+        $params['scaleid'] = -$moduleinstance->grade;
+
+        // Make sure current grade fetched correctly from $grades
+        $currentgrade = null;
+        if (! empty($grades)) {
+            if (is_array($grades)) {
+                $currentgrade = reset($grades);
+            } else {
+                $currentgrade = $grades;
+            }
+        }
+
+        // When converting a score to a scale, use scale's grade maximum to calculate it.
+        if (! empty($currentgrade) && $currentgrade->rawgrade !== null) {
+            $grade = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $currentgrade->userid);
+            $params['grademax'] = reset($grade->items)->grademax;
+        }
+    } else {
+        $params['gradetype'] = GRADE_TYPE_NONE;
+    }
+
+    if ($grades  === 'reset') {
+        $params['reset'] = true;
+        $grades = null;
+    } else if (!empty($grades)) {
+        // Need to calculate raw grade (Note: $grades has many forms)
+        if (is_object($grades)) {
+            $grades = array($grades->userid => $grades);
+        } else if (array_key_exists('userid', $grades)) {
+            $grades = array($grades['userid'] => $grades);
+        }
+        foreach ($grades as $key => $grade) {
+            if (!is_array($grade)) {
+                $grades[$key] = $grade = (array) $grade;
+            }
+            //check raw grade isnt null otherwise we insert a grade of 0
+            if ($grade['rawgrade'] !== null) {
+                $grades[$key]['rawgrade'] = ($grade['rawgrade'] * $params['grademax'] / 100);
+            } else {
+                //setting rawgrade to null just in case user is deleting a grade
+                $grades[$key]['rawgrade'] = null;
+            }
+        }
+    }
+
+    if (is_object($moduleinstance->course)) {
+        $courseid = $moduleinstance->course->id;
+    } else {
+        $courseid = $moduleinstance->course;
+    }
+
+    return grade_update('mod/pchat', $courseid, 'mod', 'pchat', $moduleinstance->id, 0, $grades, $params);
+}
+
+/**
+ * Update grades in central gradebook
+ *
+ * @category grade
+ * @param object $moduleinstance
+ * @param int $userid specific user only, 0 means all
+ * @param bool $nullifnone
+ */
+function pchat_update_grades($moduleinstance, $userid=0, $nullifnone=true) {
+    global $CFG, $DB;
+    require_once($CFG->dirroot.'/lib/gradelib.php');
+
+    if (empty($moduleinstance->grade)) {
+        $grades = null;
+    } else if ($grades = pchat_get_user_grades($moduleinstance, $userid)) {
+        // do nothing
+    } else if ($userid && $nullifnone) {
+        $grades = (object)array('userid' => $userid, 'rawgrade' => null);
+    } else {
+        $grades = null;
+    }
+
+    pchat_grade_item_update($moduleinstance, $grades);
+}
+
+/**
+ * Return grade for given user or all users.
+ *
+ * @global stdClass
+ * @global object
+ * @param int $id of pchat
+ * @param int $userid optional user id, 0 means all users
+ * @return array array of grades, false if none
+ */
+function pchat_get_user_grades($moduleinstance, $userid=0) {
+
+    global $CFG, $DB;
+
+    $params = array("moduleid" => $moduleinstance->id);
+
+    if (!empty($userid)) {
+        $params["userid"] = $userid;
+        $user = "AND u.id = :userid";
+    }
+    else {
+        $user="";
+    }
+
+    //grade_sql
+    $grade_sql = "SELECT u.id, u.id AS userid, IF(a.turns > 0, 100 , 0) AS rawgrade
+                      FROM {user} u, {". constants::M_STATSTABLE ."} a
+                     WHERE a.id= (SELECT max(id) FROM {". constants::M_STATSTABLE ."} ia WHERE ia.userid=u.id AND ia.pchat = a.pchat)  AND u.id = a.userid AND a.pchat = :moduleid
+                           $user
+                  GROUP BY u.id";
+
+
+    $results = $DB->get_records_sql($grade_sql, $params);
+    return $results;
+}
+
+/**
+ * Is a given scale used by the instance of pchat?
+ *
+ * This function returns if a scale is being used by one pchat
+ * if it has support for grading and scales. Commented code should be
+ * modified if necessary. See forum, glossary or journal modules
+ * as reference.
+ *
+ * @param int $moduleid ID of an instance of this module
+ * @return bool true if the scale is used by the given instance
+ */
+function pchat_scale_used($moduleid, $scaleid) {
+    global $DB;
+
+    /** @example */
+    if ($scaleid and $DB->record_exists(constants::M_TABLE, array('id' => $moduleid, 'grade' => -$scaleid))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Checks if scale is being used by any instance of module.
+ *
+ * This is used to find out if scale used anywhere.
+ *
+ * @param $scaleid int
+ * @return boolean true if the scale is used by any module instance
+ */
+function pchat_scale_used_anywhere($scaleid) {
+    global $DB;
+
+    /** @example */
+    if ($scaleid and $DB->record_exists(constants::M_TABLE, array('grade' => -$scaleid))) {
+        return true;
+    } else {
+        return false;
+    }
 }

@@ -102,6 +102,14 @@ class mod_pchat_mod_form extends moodleform_mod {
         $mform->addElement('select', 'expiredays', get_string('expiredays', constants::M_COMPONENT), $expiredaysoptions);
         $mform->setDefault('expiredays',$config->expiredays);
 
+        // Grade.
+        $this->standard_grading_coursemodule_elements();
+
+        //grade options
+        //for now we hard code this to latest attempt
+        $mform->addElement('hidden', 'gradeoptions',constants::M_GRADELATEST);
+        $mform->setType('gradeoptions', PARAM_INT);
+
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();

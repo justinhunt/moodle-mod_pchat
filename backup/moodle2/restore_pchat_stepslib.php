@@ -158,23 +158,37 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
         $topics = $DB->get_records(constants::M_TOPIC_TABLE,array('name'=>$data->name, 'courseid'=>$this->get_courseid()));
         $topicid=false;
         if($topics){
-            //if we have the same topic (prob. a duplicate activity in same course)
+            //if we already have the same topic (prob. a duplicate activity in same course), we use that
             foreach($topics as $topic){
-                if($topic->id == $data->topicid){
+                if($topic->id == $data->topicid &&
+                        $topic->topiclevel == constants::M_TOPICLEVEL_COURSE
+                        && $data->topiclevel == constants::M_TOPICLEVEL_COURSE){
                     $topicid = $data->topicid;
                     break;
                 }
             }
-            //if we have the same topicname available in this course, just use it
+            //if we already have the same topicname available in this course, and its course level, and so are we, we use it
             if(!$topicid) {
                 foreach ($topics as $topic) {
-                    if ($topic->topiclevel == constants::M_TOPICLEVEL_COURSE) {
+                    if ($topic->topiclevel == constants::M_TOPICLEVEL_COURSE
+                            && $data->topiclevel == constants::M_TOPICLEVEL_COURSE) {
                         $topicid=$topic->id;
                         break;
                     }
                 }
             }
-            //create a new topic (sigh)
+            //if we already have the same topicname available in this module and its custom we use it
+            if(!$topicid) {
+                foreach ($topics as $topic) {
+                    if ($topic->topiclevel == constants::M_TOPICLEVEL_CUSTOM
+                            && $data->topiclevel == constants::M_TOPICLEVEL_CUSTOM &&
+                            $topic->moduleid == $this->get_new_parentid(constants::M_MODNAME)) {
+                        $topicid=$topic->id;
+                        break;
+                    }
+                }
+            }
+            //create a new topic, if there is nothing pre-existing we should use
             if(!$topicid){
                 $newtopic = new stdClass();
                 $newtopic->name = $data->name;
@@ -190,7 +204,7 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
         //Add our selected topic
         if($topicid) {
             $data->topicid = $topicid;
-            $newid = $DB->insert_record(constants::M_TOPICSELECTED_TABLE, $data);
+            $newid = $DB->insert_record(constants::M_SELECTEDTOPIC_TABLE, $data);
         }
     }
 

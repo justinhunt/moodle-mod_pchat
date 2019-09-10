@@ -109,7 +109,7 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
        // $selectedtopic->set_source_table(constants::M_TOPICSELECTED_TABLE, array('moduleid'=>backup::VAR_ACTIVITYID));
         $selectedtopic->set_source_sql('
             SELECT ts.*, topic.name, topic.topiclevel, topic.targetwords, topic.fonticon
-              FROM {'. constants::M_TOPICSELECTED_TABLE .'} ts
+              FROM {'. constants::M_SELECTEDTOPIC_TABLE .'} ts
               INNER JOIN {'. constants::M_TOPIC_TABLE .'} topic ON ts.topicid = topic.id
              WHERE ts.moduleid = ?',
                 array(backup::VAR_ACTIVITYID));
