@@ -282,6 +282,20 @@ abstract class baseform extends \moodleform {
         $PAGE->requires->js_call_amd("mod_pchat/toggleselected", 'init', array($opts));
     }
 
+    protected final function add_userselector_field($name,$label){
+        $options = [
+                //'ajax' => 'mod_pchat/form-user-selector',
+            'multiple'=>true
+        ];
+
+        $selectusers=array();
+        foreach ($this->users as $user){
+            $selectusers[$user->id] =  fullname($user);
+        }
+        $this->_form->addElement('autocomplete', $name, $label,$selectusers, $options);
+        $this->_form->addRule($name, null, 'required', null, 'client');
+    }
+
     protected final function add_transcript_editor($name, $label){
         global $OUTPUT, $PAGE, $CFG;
 

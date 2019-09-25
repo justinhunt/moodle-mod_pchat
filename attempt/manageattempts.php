@@ -116,6 +116,13 @@ switch($type){
             $topichelper = new \mod_pchat\topichelper($cm);
         }
         $topics = $topichelper->fetch_selected_topics();
+/*
+        $allusernames = get_all_user_name_fields(true);
+        $orderby = 'lastname ASC, firstname ASC';
+        $userfields = 'id, email, ' . $allusernames;
+        $onlyactive=false;
+        $users =get_enrolled_users($context,'mod_pchat\view',0,$userfields,$orderby,0,0,$onlyactive);
+  */
         $users = get_enrolled_users($context);
         $targetwords = $attempt ? $attempt->topictargetwords : '';
         $mform = new \mod_pchat\attempt\userselectionsform(null,
@@ -139,17 +146,23 @@ switch($type){
         $autotranscript='';
         $stats = false;
         if($attempt){
+            if(!empty($attempt->selftranscript)){
+                $selftranscript=utils::extract_simple_transcript($attempt->selftranscript);
+            }
             //try to pull transcripts if we have none. Why wait for cron?
             if(empty($attempt->transcript)){
-                $with_transcripts_attempt = utils::retrieve_transcripts($attempt);
-                if($with_transcripts_attempt){
-                    $autotranscript=$with_transcripts_attempt->transcript;
+                $attempt_with_transcripts = utils::retrieve_transcripts($attempt);
+                if($attempt_with_transcripts && !empty($selftranscript)){
+                    $autotranscript=$attempt_with_transcripts->transcript;
+                    $aitranscript = new \mod_pchat\aitranscript($attempt_with_transcripts->id,
+                            $context->id, $selftranscript,
+                            $attempt_with_transcripts->jsontranscript);
                 }
             }else{
                 $autotranscript=$attempt->transcript;
             }
             if(empty($autotranscript)){$autotranscript=get_string('transcriptnotready',constants::M_COMPONENT);}
-            if(!empty($attempt->selftranscript)){$selftranscript=utils::extract_simple_transcript($attempt->selftranscript);}
+
             $stats =utils::fetch_stats($attempt);
         }
         $mform = new \mod_pchat\attempt\selfreviewform(null,
@@ -209,6 +222,12 @@ if ($data = $mform->get_data()) {
                     $theattempt->topicfonticon = $topic->fonticon;
                     $theattempt->topictargetwords = $topic->targetwords;
                 }
+            }
+            //the incoming data is an array, and we need to csv it.
+            if($data->interlocutors) {
+                $theattempt->interlocutors = implode(',', $data->interlocutors);
+            }else{
+                $theattempt->interlocutors ='';
             }
             break;
 

@@ -13,7 +13,7 @@ $functions = array(
                 'methodname'  => 'toggle_topic_selected',
                 'description' => 'Select/deselect a topic for a mod',
                 'capabilities'=> 'mod/pchat:selecttopics',
-                'type'        => 'write',
+                'type'        => 'read',
                 'ajax'        => true,
         )
 

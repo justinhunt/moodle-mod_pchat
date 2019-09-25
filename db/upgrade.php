@@ -45,19 +45,33 @@ function xmldb_pchat_upgrade($oldversion) {
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
 
-    // Add passage picture to pchat table
-    if ($oldversion < 2018122000) {
-        $activitytable = new xmldb_table(constants::M_TABLE);
+    if ($oldversion < 2019092400){
+        $table = new xmldb_table('pchat_ai_result');
 
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('readaloudid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('attemptid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('transcript', XMLDB_TYPE_TEXT, null, null, null, null);
+        $table->add_field('passage', XMLDB_TYPE_TEXT, null, null, null, null);
+        $table->add_field('fulltranscript', XMLDB_TYPE_TEXT, null, null, null, null);
+        $table->add_field('wpm', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('accuracy', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('sessionscore', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('sessiontime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('sessionerrors', XMLDB_TYPE_TEXT, null, null, null, null);
+        $table->add_field('sessionendword', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 
-        // Define field expiredays to be added to pchat
-        $field_picture = new xmldb_field('passagepicture', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, XMLDB_NOTNULL, null);
+        // Adding keys to table pchat ai result.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-        // add picture field to pchat table
-        if (!$dbman->field_exists($activitytable, $field_picture)) {
-            $dbman->add_field($activitytable, $field_picture);
+        // Conditionally launch create table for pchat ai resiult.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
         }
-        upgrade_mod_savepoint(true, 2018122000, constants::M_MODNAME);
+        upgrade_mod_savepoint(true, 2019092400, 'pchat');
     }
 
     // Final return of upgrade result (true, all went good) to Moodle.

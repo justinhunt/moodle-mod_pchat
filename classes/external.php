@@ -66,4 +66,7 @@ class external extends \external_api {
     public static function toggle_topic_selected_returns() {
         return new \external_value(PARAM_BOOL);
     }
+
+
+
 }

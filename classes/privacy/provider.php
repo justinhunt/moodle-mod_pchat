@@ -71,11 +71,9 @@ class provider implements
             'id' => 'privacy:metadata:attemptid',
             'pchat' => 'privacy:metadata:pchat',
             'userid' => 'privacy:metadata:userid',
-            'filename' => 'privacy:metadata:filename',
-            'errorcount' => 'privacy:metadata:errorcount',
             'timemodified' => 'privacy:metadata:timemodified'
         ];
-        $collection->add_database_table(constants::M_ATTEMPTSTABLE, $userdetail, 'privacy:metadata:itemtable');
+        $collection->add_database_table(constants::M_ATTEMPTSTABLE, $userdetail, 'privacy:metadata:attemptstable');
 
 
         $collection->add_external_location_link('cloud.poodll.com', [

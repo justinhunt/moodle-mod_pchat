@@ -64,7 +64,7 @@ class pchat_s3_adhoc extends \core\task\adhoc_task {
                  $this->do_retry_soon('Audio file appears to not be ready yet',$trace,$cd);
                  return;
              }
-             if(!$attempt->transcript){
+             if($attempt->transcript){
                  //woa!! Its already been got. This can happen if user goes to selfreview page which will try and do the
                  //retrieve if transcripts are not back. Too many users do not have cron going, so this helps.
                  $trace->output("Transcript has already been fetched. Nothing to do");
@@ -74,6 +74,22 @@ class pchat_s3_adhoc extends \core\task\adhoc_task {
              $attempt_with_transcripts = utils::retrieve_transcripts($attempt);
              if($attempt_with_transcripts){
                  $trace->output("Transcripts are fetched for " . $cd->attemptid . " ...all ok");
+                 //process transcripts (find matches etc)
+                 $selftranscript='';
+                 if(!empty($attempt_with_transcripts->selftranscript)){
+                     $selftranscript=utils::extract_simple_transcript($attempt_with_transcripts->selftranscript);
+                 }
+                 if(!empty($selftranscript)) {
+                     try {
+                         $aitranscript = new \mod_pchat\aitranscript($attempt_with_transcripts->id,
+                                 $cd->modulecontextid, $selftranscript,
+                                 $attempt_with_transcripts->jsontranscript);
+                     }catch(\Exception $e){
+                         $this->do_forever_fail('transcripts fetched but processing failed: ' .
+                                 $e->getMessage() .": attemptid:"  . $cd->attemptid,$trace);
+                     }
+                 }
+
              }else{
                  $this->do_retry_soon('Transcripts are not ready yet',$trace,$cd);
              }

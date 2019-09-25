@@ -19,12 +19,21 @@ const M_ATTEMPTSTABLE='pchat_attempts';
 const M_STATSTABLE='pchat_attemptstats';
 const M_TOPIC_TABLE='pchat_topics';
 const M_SELECTEDTOPIC_TABLE='pchat_selectedtopics';
+const M_AITABLE='pchat_ai_result';
 const M_MODNAME='pchat';
 const M_URL='/mod/pchat';
 const M_CLASS='mod_pchat';
 const M_CLASS_ITEMTABLE='mod_pchat_attempttable';
 const M_CLASS_TOPICSCONTAINER ='topicscontainer';
 const M_CLASS_TOPICSCHECKBOX = 'topicscheckbox';
+
+//AI Transcript constants
+const M_AI_PARENTFIELDNAME = 'pchat';
+const M_AI_TIMELIMITFIELDNAME = 'convlength';
+const ACCMETHOD_NONE =0;
+const ACCMETHOD_AUTO =1;
+const ACCMETHOD_FIXED =2;
+const ACCMETHOD_NOERRORS =3;
 
 
 const M_RECORDERID='therecorder';
@@ -85,5 +94,11 @@ const DEF_CONVLENGTH=7;
 const M_C_TRANSCRIPTDISPLAY='mod_pchat_transcriptdisplay';
 const M_C_TRANSCRIPTEDITOR='mod_pchat_transcripteditor';
 const M_C_CONVERSATION='mod_pchat_conversation';
+
+const M_LANG_ENUS ='en-US';
+const M_LANG_ENUK ='en-UK';
+const M_LANG_ENAU ='en-AU';
+const M_LANG_ESUS ='es-US';
+const M_LANG_FRCA ='fr-CA';
 
 }

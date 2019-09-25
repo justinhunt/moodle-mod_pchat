@@ -26,7 +26,8 @@ class userselectionsform extends baseform
         //user combo
         $name='interlocutors';
         $label=get_string('chooseusers',constants::M_COMPONENT);
-        $this->add_usercombo_field($name,$label);
+       // $this->add_usercombo_field($name,$label);
+        $this->add_userselector_field($name,$label);
 
         //Selected Topic
         $name='topicid';

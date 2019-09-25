@@ -43,6 +43,8 @@ $string['pchat:manageattempts'] = 'Can manage PChat attempts';
 $string['pchat:manage'] = 'Can manage PChat instances';
 $string['pchat:submit'] = 'Can submit PChat attempts';
 $string['privacy:metadata'] = 'The Poodll PChat plugin does store personal data.';
+$string['privacy:metadata:pchat'] = 'The Poodll PChat plugin does store personal data.';
+$string['privacy:metadata:attemptstable'] = 'The Poodll PChat attempts table.';
 
 
 $string['id']='ID';
