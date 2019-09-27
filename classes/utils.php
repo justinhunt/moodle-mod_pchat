@@ -559,6 +559,7 @@ class utils{
       );
   }
 
+
     public static function fetch_options_transcribers() {
         $options =
                 array(constants::TRANSCRIBER_AMAZONTRANSCRIBE => get_string("transcriber_amazontranscribe", constants::M_COMPONENT),

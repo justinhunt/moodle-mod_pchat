@@ -225,7 +225,13 @@ if ($data = $mform->get_data()) {
             }
             //the incoming data is an array, and we need to csv it.
             if($data->interlocutors) {
-                $theattempt->interlocutors = implode(',', $data->interlocutors);
+                if(is_array($data->interlocutors)) {
+                    //if using userselector in userselections form
+                    $theattempt->interlocutors = implode(',', $data->interlocutors);
+                }else{
+                    //if using usercombo in userselections form
+                    $theattempt->interlocutors = $data->interlocutors;
+                }
             }else{
                 $theattempt->interlocutors ='';
             }

@@ -158,8 +158,7 @@ function pchat_reset_userdata($data) {
 
 
 function pchat_get_editornames(){
-	//return array('passage','welcome','feedback');
-    return array();
+	return array('tips');
 }
 
 /**
@@ -178,14 +177,14 @@ function pchat_add_instance(stdClass $moduleinstance, mod_pchat_mod_form $mform 
     global $DB;
 
     $moduleinstance->timecreated = time();
-	$moduleinstance = pchat_process_files($moduleinstance,$mform);
+	$moduleinstance = pchat_process_editors($moduleinstance,$mform);
     $moduleinstance->id = $DB->insert_record(constants::M_TABLE, $moduleinstance);
     pchat_grade_item_update($moduleinstance);
 	return $moduleinstance->id;
 }
 
 
-function pchat_process_files(stdClass $moduleinstance, mod_pchat_mod_form $mform = null) {
+function pchat_process_editors(stdClass $moduleinstance, mod_pchat_mod_form $mform = null) {
 	global $DB;
     $cmid = $moduleinstance->coursemodule;
     $context = context_module::instance($cmid);
@@ -220,7 +219,7 @@ function pchat_update_instance(stdClass $moduleinstance, mod_pchat_mod_form $mfo
     $moduleinstance->timemodified = time();
     $moduleinstance->id = $moduleinstance->instance;
 
-	$moduleinstance = pchat_process_files($moduleinstance,$mform);
+	$moduleinstance = pchat_process_editors($moduleinstance,$mform);
 	$success = $DB->update_record(constants::M_TABLE, $moduleinstance);
     pchat_grade_item_update($moduleinstance);
 

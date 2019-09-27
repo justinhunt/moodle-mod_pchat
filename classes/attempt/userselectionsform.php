@@ -16,6 +16,7 @@ class userselectionsform extends baseform
     public $typestring = constants::T_USERSELECTIONS;
     public function custom_definition() {
         $this->topics = $this->_customdata['topics'];
+        $this->moduleinstance = $this->_customdata['moduleinstance'];
         $this->users = $this->_customdata['users'];
         $this->targetwords = $this->_customdata['targetwords'];
 

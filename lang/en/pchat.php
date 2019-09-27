@@ -15,36 +15,36 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'PChat';
-$string['modulenameplural'] = 'PChats';
-$string['modulename_help'] = 'PChat is an activity designed to assist teachers in evaluating their students reading fluency. Students read a passage, set by the teacher, into a microphone. Later the teacher can mark words as incorrect and get the student WCPM(Words Correct Per Minute) scores.';
+$string['modulename'] = 'P-CHAT';
+$string['modulenameplural'] = 'P-CHATs';
+$string['modulename_help'] = 'P-CHAT is an activity designed to assist teachers in evaluating their students reading fluency. Students read a passage, set by the teacher, into a microphone. Later the teacher can mark words as incorrect and get the student WCPM(Words Correct Per Minute) scores.';
 $string['pchatfieldset'] = 'Custom example fieldset';
-$string['pchatname'] = 'PChat';
+$string['pchatname'] = 'P-CHAT';
 $string['pchatname_help'] = 'This is the content of the help tooltip associated with the pchatname field. Markdown syntax is supported.';
 $string['pchat'] = 'pchat';
 $string['activitylink'] = 'Link to next activity';
 $string['activitylink_help'] = 'To provide a link after the attempt to another activity in the course, select the activity from the dropdown list.';
 $string['activitylinkname'] = 'Continue to next activity: {$a}';
-$string['pluginadministration'] = 'PChat Administration';
-$string['pluginname'] = 'PChat Activity';
+$string['pluginadministration'] = 'P-CHAT Administration';
+$string['pluginname'] = 'P-CHAT Activity';
 $string['someadminsetting'] = 'Some Admin Setting';
 $string['someadminsetting_details'] = 'More info about Some Admin Setting';
 $string['someinstancesetting'] = 'Some Instance Setting';
 $string['someinstancesetting_details'] = 'More infor about Some Instance Setting';
 $string['pchatsettings'] = 'pchat settings';
-$string['pchat:addinstance'] = 'Add a new PChat';
-$string['pchat:view'] = 'View PChat';
-$string['pchat:viewreports'] = 'View PChat reports';
+$string['pchat:addinstance'] = 'Add a new P-CHAT';
+$string['pchat:view'] = 'View P-CHAT';
+$string['pchat:viewreports'] = 'View P-CHAT reports';
 $string['pchat:selecttopics'] = 'Select topics for use in activity.';
 $string['pchat:managetopics'] = 'Manage topics (add/edit/delete)';
 $string['pchat:attemptview'] = 'View attempts';
 $string['pchat:attemptedit'] = 'Edit attempts';
-$string['pchat:manageattempts'] = 'Can manage PChat attempts';
-$string['pchat:manage'] = 'Can manage PChat instances';
-$string['pchat:submit'] = 'Can submit PChat attempts';
-$string['privacy:metadata'] = 'The Poodll PChat plugin does store personal data.';
-$string['privacy:metadata:pchat'] = 'The Poodll PChat plugin does store personal data.';
-$string['privacy:metadata:attemptstable'] = 'The Poodll PChat attempts table.';
+$string['pchat:manageattempts'] = 'Can manage P-CHAT attempts';
+$string['pchat:manage'] = 'Can manage P-CHAT instances';
+$string['pchat:submit'] = 'Can submit P-CHAT attempts';
+$string['privacy:metadata'] = 'The Poodll P-CHAT plugin does store personal data.';
+$string['privacy:metadata:pchat'] = 'The Poodll P-CHAT plugin does store personal data.';
+$string['privacy:metadata:attemptstable'] = 'The Poodll P-CHAT attempts table.';
 
 
 $string['id']='ID';
@@ -68,7 +68,7 @@ $string['maxattempts'] ='Max. Attempts';
 $string['unlimited'] ='unlimited';
 $string['defaultsettings'] ='Default Settings';
 $string['exceededattempts'] ='You have completed the maximum {$a} attempts.';
-$string['pchattask'] ='PChat Task';
+$string['pchattask'] ='P-CHAT Task';
 $string['gotnosound'] = 'We could not hear you. Please check the permissions and settings for microphone and try again.';
 $string['done'] = 'Done';
 $string['processing'] = 'Processing';
@@ -100,7 +100,7 @@ $string['apiuser_details']='The Poodll account username that authorises Poodll o
 $string['apisecret']='Poodll API Secret ';
 $string['apisecret_details']='The Poodll API secret. See <a href= "https://support.poodll.com/support/solutions/articles/19000083076-cloud-poodll-api-secret">here</a> for more details';
 $string['enableai']='Enable AI';
-$string['enableai_details']='PChat can evaluate results from a student attempt using AI. Check to enable.';
+$string['enableai_details']='P-CHAT can evaluate results from a student attempt using AI. Check to enable.';
 
 
 $string['useast1']='US East';
@@ -144,24 +144,24 @@ $string['grader_human']='Human';
 $string['grader_ungraded']='Ungraded';
 
 $string['displaysubs'] = '{$a->subscriptionname} : expires {$a->expiredate}';
-$string['noapiuser'] = "No API user entered. PChat will not work correctly.";
-$string['noapisecret'] = "No API secret entered. PChat will not work correctly.";
+$string['noapiuser'] = "No API user entered. P-CHAT will not work correctly.";
+$string['noapisecret'] = "No API secret entered. P-CHAT will not work correctly.";
 $string['credentialsinvalid'] = "The API user and secret entered could not be used to get access. Please check them.";
-$string['appauthorised']= "Poodll PChat is authorised for this site.";
-$string['appnotauthorised']= "Poodll PChat is NOT authorised for this site.";
+$string['appauthorised']= "Poodll P-CHAT is authorised for this site.";
+$string['appnotauthorised']= "Poodll P-CHAT is NOT authorised for this site.";
 $string['refreshtoken']= "Refresh license information";
 $string['notokenincache']= "Refresh to see license information. Contact Poodll support if there is a problem.";
 
-$string['privacy:metadata:attemptid']='The unique identifier of a users PChat attempt.';
-$string['privacy:metadata:pchatid']='The unique identifier of a PChat activity instance.';
-$string['privacy:metadata:userid']='The user id for the PChat attempt';
+$string['privacy:metadata:attemptid']='The unique identifier of a users P-CHAT attempt.';
+$string['privacy:metadata:pchatid']='The unique identifier of a P-CHAT activity instance.';
+$string['privacy:metadata:userid']='The user id for the P-CHAT attempt';
 $string['privacy:metadata:filename']='File urls of submitted recordings.';
 $string['privacy:metadata:timemodified']='The last time attempt was modified for the attempt';
-$string['privacy:metadata:attempttable']='Stores the scores and other user data associated with a PChat attempt.';
+$string['privacy:metadata:attempttable']='Stores the scores and other user data associated with a P-CHAT attempt.';
 $string['privacy:metadata:transcriptpurpose']='The recording short transcripts.';
 $string['privacy:metadata:fulltranscriptpurpose']='The full transcripts of recordings.';
-$string['privacy:metadata:cloudpoodllcom:userid']='The PChat plugin includes the moodle userid in the urls of recordings and transcripts';
-$string['privacy:metadata:cloudpoodllcom']='The PChat plugin stores recordings in AWS S3 buckets via cloud.poodll.com.';
+$string['privacy:metadata:cloudpoodllcom:userid']='The P-CHAT plugin includes the moodle userid in the urls of recordings and transcripts';
+$string['privacy:metadata:cloudpoodllcom']='The P-CHAT plugin stores recordings in AWS S3 buckets via cloud.poodll.com.';
 
 //attempts
 $string['durationgradesettings'] = 'Grade Settings ';
@@ -214,7 +214,7 @@ $string['readtext'] = 'Text to read';
 $string['language_voice'] = 'Language and voice';
 $string['listen'] = 'Listen';
 $string['download'] = 'Download';
-$string['tagarea_pchat_attempts'] = 'PChat Attempts';
+$string['tagarea_pchat_attempts'] = 'P-CHAT Attempts';
 $string['timemodified'] = 'Last Changed';
 
 $string['picturechoice'] = 'Picture Choice';
@@ -283,9 +283,9 @@ $string['chooseusers'] = 'Choose Partner(s)';
 $string['users'] = 'Partners';
 $string['topic'] = 'Topic';
 
-$string['attempt_partone'] = '1: User Selections';
-$string['attempt_parttwo'] = '2: Conversation';
-$string['attempt_partthree'] = '3: Transcribe ';
+$string['attempt_partone'] = '1: Prepare';
+$string['attempt_parttwo'] = '2: Record';
+$string['attempt_partthree'] = '3: Transcribe';
 $string['attempt_partfour'] = '4: Review';
 $string['attempt_partone_instructions'] = 'Choose your partners, topic, target words and target speaking time from the options below. When you are ready, move to the next page and begin your conversation';
 $string['attempt_parttwo_instructions'] = 'Use the recorder below to record your conversation. Try to use the target words. Good luck.';
@@ -332,6 +332,10 @@ $string['fonticonexplanation']= 'Add an icon graphic to represent the topic. Use
 $string['targetwordsexplanation']= 'Add target words each on a new line.';
 
 $string['confirmtopicdeletetitle']= 'Confirm Delete Topic:';
+
+$string['userconvlength']= 'Conv. length override';
+$string['userconvlength_details']= 'Allow users to override suggested conversation length';
+$string['revq']= 'Reflection question {$a}';
 
 
 

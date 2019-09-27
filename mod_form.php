@@ -31,6 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 use \mod_pchat\constants;
+use \mod_pchat\utils;
 
 /**
  * Module instance settings form
@@ -68,10 +69,34 @@ class mod_pchat_mod_form extends moodleform_mod {
         	$this->standard_intro_elements();
 		}
 
-        //Enable AI
+        //Enable multiple attempts (or not)
         $mform->addElement('advcheckbox', 'multiattempts', get_string('multiattempts', constants::M_COMPONENT), get_string('multiattempts_details', constants::M_COMPONENT));
-        $mform->setDefault('multipleattempts',$config->enableai);
-		
+        $mform->setDefault('multipleattempts',true);
+
+        //time limits
+        $options = utils::get_conversationlength_options();
+        //the size attribute doesn't work because the attributes are applied on the div container holding the select
+        $mform->addElement('select','convlength',get_string('convlength', constants::M_COMPONENT), $options,array("size"=>"5"));
+        $mform->setDefault('convlength',constants::DEF_CONVLENGTH);
+
+        //Allow student override time limit
+        $mform->addElement('advcheckbox', 'userconvlength', get_string('userconvlength', constants::M_COMPONENT), get_string('userconvlength_details', constants::M_COMPONENT));
+        $mform->setDefault('userconvlength',true);
+
+        // Adding the revq 1 field
+        $mform->addElement('textarea', 'revq1', get_string('revq', constants::M_COMPONENT, '1'),  array('rows'=>'5', 'cols'=>'80'));
+        $mform->setType('revq1', PARAM_TEXT);
+        $mform->addElement('textarea', 'revq2', get_string('revq', constants::M_COMPONENT, '2'),  array('rows'=>'5', 'cols'=>'80'));
+        $mform->setType('revq2', PARAM_TEXT);
+        $mform->addElement('textarea', 'revq3', get_string('revq', constants::M_COMPONENT, '3'),  array('rows'=>'5', 'cols'=>'80'));
+        $mform->setType('revq3', PARAM_TEXT);
+
+        //add tips field
+        $edoptions = pchat_editor_no_files_options($this->context);
+        $opts = array('rows'=>'5', 'columns'=>'80');
+        $mform->addElement('editor','tips_editor',get_string('tips', constants::M_COMPONENT),$opts,$edoptions);
+        $mform->setDefault('tips_editor',array('text'=>$config->speakingtips, 'format'=>FORMAT_HTML));
+        $mform->setType('tips_editor',PARAM_RAW);
 
         //Enable AI
         $mform->addElement('advcheckbox', 'enableai', get_string('enableai', constants::M_COMPONENT), get_string('enableai_details', constants::M_COMPONENT));
@@ -89,8 +114,6 @@ class mod_pchat_mod_form extends moodleform_mod {
         $options = \mod_readaloud\utils::fetch_options_transcribers();
         $mform->addElement('select', $name, $label, $options);
         $mform->setDefault($name,constants::TRANSCRIBER_AMAZONTRANSCRIBE);// $config->{$name});
-
-
 
         //region
         $regionoptions = \mod_pchat\utils::get_region_options();

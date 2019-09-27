@@ -51,6 +51,7 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
         // root element describing pchat instance
         $oneactivity = new backup_nested_element(constants::M_MODNAME, array('id'), array(
             'course','name','intro','introformat','grade','gradeoptions','mingrade',
+                'convlength','userconvlength','revq1','revq2','revq3','tips','tipsformat',
             'ttslanguage','enableai','expiredays','region','transcriber','multiattempts','timecreated','timemodified'
 			));
 
@@ -59,7 +60,7 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
         $attempt = new backup_nested_element('attempt', array('id'),array(
             constants::M_MODNAME, 'userid', 'type','visible','interlocutors','filename', 'transcript','jsontranscript','vtttranscript',
             'selftranscript','topicid','topicname','topicfonticon','topictargetwords','mywords','convlength',
-            'customtext1', 'customtext1format','reviewquestions', 'reviewlonganswers','reviewimprove','completedsteps',
+            'customtext1', 'customtext1format','revq1', 'revq2','revq3','completedsteps',
             'currentint1','currentint2','currentint3','currentint4',
             'timemodified','createdby','modifiedby'));
 

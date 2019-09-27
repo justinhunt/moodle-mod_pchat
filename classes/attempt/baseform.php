@@ -173,10 +173,17 @@ abstract class baseform extends \moodleform {
     }
 
     protected final function add_conversationlength_field() {
-        $options = utils::get_conversationlength_options();
-        //the size attribute doesn't work because the attributes are applied on the div container holding the select
-        $this->_form->addElement('select','convlength',get_string('convlength', constants::M_COMPONENT), $options,array("size"=>"5"));
-        $this->_form->setDefault('convlength',constants::DEF_CONVLENGTH);
+        if($this->moduleinstance->userconvlength) {
+            $options = utils::get_conversationlength_options();
+            //the size attribute doesn't work because the attributes are applied on the div container holding the select
+            $this->_form->addElement('select', 'convlength', get_string('convlength', constants::M_COMPONENT), $options,
+                    array("size" => "5"));
+            $this->_form->setDefault('convlength', $this->moduleinstance->convlength);
+        }else{
+            $this->_form->addElement('hidden','convlength');
+            $this->_form->setType('convlength',PARAM_INT);
+            $this->_form->addElement('static','convlengthtitle',get_string('convlength', constants::M_COMPONENT),get_string('xminutes', constants::M_COMPONENT, $this->moduleinstance->convlength));
+        }
     }
 
     protected final function add_targetwords_fields() {
@@ -228,7 +235,7 @@ abstract class baseform extends \moodleform {
 
     protected final function add_tips_field() {
         $this->_form->addElement('static','tips',get_string('tips', constants::M_COMPONENT),
-                get_config(constants::M_COMPONENT, 'speakingtips'),array("class"=>'mod_pchat_bordered mod_pchat_readonly'));
+                $this->moduleinstance->tips ,array("class"=>'mod_pchat_bordered mod_pchat_readonly'));
 
     }
 
@@ -335,14 +342,16 @@ abstract class baseform extends \moodleform {
     }
 
     protected final function add_selfreview_fields() {
-        $this->_form->addElement('text','reviewquestions',get_string('reviewquestions', constants::M_COMPONENT),array());
-        $this->_form->setType('reviewquestions',PARAM_TEXT);
+        $opts= array('rows'=>'5', 'cols'=>'80');
 
-        $this->_form->addElement('text','reviewlonganswers',get_string('reviewlonganswers', constants::M_COMPONENT),array());
-        $this->_form->setType('reviewlonganswers',PARAM_TEXT);
+        $this->_form->addElement('text','revq1',$this->moduleinstance->revq1,$opts);
+        $this->_form->setType('revq1',PARAM_TEXT);
 
-        $this->_form->addElement('textarea','reviewimprove',get_string('reviewimprove', constants::M_COMPONENT),array());
-        $this->_form->setType('reviewimprove',PARAM_TEXT);
+        $this->_form->addElement('text','revq2',$this->moduleinstance->revq2,$opts);
+        $this->_form->setType('revq2',PARAM_TEXT);
+
+        $this->_form->addElement('textarea','revq3',$this->moduleinstance->revq3,$opts);
+        $this->_form->setType('revq3',PARAM_TEXT);
     }
 
     protected final function add_recordingurl_field() {
