@@ -112,7 +112,7 @@ class attempt_renderer extends \plugin_renderer_base {
 
     }
 
-    function show_summary($attempt,$stats){
+    function show_summary($moduleinstance,$attempt,$stats){
         $attempt->targetwords = utils::fetch_targetwords($attempt);
         $attempt->interlocutornames = utils::fetch_interlocutor_names($attempt);
         $attempt->selftranscriptparts = utils::fetch_selftranscript_parts($attempt);
@@ -120,6 +120,12 @@ class attempt_renderer extends \plugin_renderer_base {
         $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summarychoices', $attempt);
         $tdata=array('a'=>$attempt, 's'=>$stats);
         $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summaryresults', $tdata);
+
+        $revqs=array();
+        if($moduleinstance->revq1){$revqs[] = array('q'=>$moduleinstance->revq1,'a'=>$attempt->revq1);}
+        if($moduleinstance->revq2){$revqs[] = array('q'=>$moduleinstance->revq2,'a'=>$attempt->revq2);}
+        if($moduleinstance->revq3){$revqs[] = array('q'=>$moduleinstance->revq3,'a'=>$attempt->revq3);}
+        $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summaryselfreview', array('revqs'=>$revqs));
         return $ret;
     }
 	

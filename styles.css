@@ -82,7 +82,8 @@ div.mod_pchat_mbuttons {
 	flex-grow: 1;
 	width: 50%;
 }
-.mod_pchat_summarychoices .summarybox {
+.mod_pchat_summarychoices .summarybox,
+.mod_pchat_summaryselfreview .summarybox {
 	border: 1px solid;
 	border-radius: 3px;
 	padding: 5px;
@@ -90,16 +91,20 @@ div.mod_pchat_mbuttons {
 	text-align: center;
 }
 
-.mod_pchat_summarychoices {
+.mod_pchat_summarychoices,
+.mod_pchat_summaryselfreview {
 	display: flex;
-	margin-bottom: 15px
+	margin-bottom: 15px;
 }
 
-.mod_pchat_summarychoices .summaryboxtitle {
+.mod_pchat_summarychoices .summaryboxtitle,
+.mod_pchat_summaryselfreview .summaryboxtitle {
 	background-color: aliceblue;
 	border-bottom: 1px solid;
 }
-.mod_pchat_summarychoices .summaryboxcontent {
+
+.mod_pchat_summarychoices .summaryboxcontent,
+.mod_pchat_summaryselfreview .summaryboxcontent {
     position: relative;
     top: 40%;
     -webkit-transform: translateY(-50%);
@@ -141,6 +146,10 @@ div.mod_pchat_mbuttons {
 	display: flex;
 	flex-direction: column;
 	horiz-align: right;
+}
+
+.summaryboxcontent.targetwords {
+    column-width: 150px;
 }
 
 .mod_pchat_formtitle {
@@ -664,9 +673,8 @@ button#poodllconvedit_edcancel:hover,
 	border: 1px solid #E3E4F1;
 	border-radius: 10px;
 	display: flex;
-	overflow: hidden;
+	overflow: auto;
 	resize: both;
-	/* overflow: auto; */
 }
 
 .transcriptionpreviewplayer.player_little {
@@ -800,7 +808,7 @@ button#poodllconvedit_edcancel:hover,
 }
 
 .transcriptionpreviewplayer .btn.play{background-image: url([[pix:mod_pchat|e/play-icon]]);}
-.transcriptionpreviewplayer .btn.play.active {
+.transcriptionpreviewplayer .btn.play.playing {
 	background-image: url([[pix:mod_pchat|e/pause-button]]);
 }
 .transcriptionpreviewplayer .btn.prev{

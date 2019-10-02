@@ -200,16 +200,12 @@ class utils{
     }
 
     public static function fetch_targetwords($attempt){
-        return explode(PHP_EOL,$attempt->topictargetwords);
+        $targetwords = explode(PHP_EOL,$attempt->topictargetwords);
+        $mywords = explode(PHP_EOL,$attempt->mywords);
+        $alltargetwords = array_unique(array_merge($targetwords, $mywords));
+        return $alltargetwords;
     }
 
-    public static function render_tags(){
-        $words = explode(PHP_EOL,$topic->targetwords);
-        $targetwords = '';
-        foreach($words as $word){
-            $targetwords .= '<span class="mod_pchat_targetwordtag">' . $word . '</span>';
-        }
-    }
 
     //fetch stats, one way or the other
     public static function fetch_stats($attempt) {

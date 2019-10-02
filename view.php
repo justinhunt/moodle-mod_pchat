@@ -110,7 +110,7 @@ if($start_or_continue) {
     $attempt = utils::fetch_latest_finishedattempt($moduleinstance);
     if($attempt) {
         $stats=utils::fetch_stats($attempt);
-        echo $attempt_renderer->show_summary($attempt, $stats);
+        echo $attempt_renderer->show_summary($moduleinstance,$attempt, $stats);
     }
 
     //all attempts by user table [good for debugging]

@@ -344,13 +344,17 @@ abstract class baseform extends \moodleform {
     protected final function add_selfreview_fields() {
         $opts= array('rows'=>'5', 'cols'=>'80');
 
-        $this->_form->addElement('text','revq1',$this->moduleinstance->revq1,$opts);
+
+        $this->_form->addElement('static', 'revqs' ,get_string('selfreview', constants::M_COMPONENT),$this->moduleinstance->revq1);
+        $this->_form->addElement('textarea','revq1','',$opts);
         $this->_form->setType('revq1',PARAM_TEXT);
 
-        $this->_form->addElement('text','revq2',$this->moduleinstance->revq2,$opts);
+        $this->_form->addElement('static', 'revq2text' ,'',$this->moduleinstance->revq2);
+        $this->_form->addElement('textarea','revq2','',$opts);
         $this->_form->setType('revq2',PARAM_TEXT);
 
-        $this->_form->addElement('textarea','revq3',$this->moduleinstance->revq3,$opts);
+        $this->_form->addElement('static', 'revq3text' ,'',$this->moduleinstance->revq3);
+        $this->_form->addElement('textarea','revq3','',$opts);
         $this->_form->setType('revq3',PARAM_TEXT);
     }
 

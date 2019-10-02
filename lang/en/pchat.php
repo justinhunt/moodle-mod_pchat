@@ -310,10 +310,6 @@ $string['stats_longestturn'] = 'Longest Turn Length';
 $string['stats_targetwords'] = 'Target Words';
 $string['transcripteditor']= 'Transcript Editor';
 $string['selfreview']= 'Self Review';
-
-$string['reviewimprove']= 'How can you improve next time?';
-$string['reviewquestions']= 'How many questions did you ask?';
-$string['reviewlonganswers']= 'How many long answers did you give?';
 $string['multiattempts'] = 'Allow Multiple Attempts';
 $string['multiattempts_details'] = 'If checked a student can choose to overwrite an existing attempt with a new one.';
 $string['attemptsheading']= 'Attempts';
