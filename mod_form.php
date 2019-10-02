@@ -84,11 +84,11 @@ class mod_pchat_mod_form extends moodleform_mod {
         $mform->setDefault('userconvlength',true);
 
         // Adding the revq 1 field
-        $mform->addElement('textarea', 'revq1', get_string('revq', constants::M_COMPONENT, '1'),  array('rows'=>'5', 'cols'=>'80'));
+        $mform->addElement('textarea', 'revq1', get_string('revq', constants::M_COMPONENT, '1'),  array('rows'=>'3', 'cols'=>'80'));
         $mform->setType('revq1', PARAM_TEXT);
-        $mform->addElement('textarea', 'revq2', get_string('revq', constants::M_COMPONENT, '2'),  array('rows'=>'5', 'cols'=>'80'));
+        $mform->addElement('textarea', 'revq2', get_string('revq', constants::M_COMPONENT, '2'),  array('rows'=>'3', 'cols'=>'80'));
         $mform->setType('revq2', PARAM_TEXT);
-        $mform->addElement('textarea', 'revq3', get_string('revq', constants::M_COMPONENT, '3'),  array('rows'=>'5', 'cols'=>'80'));
+        $mform->addElement('textarea', 'revq3', get_string('revq', constants::M_COMPONENT, '3'),  array('rows'=>'3', 'cols'=>'80'));
         $mform->setType('revq3', PARAM_TEXT);
 
         //add tips field

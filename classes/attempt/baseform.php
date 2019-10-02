@@ -343,19 +343,21 @@ abstract class baseform extends \moodleform {
 
     protected final function add_selfreview_fields() {
         $opts= array('rows'=>'5', 'cols'=>'80');
+        $names = array('revq1','revq2','revq3');
 
-
-        $this->_form->addElement('static', 'revqs' ,get_string('selfreview', constants::M_COMPONENT),$this->moduleinstance->revq1);
-        $this->_form->addElement('textarea','revq1','',$opts);
-        $this->_form->setType('revq1',PARAM_TEXT);
-
-        $this->_form->addElement('static', 'revq2text' ,'',$this->moduleinstance->revq2);
-        $this->_form->addElement('textarea','revq2','',$opts);
-        $this->_form->setType('revq2',PARAM_TEXT);
-
-        $this->_form->addElement('static', 'revq3text' ,'',$this->moduleinstance->revq3);
-        $this->_form->addElement('textarea','revq3','',$opts);
-        $this->_form->setType('revq3',PARAM_TEXT);
+        //header
+        $this->_form->addElement('static', 'revqs', get_string('selfreview', constants::M_COMPONENT),'');
+        //add visible review question fields, when there is a question
+        foreach($names as $name){
+            if(!empty($this->moduleinstance->{$name})) {
+                $this->_form->addElement('static', $name . 'text' ,'',$this->moduleinstance->{$name});
+                $this->_form->addElement('textarea', $name, '', $opts);
+                $this->_form->setType($name, PARAM_TEXT);
+            }else{
+                $this->_form->addElement('hidden', $name);
+                $this->_form->setType($name,PARAM_TEXT);
+            }
+        }
     }
 
     protected final function add_recordingurl_field() {

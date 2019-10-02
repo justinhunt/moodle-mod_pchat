@@ -125,7 +125,9 @@ class attempt_renderer extends \plugin_renderer_base {
         if($moduleinstance->revq1){$revqs[] = array('q'=>$moduleinstance->revq1,'a'=>$attempt->revq1);}
         if($moduleinstance->revq2){$revqs[] = array('q'=>$moduleinstance->revq2,'a'=>$attempt->revq2);}
         if($moduleinstance->revq3){$revqs[] = array('q'=>$moduleinstance->revq3,'a'=>$attempt->revq3);}
-        $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summaryselfreview', array('revqs'=>$revqs));
+        if(count($revqs)>0) {
+            $ret .= $this->output->render_from_template(constants::M_COMPONENT . '/summaryselfreview', array('revqs' => $revqs));
+        }
         return $ret;
     }
 	

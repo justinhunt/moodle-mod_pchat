@@ -888,8 +888,8 @@ button#poodllconvedit_edcancel:hover,
 .mod_pchat_togglebuttongroup .fonttoggleitem {
 	display: block;
 }
-.mod_pchat_togglebuttongroup .btn-secondary.usertoggleitem.active,
-.mod_pchat_togglebuttongroup .btn-secondary.fonttoggleitem.active {
+.mod_pchat_togglebuttongroup .btn.btn-secondary.usertoggleitem.active,
+.mod_pchat_togglebuttongroup .btn.btn-secondary.fonttoggleitem.active {
 	background-color: blue;
 	color: white;
 }

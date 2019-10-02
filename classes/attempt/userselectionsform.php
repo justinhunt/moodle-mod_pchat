@@ -40,9 +40,6 @@ class userselectionsform extends baseform
 
         //Conversation length
         $this->add_conversationlength_field();
-
-        //add tips
-        $this->add_tips_field();
     }
     public function custom_definition_after_data() {
 
