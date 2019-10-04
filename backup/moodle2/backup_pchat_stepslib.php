@@ -70,6 +70,14 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
                 constants::M_MODNAME, 'userid', 'attemptid','turns','words','avturn', 'longestturn','targetwords','totaltargetwords',
                 'questions', 'timemodified','createdby','modifiedby'));
 
+        //airesults
+        $airesults = new backup_nested_element('airesults');
+        $airesult = new backup_nested_element('airesult', array('id'),array(
+                'courseid', 'moduleid', 'attemptid','transcript','passage','jsontranscript', 'wpm','accuracy','sessionscore',
+                'sessiontime', 'sessionerrors', 'sessionmatches','sessionendword','errorcount',
+                'timecreated', 'timemodified'));
+
+
         //topics
         $topics = new backup_nested_element('topics');
         $topic = new backup_nested_element('topic', array('id'),array(
@@ -102,6 +110,10 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
         $attempt->add_child($attemptstats);
         $attemptstats->add_child($attemptstat);
 
+        //airesults
+        $attempt->add_child($airesults);
+        $airesults->add_child($airesult);
+
 
         // Define sources.
         $oneactivity->set_source_table(constants::M_TABLE, array('id' => backup::VAR_ACTIVITYID));
@@ -123,6 +135,9 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
             $attemptstat->set_source_table(constants::M_STATSTABLE,
                     array('attemptid' => backup::VAR_PARENTID,
                             constants::M_MODNAME => backup::VAR_ACTIVITYID));
+            $airesult->set_source_table(constants::M_AITABLE,
+                    array('attemptid' => backup::VAR_PARENTID,
+                            'moduleid' => backup::VAR_ACTIVITYID));
         }
 
         // Define id annotations.

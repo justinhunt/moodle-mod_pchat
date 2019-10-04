@@ -72,8 +72,8 @@ abstract class baseform extends \moodleform {
      * @var array
      */
     protected $token = 'notoken';
-	
-	
+
+
     /**
      * True if this is a standard item of false if it does something special.
      * items are standard items
@@ -91,7 +91,7 @@ abstract class baseform extends \moodleform {
      * Item types can override this to add any custom elements to
      * the basic form that they want
      */
-   public function custom_definition_after_data() {}
+    public function custom_definition_after_data() {}
 
     /**
      * Used to determine if this is a standard item or a special item
@@ -113,8 +113,8 @@ abstract class baseform extends \moodleform {
         $this->moduleinstance = $this->_customdata['moduleinstance'];
         $this->cm = $this->_customdata['moduleinstance'];
 
-	
-       // $mform->addElement('header', 'typeheading', get_string('createattempt', constants::M_COMPONENT, get_string($this->typestring, constants::M_COMPONENT)));
+
+        // $mform->addElement('header', 'typeheading', get_string('createattempt', constants::M_COMPONENT, get_string($this->typestring, constants::M_COMPONENT)));
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -134,7 +134,7 @@ abstract class baseform extends \moodleform {
 
         $this->custom_definition();
 
-		//add the action buttons
+        //add the action buttons
         $this->add_action_buttons(get_string('cancel'), get_string('saveitem', constants::M_COMPONENT));
 
     }
@@ -291,8 +291,8 @@ abstract class baseform extends \moodleform {
 
     protected final function add_userselector_field($name,$label){
         $options = [
-                //'ajax' => 'mod_pchat/form-user-selector',
-            'multiple'=>true
+            //'ajax' => 'mod_pchat/form-user-selector',
+                'multiple'=>true
         ];
 
         $selectusers=array();
@@ -323,20 +323,48 @@ abstract class baseform extends \moodleform {
 
     }
 
+    protected final function add_selfreviewsummary($name, $label) {
+        global $OUTPUT;
+        $tdata=array();
+        $tdata['markedpassage']=$this->fetch_markedpassage();
+        $tdata['stats']=$this->fetch_stats();
+        $selfreviewsummary = $OUTPUT->render_from_template( constants::M_COMPONENT . '/selfreviewsummary', $tdata);
+        $this->_form->addElement('static', 'combo_' . $name, $label, $selfreviewsummary);
+
+    }
+
     protected final function add_comparison_field($name, $label) {
         global $OUTPUT, $PAGE, $CFG;
         $tdata=array();
         $tdata['selftranscript']=$this->selftranscript;
         $tdata['autotranscript']=$this->autotranscript;
-        $transcriptscompare = $OUTPUT->render_from_template( constants::M_COMPONENT . '/transcriptscompare', $tdata);
+        $transcriptscompare = $OUTPUT->render_from_template( constants::M_COMPONENT . '/selfreviewtranscripts', $tdata);
 
         $this->_form->addElement('static', 'combo_' . $name, $label, $transcriptscompare);
 
     }
 
+    protected final function fetch_markedpassage() {
+        $markedpassage = \mod_pchat\aitranscriptutils::render_passage($this->selftranscript);
+        $js_opts_html = \mod_pchat\aitranscriptutils::prepare_passage_amd($this->attempt, $this->aidata);
+        return ($markedpassage . $js_opts_html);
+    }
+
+    protected final function add_markedpassage_field($name, $label) {
+        global $PAGE;
+        $markedpassage = $this->fetch_markedpassage();
+        $this->_form->addElement('static', 'combo_' . $name, $label, $markedpassage);
+    }
+
+    protected final function fetch_stats() {
+        global $OUTPUT;
+        $stats = $OUTPUT->render_from_template( constants::M_COMPONENT . '/summarystats', array('s'=>$this->stats));
+        return $stats;
+    }
+
     protected final function add_stats_field($name, $label) {
-        global $OUTPUT, $PAGE, $CFG;
-        $stats = $OUTPUT->render_from_template( constants::M_COMPONENT . '/transcriptstats', $this->stats);
+        global $OUTPUT;
+        $stats = $this->fetch_stats();
         $this->_form->addElement('static', 'combo_' . $name, $label, $stats);
 
     }
@@ -346,7 +374,8 @@ abstract class baseform extends \moodleform {
         $names = array('revq1','revq2','revq3');
 
         //header
-        $this->_form->addElement('static', 'revqs', get_string('selfreview', constants::M_COMPONENT),'');
+        // $this->_form->addElement('static', 'revqs', get_string('selfreview', constants::M_COMPONENT),'');
+
         //add visible review question fields, when there is a question
         foreach($names as $name){
             if(!empty($this->moduleinstance->{$name})) {
@@ -388,11 +417,11 @@ abstract class baseform extends \moodleform {
             $recordingorplayerfield->setValue($recorder_html);
         }
 
-	}
+    }
 
     protected final function add_audio_player($name, $label = null, $required = false) {
-            $player_html = "<audio src='" . $this->filename . "' controls></audio>";
-            $this->_form->addElement('static', $name, $label, $player_html, '');
+        $player_html = "<audio src='" . $this->filename . "' controls></audio>";
+        $this->_form->addElement('static', $name, $label, $player_html, '');
 
     }
 

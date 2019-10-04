@@ -132,6 +132,11 @@ div.mod_pchat_mbuttons {
 	width: 50%;
 }
 
+.mod_pchat_grading_passagecont {
+    padding: 5px;
+    border: darkgrey solid 1px;
+}
+
 .mod_pchat_summarytranscript .summarytranscriptpart {
 	background-color: lightgreen;
 	padding: 5px;
@@ -146,6 +151,10 @@ div.mod_pchat_mbuttons {
 	display: flex;
 	flex-direction: column;
 	horiz-align: right;
+}
+.mod_pchat_summarytranscriptplaceholder {
+    display: block;
+    padding: 5px;
 }
 
 .summaryboxcontent.targetwords {
@@ -892,4 +901,58 @@ button#poodllconvedit_edcancel:hover,
 .mod_pchat_togglebuttongroup .btn.btn-secondary.fonttoggleitem.active {
 	background-color: blue;
 	color: white;
+}
+
+
+.mod_pchat_grading_badword {
+    /*
+    color: red;
+    background-color: #ffcaca;
+    padding: 5px;
+    border-radius: 5px 5px 5px;
+    border: 1px solid red;
+    position: relative;
+    */
+    text-decoration: underline #0000FF;
+    font-weight: bold;
+}
+
+.mod_pchat_grading_endspace {
+    /*
+    color: blue;
+    background-color: #cacaff;
+    padding: 5px;
+    border-radius: 5px 5px 5px;
+    border: 1px solid blue;
+    position: relative;
+    */
+}
+
+.mod_pchat_grading_passagespace {
+   /* padding: 2px; */
+}
+
+div.mod_pchat_postattempt .mod_pchat_grading_unreadword {
+    text-decoration: none;
+    background-color: lightgrey;
+}
+
+div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
+    background-color: lightgrey;
+    padding: 0px 2px;
+}
+
+.mod_pchat_grading_unreadword {
+    font-style: italic;
+    text-decoration: underline;
+}
+
+.mod_pchat_grading_passageword.mod_pchat_aiunmatched {
+    /*background-color: lightgrey;*/
+}
+
+.mod_pchat_grading_passagespace.mod_pchat_aiunmatched {
+    /*background-color: lightgrey;*/
+    text-decoration: underline #0000FF;
+    font-weight: bold;
 }

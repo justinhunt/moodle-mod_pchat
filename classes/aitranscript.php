@@ -15,7 +15,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class aitranscript
 {
-    function __construct($attemptid, $modulecontextid=0, $passage=false, $jsontranscript=false) {
+    function __construct($attemptid, $modulecontextid=0, $passage=false,$transcript=false, $jsontranscript=false) {
         global $DB;
         $this->attemptid = $attemptid;
         $this->modulecontextid = $modulecontextid;
@@ -27,8 +27,8 @@ class aitranscript
             if ($record) {
                 $this->recordid = $record->id;
                 $this->aidata = $record;
-            } elseif($passage && $jsontranscript) {
-                $this->recordid = self::create_record($this->attemptdata,$passage,$jsontranscript);
+            } elseif($passage && $jsontranscript && $transcript) {
+                $this->recordid = self::create_record($this->attemptdata,$this->activitydata->course,$passage,$transcript,$jsontranscript);
                 if ($this->recordid) {
                     $record = $DB->get_record(constants::M_AITABLE, array('attemptid' => $attemptid));
                     $this->aidata = $record;
@@ -42,17 +42,18 @@ class aitranscript
     }
 
     //recalculate AI transcript data
-    public function recalculate($passage,$jsontranscript){
+    public function recalculate($passage,$transcript,$jsontranscript){
         global $DB;
         $data = new \stdClass();
         $data->id= $this->recordid;
         $data->passage=$passage;
-        $data->fulltranscript= $jsontranscript;
+        $data->transcript= $transcript;
+        $data->jsontranscript= $jsontranscript;
         $data->timemodified=time();
         $ret = $DB->update_record(constants::M_AITABLE,$data);
         if($ret){
             $this->aidata->passage = $passage;
-            $this->aidata->fulltranscript = $jsontranscript;
+            $this->aidata->jsontranscript = $jsontranscript;
             $this->do_diff();
             $this->send_to_gradebook();
         }
@@ -108,7 +109,7 @@ class aitranscript
 
     //do we have the AI transcripts
    public function has_transcripts(){
-        return property_exists($this->aidata,'fulltranscript') && !empty($this->aidata->fulltranscript);
+        return property_exists($this->aidata,'jsontranscript') && !empty($this->aidata->jsontranscript);
     }
 
     //do we have the AI at all
@@ -118,19 +119,20 @@ class aitranscript
 
     //add an entry for the AI data for this attempt in the database
     //we will fill it up with data shortly
-   public static function create_record($attemptdata,$passage, $jsontranscript){
+   public static function create_record($attemptdata,$courseid,$passage, $transcript, $jsontranscript){
         global $DB;
         $data = new \stdClass();
         $data->attemptid=$attemptdata->id;
-        $data->courseid=$attemptdata->courseid;
+        $data->courseid=$courseid;
         $data->moduleid=$attemptdata->{constants::M_AI_PARENTFIELDNAME};
         $data->sessiontime=isset($attemptdata->sessiontime) ?
                 $attemptdata->sessiontime:$attemptdata->{constants::M_AI_TIMELIMITFIELDNAME};
         $data->passage=$passage;
-        $data->transcript='';
+        $data->transcript=$transcript;
         $data->sessionerrors='';
+       $data->sessionmatches='';
         $data->errorcount=0;
-        $data->fulltranscript= $jsontranscript;
+        $data->jsontranscript= $jsontranscript;
         $data->timecreated=time();
         $data->timemodified=time();
         $recordid = $DB->insert_record(constants::M_AITABLE,$data);
@@ -144,30 +146,30 @@ class aitranscript
         global $DB;
         $success = false;
         $transcript= false;
-        $fulltranscript=false;
+        $jsontranscript=false;
         if($this->attemptdata->filename && strpos($this->attemptdata->filename,'https')===0){
             $transcript = utils::curl_fetch($this->attemptdata->filename . '.txt');
             if(strpos($transcript,"<Error><Code>AccessDenied</Code>")>0){
                 return false;
             }
             //we should actually just determine if its fast or normal transcoding here
-            $fulltranscript = utils::curl_fetch($this->attemptdata->filename . '.json');
-            if(!utils::is_json($fulltranscript)){
-                $fulltranscript = utils::curl_fetch($this->attemptdata->filename . '.gjson');
+            $jsontranscript = utils::curl_fetch($this->attemptdata->filename . '.json');
+            if(!utils::is_json($jsontranscript)){
+                $jsontranscript = utils::curl_fetch($this->attemptdata->filename . '.gjson');
             }
         }
-        if(!utils::is_json($fulltranscript)){
-            $fulltranscript='';
+        if(!utils::is_json($jsontranscript)){
+            $jsontranscript='';
         }
-        if($fulltranscript ) {
+        if($jsontranscript ) {
             $record = new \stdClass();
             $record->id = $this->recordid;
             $record->transcript = diff::cleanText($transcript);
-            $record->fulltranscript = $fulltranscript;
+            $record->jsontranscript = $jsontranscript;
             $success = $DB->update_record(constants::M_AITABLE, $record);
 
             $this->aidata->transcript = $transcript;
-            $this->aidata->fulltranscript =  $fulltranscript;
+            $this->aidata->jsontranscript =  $jsontranscript;
         }
         return $success;
     }
@@ -252,33 +254,18 @@ class aitranscript
 
         //also  capture match information for debugging and audio point matching
        //we can only map transcript to audio from match data
-       $matches = aitranscriptutils::fetch_audio_points($this->aidata->fulltranscript, $matches,$alternatives);
+       $matches = aitranscriptutils::fetch_audio_points($this->aidata->jsontranscript, $matches,$alternatives);
        $sessionmatches = json_encode($matches);
 
        //session time
-       //if we have a human eval sessiontime, use that.
-        $sessiontime = $this->attemptdata->sessiontime;
-        if(!$sessiontime){
-            //else if we have a time limit and not allowing early exit, we use the time limit
-            if($this->activitydata->timelimit > 0 && !$this->activitydata->allowearlyexit ){
-                $sessiontime = $this->activitydata->timelimit;
+       //in pchat we do not collect session time from a manual grading session, so its always false.
+        $sessiontime = aitranscriptutils::fetch_duration_from_transcript($this->aidata->jsontranscript);
+        if($sessiontime<1) {
+                //this is a guess now, We just don't know it. And WPM is not an important metric here.
+                $sessiontime = 60;
+         }
 
-                //else if we have stored an ai data sessiontime we use that
-                //(currently disabling this to force resync on recalc grades)
-            }elseif(false && $this->aidata->sessiontime) {
-                $sessiontime = $this->aidata->sessiontime;
 
-                //else we get it from transcript (it will be stored as aidata sessiontime for next time)
-            }else {
-                //we get the end_time attribute of the final recognised word in the fulltranscript
-                $sessiontime = aitranscriptutils::fetch_duration_from_transcript($this->aidata->fulltranscript);
-
-                if($sessiontime<1) {
-                    //this is a guess now, We just don't know it. And should not really get here.
-                    $sessiontime = 60;
-                }
-            }
-        }
 
         $scores = aitranscriptutils::processscores($sessiontime,
             $sessionendword,

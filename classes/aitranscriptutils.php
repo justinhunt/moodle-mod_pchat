@@ -87,29 +87,29 @@ class aitranscriptutils{
         //return nl2br($passage);
     }
 
-    public static function fetch_duration_from_transcript($fulltranscript) {
+    public static function fetch_duration_from_transcript($jsontranscript) {
         //if we do not have the full transcript return 0
-        if(!$fulltranscript || empty($fulltranscript)){
+        if(!$jsontranscript || empty($jsontranscript)){
             return 0;
         }
 
-        $transcript =  json_decode($fulltranscript);
+        $transcript =  json_decode($jsontranscript);
         if(isset($transcript->results)){
-            $duration = self::fetch_duration_from_transcript_json($fulltranscript);
+            $duration = self::fetch_duration_from_transcript_json($jsontranscript);
         }else{
-            $duration = self::fetch_duration_from_transcript_gjson($fulltranscript);
+            $duration = self::fetch_duration_from_transcript_gjson($jsontranscript);
         }
         return $duration;
 
     }
 
-    public static function fetch_duration_from_transcript_json($fulltranscript){
+    public static function fetch_duration_from_transcript_json($jsontranscript){
         //if we do not have the full transcript return 0
-        if(!$fulltranscript || empty($fulltranscript)){
+        if(!$jsontranscript || empty($jsontranscript)){
             return 0;
         }
 
-        $transcript = json_decode($fulltranscript);
+        $transcript = json_decode($jsontranscript);
         $titems=$transcript->results->items;
         $twords=array();
         foreach($titems as $titem){
@@ -125,13 +125,13 @@ class aitranscriptutils{
         }
     }
 
-    public static function fetch_duration_from_transcript_gjson($fulltranscript){
+    public static function fetch_duration_from_transcript_gjson($jsontranscript){
         //if we do not have the full transcript return 0
-        if(!$fulltranscript || empty($fulltranscript)){
+        if(!$jsontranscript || empty($jsontranscript)){
             return 0;
         }
 
-        $transcript =  json_decode($fulltranscript);
+        $transcript =  json_decode($jsontranscript);
         $twords=[];
         //create a big array of 'words' from gjson sentences
         foreach($transcript as $sentence) {
@@ -149,18 +149,18 @@ class aitranscriptutils{
     }
 
 
-    public static function fetch_audio_points($fulltranscript,$matches,$alternatives) {
+    public static function fetch_audio_points($jsontranscript,$matches,$alternatives) {
 
-        //first check if we have a fulltranscript (we might only have a transcript in some cases)
+        //first check if we have a jsontranscript (we might only have a transcript in some cases)
         //if not we just return dummy audio points. Que sera sera
-        if (!self::is_json($fulltranscript)) {
+        if (!self::is_json($jsontranscript)) {
             foreach ($matches as $matchitem) {
                 $matchitem->audiostart = 0;
                 $matchitem->audioend = 0;
             }
             return $matches;
         }
-        $transcript =  json_decode($fulltranscript);
+        $transcript =  json_decode($jsontranscript);
         if(isset($transcript->results)){
             $matches = self::fetch_audio_points_json($transcript,$matches,$alternatives);
         }else{
@@ -270,7 +270,12 @@ class aitranscriptutils{
 
         ////wpm score
         $wpmerrors = $errorcount;
-        switch($activitydata->accadjustmethod){
+        //accuracy adjust is a ReadaLoud feature. We *might* use here. But not currently
+        $accadjustmethod=constants::ACCMETHOD_NONE;
+        //target WPM is a ReadaLoud feature. We probably won't use it here.
+        $targetwpm = 100;
+
+        switch($accadjustmethod){
 
             case constants::ACCMETHOD_FIXED:
                 $wpmerrors = $wpmerrors - $activitydata->accadjust;
@@ -307,7 +312,6 @@ class aitranscriptutils{
 
         //sessionscore
         $usewpmscore = $wpmscore;
-        $targetwpm = $activitydata->targetwpm;
         if($usewpmscore > $targetwpm){
             $usewpmscore = $targetwpm;
         }
@@ -509,6 +513,164 @@ class aitranscriptutils{
             constants::ACCMETHOD_FIXED  => get_string("accmethod_fixed",constants::M_COMPONENT),
             constants::ACCMETHOD_NOERRORS  => get_string("accmethod_noerrors",constants::M_COMPONENT),
         );
+    }
+
+    public static function render_passage($passage) {
+        // load the HTML document
+        $doc = new \DOMDocument;
+        // it will assume ISO-8859-1  encoding, so we need to hint it:
+        //see: http://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
+        @$doc->loadHTML(mb_convert_encoding($passage, 'HTML-ENTITIES', 'UTF-8'));
+
+        // select all the text nodes
+        $xpath = new \DOMXPath($doc);
+        $nodes = $xpath->query('//text()');
+        //init the text count
+        $wordcount = 0;
+        foreach ($nodes as $node) {
+            $trimmednode = trim($node->nodeValue);
+            if (empty($trimmednode)) {
+                continue;
+            }
+
+            //explode missed new lines that had been copied and pasted. eg A[newline]B was not split and was one word
+            //This resulted in ai selected error words, having different index to their passage text counterpart
+            $seperator = ' ';
+            //$words = explode($seperator, $node->nodeValue);
+
+            $nodevalue = self::lines_to_brs($node->nodeValue, $seperator);
+            $words = preg_split('/\s+/', $nodevalue);
+
+            foreach ($words as $word) {
+                //if its a new line character from lines_to_brs we add it, but not as a word
+                if ($word == '<br>') {
+                    $newnode = $doc->createElement('br', $word);
+                    $node->parentNode->appendChild($newnode);
+                    continue;
+                }
+
+                $wordcount++;
+                $newnode = $doc->createElement('span', $word);
+                $spacenode = $doc->createElement('span', $seperator);
+                //$newnode->appendChild($spacenode);
+                //print_r($newnode);
+                $newnode->setAttribute('id', constants::M_CLASS . '_grading_passageword_' . $wordcount);
+                $newnode->setAttribute('data-wordnumber', $wordcount);
+                $newnode->setAttribute('class', constants::M_CLASS . '_grading_passageword');
+                $spacenode->setAttribute('class', constants::M_CLASS . '_grading_passagespace');
+                $spacenode->setAttribute('data-wordnumber', $wordcount);
+                $spacenode->setAttribute('id', constants::M_CLASS . '_grading_passagespace_' . $wordcount);
+                $node->parentNode->appendChild($newnode);
+                $node->parentNode->appendChild($spacenode);
+                $newnode = $doc->createElement('span', $word);
+            }
+            $node->nodeValue = "";
+        }
+
+        $usepassage = $doc->saveHTML();
+        //remove container 'p' tags, they mess up formatting in pchat
+        $usepassage= str_replace('<p>','',$usepassage);
+        $usepassage= str_replace('</p>','',$usepassage);
+
+        $ret = \html_writer::div($usepassage, constants::M_CLASS . '_grading_passagecont ' . constants::M_CLASS . '_summarytranscriptplaceholder');
+        return $ret;
+    }
+
+    public static function prepare_turn_markers($attempt){
+        $turns = $attempt->selftranscript;
+        if(empty($turns) || !self::is_json($turns)){
+            return [];
+        }else{
+            $turns = json_decode($turns);
+        }
+
+        $markers = array();
+        $nextstart=1;
+        foreach ($turns as $turn){
+            $wordcount = self::count_turn_words($turn->part);
+            if($wordcount) {
+                $turnend = $nextstart + $wordcount - 1;
+                $markers[] = ['start' => $nextstart, 'end' => $turnend];
+                $nextstart = $turnend+1;
+            }
+        }
+        return $markers;
+    }
+
+    /*
+     * This function is v similar to render_passage because we need to have the same word count as render_passage would
+     * for markup to be successful.
+     *
+     * TODO: remove the redundancy here with a helper function
+     */
+    public static function count_turn_words($turntext){
+        // load the HTML document
+        $doc = new \DOMDocument;
+        // it will assume ISO-8859-1  encoding, so we need to hint it:
+        //see: http://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
+        @$doc->loadHTML(mb_convert_encoding($turntext, 'HTML-ENTITIES', 'UTF-8'));
+
+        // select all the text nodes
+        $xpath = new \DOMXPath($doc);
+        $nodes = $xpath->query('//text()');
+        //init the text count
+        $wordcount = 0;
+        foreach ($nodes as $node) {
+            $trimmednode = trim($node->nodeValue);
+            if (empty($trimmednode)) {
+                continue;
+            }
+
+            //explode missed new lines that had been copied and pasted. eg A[newline]B was not split and was one word
+            //This resulted in ai selected error words, having different index to their passage text counterpart
+            $seperator = ' ';
+            //$words = explode($seperator, $node->nodeValue);
+
+            $nodevalue = self::lines_to_brs($node->nodeValue, $seperator);
+            $words = preg_split('/\s+/', $nodevalue);
+
+            foreach ($words as $word) {
+                //if its a new line character from lines_to_brs we add it, but not as a word
+                if ($word == '<br>') {
+                    $newnode = $doc->createElement('br', $word);
+                    $node->parentNode->appendChild($newnode);
+                    continue;
+                }
+
+                $wordcount++;
+            }
+            $node->nodeValue = "";
+        }
+        return $wordcount;
+    }
+
+    public static function prepare_passage_amd($attempt, $aidata) {
+        global $PAGE;
+
+        //here we set up any info we need to pass into javascript
+        $passageopts = Array();
+        $passageopts['sesskey'] = sesskey();
+        $passageopts['activityid'] = $attempt->pchat;
+        $passageopts['attemptid'] = $attempt->id;
+        $passageopts['sessiontime'] = $aidata->sessiontime;
+        $passageopts['sessionerrors'] = $aidata->sessionerrors;
+        $passageopts['sessionendword'] = $aidata->sessionendword;
+        $passageopts['sessionmatches'] = $aidata->sessionmatches;
+        $passageopts['aidata'] = $aidata;
+        $passageopts['turns'] = self::prepare_turn_markers($attempt);
+        $passageopts['opts_id'] = 'mod_pchat_passageopts';
+
+
+
+        $jsonstring = json_encode($passageopts);
+        $opts_html =
+                \html_writer::tag('input', '', array('id' => $passageopts['opts_id'], 'type' => 'hidden', 'value' => $jsonstring));
+        $PAGE->requires->js_call_amd("mod_pchat/passagemarkup", 'init', array(array('id' => $passageopts['opts_id'])));
+        $PAGE->requires->strings_for_js(array('transcript'),
+                'mod_pchat');
+
+        //these need to be returned and echo'ed to the page
+        return $opts_html;
     }
 
 }

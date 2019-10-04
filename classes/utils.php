@@ -119,6 +119,11 @@ class utils{
     public static function retrieve_transcripts($attempt){
         global $DB;
 
+        //if the audio filename is empty or wrong, its hopeless ...just return false
+        if(!$attempt->filename || empty($attempt->filename)){
+            return false;
+        }
+
         $jsontranscripturl = $attempt->filename . '.json';
         $vtttranscripturl = $attempt->filename . '.vtt';
         $transcripturl = $attempt->filename . '.txt';
@@ -261,13 +266,13 @@ class utils{
 
         $transcriptarray=json_decode($usetranscript);
         $totalturnlengths=0;
-        $fulltranscript = '';
+        $jsontranscript = '';
 
         foreach($transcriptarray as $turn){
             $part = $turn->part;
             $wordcount = str_word_count($part,0);
             if($wordcount===0){continue;}
-            $fulltranscript .= $turn->part . ' ' ;
+            $jsontranscript .= $turn->part . ' ' ;
             $stats->turns++;
             $stats->words+= $wordcount;
             $totalturnlengths += $wordcount;
@@ -284,7 +289,7 @@ class utils{
         $stats->totaltargetwords = count($targetwords);
 
 
-        $searchpassage = strtolower($fulltranscript);
+        $searchpassage = strtolower($jsontranscript);
         foreach($targetwords as $theword){
             $searchword = self::cleanText($theword);
             if(empty($searchword) || empty($searchpassage)){
@@ -295,6 +300,21 @@ class utils{
             if($usecount){$stats->targetwords++;}
         }
         return $stats;
+    }
+
+    //clear AI data
+    // we might do this if the user re-records
+    public static function clear_ai_data($activityid, $attemptid){
+        global $DB;
+        $record = new \stdClass();
+        $record->id=$attemptid;
+        $record->transcript='';
+        $record->jsontranscript='';
+        $record->vtttranscript='';
+        //Remove AI data from attempts table
+        $DB->update_record(constants::M_ATTEMPTSTABLE,$record);
+        //Delete AI record
+        $DB->delete_records(constants::M_AITABLE,array('attemptid'=>$attemptid, 'moduleid'=>$activityid));
     }
 
     //register an adhoc task to pick up transcripts
@@ -507,8 +527,8 @@ class utils{
         return $token;
     }
 
-    public static function fetch_duration_from_transcript($fulltranscript){
-        $transcript = json_decode($fulltranscript);
+    public static function fetch_duration_from_transcript($jsontranscript){
+        $transcript = json_decode($jsontranscript);
         $titems=$transcript->results->items;
         $twords=array();
         foreach($titems as $titem){

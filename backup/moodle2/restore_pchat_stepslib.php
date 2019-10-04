@@ -64,9 +64,12 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
         // XML interesting paths - user data
         ////////////////////////////////////////////////////////////////////////
         $attempts = new restore_path_element('attempts', '/activity/pchat/attempts/attempt');
-        $attemptstats = new restore_path_element('attemptstats', '/activity/pchat/attemptstat/attemptstats');
+        $attemptstats = new restore_path_element('attemptstats', '/activity/pchat/attempts/attempt/attemptstats/attemptstat');
+        $airesults = new restore_path_element('airesults', '/activity/pchat/attempts/attempt/airesults/airesult');
         $paths[] = $attempts;
         $paths[] = $attemptstats;
+        $paths[] = $airesults;
+
 
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
@@ -116,7 +119,21 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
 
         $data->{constants::M_MODNAME} = $this->get_new_parentid(constants::M_MODNAME);
         $data->attemptid = $this->get_new_parentid('attempts');
-        $newid = $DB->insert_record(constants::M_ATTEMPTSTABLE, $data);
+        $newid = $DB->insert_record(constants::M_STATSTABLE, $data);
+    }
+
+    protected function process_airesults($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
+
+
+        $data->moduleid = $this->get_new_parentid(constants::M_MODNAME);
+        $data->attemptid = $this->get_new_parentid('attempts');
+        $newid = $DB->insert_record(constants::M_AITABLE, $data);
     }
 
     protected function process_topics($data) {

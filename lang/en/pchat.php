@@ -159,7 +159,7 @@ $string['privacy:metadata:filename']='File urls of submitted recordings.';
 $string['privacy:metadata:timemodified']='The last time attempt was modified for the attempt';
 $string['privacy:metadata:attempttable']='Stores the scores and other user data associated with a P-CHAT attempt.';
 $string['privacy:metadata:transcriptpurpose']='The recording short transcripts.';
-$string['privacy:metadata:fulltranscriptpurpose']='The full transcripts of recordings.';
+$string['privacy:metadata:jsontranscriptpurpose']='The full transcripts of recordings.';
 $string['privacy:metadata:cloudpoodllcom:userid']='The P-CHAT plugin includes the moodle userid in the urls of recordings and transcripts';
 $string['privacy:metadata:cloudpoodllcom']='The P-CHAT plugin stores recordings in AWS S3 buckets via cloud.poodll.com.';
 

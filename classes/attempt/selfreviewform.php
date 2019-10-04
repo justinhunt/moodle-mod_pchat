@@ -19,9 +19,16 @@ class selfreviewform extends baseform
         $this->moduleinstance = $this->_customdata['moduleinstance'];
         $this->selftranscript = $this->_customdata['selftranscript'];
         $this->autotranscript = $this->_customdata['autotranscript'];
+        $this->attempt = $this->_customdata['attempt'];
+        $this->aidata = $this->_customdata['aidata'];
         $this->stats = $this->_customdata['stats'];
-        $this->add_comparison_field('comparetranscripts',get_string('transcriptscompare',constants::M_COMPONENT));
-        $this->add_stats_field('stats',get_string('stats',constants::M_COMPONENT));
+        if($this->aidata){
+            $this->add_selfreviewsummary('comparetranscripts','');
+            //$this->add_markedpassage_field('comparetranscripts',get_string('transcriptscompare',constants::M_COMPONENT));
+        }else{
+            $this->add_comparison_field('comparetranscripts',get_string('transcriptscompare',constants::M_COMPONENT));
+            $this->add_stats_field('stats',get_string('stats',constants::M_COMPONENT));
+        }
         $this->add_selfreview_fields();
 
     }

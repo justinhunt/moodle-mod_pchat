@@ -56,6 +56,10 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('course');
 
+//Set up the attempt type specific parts of the form data
+$renderer = $PAGE->get_renderer('mod_pchat');
+$attempt_renderer = $PAGE->get_renderer('mod_pchat','attempt');
+
 //are we in new or edit mode?
 $attempt=false;
 if ($attemptid) {
@@ -79,9 +83,6 @@ $topichelper=false;
 //handle delete actions
 if($action == 'confirmdelete'){
     $usecount = $DB->count_records(constants::M_ATTEMPTSTABLE,array(constants::M_MODNAME =>$cm->instance));
-
-    $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
-    $attempt_renderer = $PAGE->get_renderer(constants::M_COMPONENT,'attempt');
     echo $renderer->header($moduleinstance, $cm, 'attempts', null, get_string('confirmattemptdeletetitle', constants::M_COMPONENT));
     echo $attempt_renderer->confirm(get_string("confirmattemptdelete",constants::M_COMPONENT),
             new moodle_url('/mod/pchat/attempt/manageattempts.php', array('action'=>'delete','id'=>$cm->id,'attemptid'=>$attemptid)),
@@ -99,12 +100,13 @@ if($action == 'confirmdelete'){
 $siteconfig = get_config(constants::M_COMPONENT);
 $token= utils::fetch_token($siteconfig->apiuser,$siteconfig->apisecret);
 
+
 //get the mform for our attempt
 switch($type){
 
     case constants::STEP_AUDIORECORDING:
         $targetwords = $attempt ? $attempt->topictargetwords : '';
-        $targetwords .= $attempt ? PHP_EOL . $attempt->mywords : '';
+        $targetwords .= $attempt ? PHP_EOL . trim($attempt->mywords) : '';
         $mform = new \mod_pchat\attempt\audiorecordingform(null,
                 array('moduleinstance'=>$moduleinstance,
                         'token'=>$token,
@@ -145,30 +147,42 @@ switch($type){
         $selftranscript='';
         $autotranscript='';
         $stats = false;
+        $attempt_with_transcripts = false;
+        $aidata = false;
         if($attempt){
             if(!empty($attempt->selftranscript)){
                 $selftranscript=utils::extract_simple_transcript($attempt->selftranscript);
             }
             //try to pull transcripts if we have none. Why wait for cron?
-            if(empty($attempt->transcript)){
+            $hastranscripts = !empty($attempt->jsontranscript);
+            if(!$hastranscripts){
                 $attempt_with_transcripts = utils::retrieve_transcripts($attempt);
-                if($attempt_with_transcripts && !empty($selftranscript)){
+                $hastranscripts = $attempt_with_transcripts !==false;
+                if($hastranscripts && !empty($selftranscript)){
                     $autotranscript=$attempt_with_transcripts->transcript;
                     $aitranscript = new \mod_pchat\aitranscript($attempt_with_transcripts->id,
                             $context->id, $selftranscript,
+                            $attempt_with_transcripts->transcript,
                             $attempt_with_transcripts->jsontranscript);
+                    $aidata = $aitranscript->aidata;
                 }
             }else{
                 $autotranscript=$attempt->transcript;
             }
-            if(empty($autotranscript)){$autotranscript=get_string('transcriptnotready',constants::M_COMPONENT);}
+            if(!$hastranscripts ){$autotranscript=get_string('transcriptnotready',constants::M_COMPONENT);}
 
             $stats =utils::fetch_stats($attempt);
+            if(!$aidata){
+                $aidata= $DB->get_record(constants::M_AITABLE,array('attemptid'=>$attempt->id));
+            }
         }
+
         $mform = new \mod_pchat\attempt\selfreviewform(null,
                 array('moduleinstance'=>$moduleinstance,
                         'selftranscript'=>$selftranscript,
                         'autotranscript'=>$autotranscript,
+                        'attempt'=>$attempt_with_transcripts ? $attempt_with_transcripts : $attempt,
+                        'aidata'=>$aidata,
                         'stats'=>$stats));
         break;
 
@@ -187,22 +201,25 @@ if ($mform->is_cancelled()) {
 if ($data = $mform->get_data()) {
     require_sesskey();
 
-    $theattempt = $data;
-    $theattempt->pchat = $moduleinstance->id;
-    $theattempt->userid = $USER->id;
-    $theattempt->modifiedby=$USER->id;
-    $theattempt->timemodified=time();
+    $newattempt = $data;
+    $newattempt->pchat = $moduleinstance->id;
+    $newattempt->userid = $USER->id;
+    $newattempt->modifiedby=$USER->id;
+    $newattempt->timemodified=time();
 
     //first insert a new attempt if we need to
     //that will give us a attemptid, we need that for saving files
     if($edit) {
-        $theattempt->id = $data->attemptid;
+        $newattempt->id = $data->attemptid;
     }else{
-        $theattempt->timecreated=time();
-        $theattempt->createdby=$USER->id;
+        $newattempt->timecreated=time();
+        $newattempt->createdby=$USER->id;
+        //this comes in as an array, but we save as string. That will be processed shortly
+        //for now lets avoid the error trying to save an array in text field.
+        $newattempt->interlocutors ='';
 
         //try to insert it
-        if (!$theattempt->id = $DB->insert_record(constants::M_ATTEMPTSTABLE,$theattempt)){
+        if (!$newattempt->id = $DB->insert_record(constants::M_ATTEMPTSTABLE,$newattempt)){
             print_error("Could not insert pchat attempt!");
             redirect($redirecturl);
         }
@@ -218,38 +235,51 @@ if ($data = $mform->get_data()) {
                 }
                 $topic = $topichelper->fetch_topic($data->topicid);
                 if($topic) {
-                    $theattempt->topicname = $topic->name;
-                    $theattempt->topicfonticon = $topic->fonticon;
-                    $theattempt->topictargetwords = $topic->targetwords;
+                    $newattempt->topicname = $topic->name;
+                    $newattempt->topicfonticon = $topic->fonticon;
+                    $newattempt->topictargetwords = $topic->targetwords;
                 }
             }
             //the incoming data is an array, and we need to csv it.
             if($data->interlocutors) {
                 if(is_array($data->interlocutors)) {
                     //if using userselector in userselections form
-                    $theattempt->interlocutors = implode(',', $data->interlocutors);
+                    $newattempt->interlocutors = implode(',', $data->interlocutors);
                 }else{
                     //if using usercombo in userselections form
-                    $theattempt->interlocutors = $data->interlocutors;
+                    $newattempt->interlocutors = $data->interlocutors;
                 }
             }else{
-                $theattempt->interlocutors ='';
+                $newattempt->interlocutors ='';
             }
             break;
 
         case constants::STEP_AUDIORECORDING:
-            if(!empty($theattempt->filename)) {
-                utils::register_aws_task($moduleinstance->id, $theattempt->id, $context->id);
+            $rerecording = $attempt && $newattempt->filename
+                    && $attempt->filename != $newattempt->filename;
+            //if rerecording we want to clear old AI data out
+            if($rerecording) {
+                utils::clear_ai_data($moduleinstance->id, $newattempt->id);
+            }
+            //if rerecording, or we are in "new" mode (first recording) we register our AWS task
+            if($rerecording || !$edit){
+                utils::register_aws_task($moduleinstance->id, $newattempt->id, $context->id);
             }
             break;
         case constants::STEP_SELFTRANSCRIBE:
-            //if the user has altered their self transcript, we ought to recalc all the stats
-            $st_altered = $attempt && $theattempt->selftranscript
-                    && $attempt->selftranscript != $theattempt->selftranscript;
+            //if the user has altered their self transcript, we ought to recalc all the stats and ai data
+            $st_altered = $attempt && $newattempt->selftranscript
+                    && $attempt->selftranscript != $newattempt->selftranscript;
             if($st_altered) {
-                $stats = utils::calculate_stats($theattempt->selftranscript, $attempt);
+                $stats = utils::calculate_stats($newattempt->selftranscript, $attempt);
                 if ($stats) {
                     utils::save_stats($stats, $attempt);
+                }
+                //recalculate AI data, if the selftranscription is altered AND we have a jsontranscript
+                if($attempt->jsontranscript){
+                    $passage = utils::extract_simple_transcript($newattempt->selftranscript);
+                    $aitranscript = new \mod_pchat\aitranscript($attempt->id, $context->id,$passage,$attempt->transcript, $attempt->jsontranscript);
+                    $aitranscript->recalculate($passage,$attempt->transcript, $attempt->jsontranscript);
                 }
             }
             break;
@@ -259,11 +289,11 @@ if ($data = $mform->get_data()) {
 
     //Set the last completed stage
     if($lateststep < $type){
-        $theattempt->completedsteps = $type;
+        $newattempt->completedsteps = $type;
     }
 
     //now update the db
-    if (!$DB->update_record(constants::M_ATTEMPTSTABLE,$theattempt)){
+    if (!$DB->update_record(constants::M_ATTEMPTSTABLE,$newattempt)){
         print_error("Could not update pchat attempt!");
         redirect($redirecturl);
     }
@@ -286,10 +316,6 @@ $data->type=$type;
 
 //init our attempt, we move the id fields around a little
 $data->id = $cm->id;
-
-//Set up the attempt type specific parts of the form data
-$attempt_renderer = $PAGE->get_renderer('mod_pchat','attempt');
-$amd_data='';
 switch($type){
     case constants::STEP_AUDIORECORDING:
     case constants::STEP_USERSELECTIONS:
@@ -300,10 +326,9 @@ switch($type){
 $mform->set_data($data);
 $PAGE->navbar->add(get_string('edit'), new moodle_url('/mod/pchat/view.php', array('id'=>$id)));
 $PAGE->navbar->add(get_string('editingattempt', constants::M_COMPONENT, get_string($mform->typestring, constants::M_COMPONENT)));
-$renderer = $PAGE->get_renderer('mod_pchat');
 $mode='attempts';
+
 echo $renderer->header($moduleinstance, $cm,$mode, null, get_string('edit', constants::M_COMPONENT));
 echo $attempt_renderer->add_edit_page_links($moduleinstance, $attempt,$type);
 $mform->display();
-echo $amd_data;
 echo $renderer->footer();
