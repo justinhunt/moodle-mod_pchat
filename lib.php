@@ -137,6 +137,8 @@ function pchat_reset_userdata($data) {
         $params = array ("course" => $data->courseid);
         $DB->delete_records_select(constants::M_ATTEMPTSTABLE, constants::M_MODNAME . " IN ($sql)", $params);
         $DB->delete_records_select(constants::M_STATSTABLE, constants::M_MODNAME . " IN ($sql)", $params);
+        $DB->delete_records_select(constants::M_AITABLE, "moduleid IN ($sql)", $params);
+        $DB->delete_records_select(constants::M_SELECTEDTOPIC_TABLE, "moduleid IN ($sql)", $params);
 
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {
@@ -253,6 +255,7 @@ function pchat_delete_instance($id) {
     $DB->delete_records(constants::M_TABLE, array('id' => $moduleinstance->id));
     $DB->delete_records(constants::M_ATTEMPTSTABLE, array(constants::M_MODNAME => $moduleinstance->id));
     $DB->delete_records(constants::M_STATSTABLE, array(constants::M_MODNAME => $moduleinstance->id));
+    $DB->delete_records(constants::M_AITABLE, array('moduleid' => $moduleinstance->id));
     $DB->delete_records(constants::M_SELECTEDTOPIC_TABLE, array('moduleid' => $moduleinstance->id));
     $DB->delete_records_select(constants::M_SELECTEDTOPIC_TABLE,
             "topicid IN (SELECT id FROM {".constants::M_TOPIC_TABLE."} t WHERE t.moduleid = ?)",
