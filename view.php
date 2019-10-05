@@ -53,6 +53,7 @@ $attempts = $attempthelper->fetch_attempts();
 $mode='attempts';
 //Set page url before require login, so post login will return here
 $PAGE->set_url(constants::M_URL . '/view.php', array('id'=>$cm->id,'mode'=>$mode));
+$PAGE->force_settings_menu(true);
 
 
 //require login for this page

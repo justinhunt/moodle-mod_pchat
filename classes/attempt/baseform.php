@@ -443,7 +443,11 @@ abstract class baseform extends \moodleform {
 
         $width=450;
         $height=380;
-        $recorder_html = $this->fetch_recorder($this->moduleinstance,'audio','fresh',$this->token, $width,$height);
+        $timelimit=0;
+        if($this->attempt) {
+            $timelimit = $this->attempt->convlength * 60;
+        }
+        $recorder_html = $this->fetch_recorder($this->moduleinstance,'audio','fresh',$timelimit,$this->token, $width,$height);
         $recordingorplayerfield->setValue($player_html . $recorder_html);
 
     }
@@ -453,7 +457,7 @@ abstract class baseform extends \moodleform {
      * PARAM $media one of audio, video
      * PARAM $recordertype something like "upload" or "fresh" or "bmr"
      */
-    public function fetch_recorder($moduleinstance, $media, $recordertype, $token,$width,$height){
+    public function fetch_recorder($moduleinstance, $media, $recordertype,$timelimit, $token,$width,$height){
         global $CFG, $PAGE;
 
         $recorderdiv_domid = constants::M_WIDGETID;
@@ -481,7 +485,7 @@ abstract class baseform extends \moodleform {
                         'data-width'=>$width,
                         'data-height'=>$height,
                         'data-updatecontrol'=>constants::M_WIDGETID . constants::RECORDINGURLFIELD,
-                        'data-timelimit'=> ($moduleinstance->convlength * 60),
+                        'data-timelimit'=> $timelimit,
                         'data-transcode'=>"1",
                         'data-transcribe'=>$transcribe,
                         'data-subtitle'=>$transcribe,

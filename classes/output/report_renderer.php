@@ -25,7 +25,7 @@ class report_renderer extends \plugin_renderer_base
             get_string('attemptsreport', constants::M_COMPONENT), 'get');
 
 
-        $ret = \html_writer::div($this->render($basic) . '<br />' . $this->render($attempts) . '<br />', constants::M_CLASS . '_listbuttons');
+        $ret = \html_writer::div(  $this->render($attempts) . '<br />', constants::M_CLASS . '_listbuttons');
 
         return $ret;
     }

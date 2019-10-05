@@ -18,6 +18,7 @@ class audiorecordingform extends baseform
     public function custom_definition() {
         //we need the token to set up the cloud poodll recorder
         $this->token = $this->_customdata['token'];
+        $this->attempt = $this->_customdata['attempt'];
         $targetwords = $this->_customdata['targetwords'];
 
         //we set the title and instructions

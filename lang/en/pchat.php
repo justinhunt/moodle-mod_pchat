@@ -307,6 +307,7 @@ $string['stats_words'] = 'Words';
 $string['stats_turns'] = 'Turns';
 $string['stats_avturn'] = 'Av. Turn Length';
 $string['stats_longestturn'] = 'Longest Turn Length';
+$string['stats_questions'] = 'Questions Asked';
 $string['stats_targetwords'] = 'Target Words';
 $string['stats_aiaccuracy'] = 'AI Accuracy';
 $string['transcripteditor']= 'Transcript Editor';
@@ -334,6 +335,8 @@ $string['userconvlength']= 'Conv. length override';
 $string['userconvlength_details']= 'Allow users to override suggested conversation length';
 $string['revq']= 'Reflection question {$a}';
 $string['heard']= 'Heard';
+$string['QS']= 'Qs';
+$string['ACC']= 'Acc';
 
 
 

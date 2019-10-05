@@ -15,7 +15,7 @@ class attempts extends basereport
 {
 
     protected $report="attempts";
-    protected $fields = array('id','username','topicname','partners','turns','ATL','LTL','TW','timemodified','deletenow');
+    protected $fields = array('id','username','topicname','partners','turns','ATL','LTL','TW','QS','ACC','timemodified','deletenow');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -76,6 +76,19 @@ class attempts extends basereport
                 $ret = $record->targetwords . '/' . $record->totaltargetwords ;
                 break;
 
+            case 'QS':
+                $ret = $record->questions ;
+                break;
+
+            case 'ACC':
+                if($record->aiaccuracy<0) {
+                    $ret = '';
+                }else{
+                    $ret = $record->aiaccuracy;
+                }
+
+                break;
+
             case 'timemodified':
                 $ret = date("Y-m-d H:i:s", $record->timemodified);
                 break;
@@ -117,7 +130,7 @@ class attempts extends basereport
         $this->headingdata = new \stdClass();
 
         $emptydata = array();
-        $sql = 'SELECT at.id, at.userid, at.topicname, at.interlocutors, st.turns, st.avturn, st.longestturn, st.targetwords, st.totaltargetwords, at.timemodified ';
+        $sql = 'SELECT at.id, at.userid, at.topicname, at.interlocutors, st.turns, st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy, at.timemodified ';
         $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
         $sql .= ' WHERE at.pchat = :pchatid';
         $alldata = $DB->get_records_sql($sql,array('pchatid'=>$formdata->pchatid));
