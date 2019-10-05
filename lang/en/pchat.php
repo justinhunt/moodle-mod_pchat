@@ -17,7 +17,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['modulename'] = 'P-CHAT';
 $string['modulenameplural'] = 'P-CHATs';
-$string['modulename_help'] = 'P-CHAT is an activity designed to assist teachers in evaluating their students reading fluency. Students read a passage, set by the teacher, into a microphone. Later the teacher can mark words as incorrect and get the student WCPM(Words Correct Per Minute) scores.';
+$string['modulename_help'] = 'P-CHAT is an activity designed to give students conversation practice and feedback. Students record their conversation, transcribe their own speech and compare their transcript with an auto generated one.';
 $string['pchatfieldset'] = 'Custom example fieldset';
 $string['pchatname'] = 'P-CHAT';
 $string['pchatname_help'] = 'This is the content of the help tooltip associated with the pchatname field. Markdown syntax is supported.';
@@ -337,6 +337,8 @@ $string['revq']= 'Reflection question {$a}';
 $string['heard']= 'Heard';
 $string['QS']= 'Qs';
 $string['ACC']= 'Acc';
+
+$string['notopicsavailable'] = "No topics have been added by your teacher.";
 
 
 

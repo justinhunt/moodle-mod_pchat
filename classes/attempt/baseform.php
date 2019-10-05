@@ -151,15 +151,20 @@ abstract class baseform extends \moodleform {
         $this->_form->addElement('hidden', $name);
         $this->_form->setType($name,PARAM_TEXT);
 
-        foreach ($this->topics as $topic){
-            $oneradio=array();
-            $oneradio['name']=$name;
-            $oneradio['fontcode']=$topic->fonticon;
-            $oneradio['topicname']=$topic->name;
-            $oneradio['value']=$topic->id;
-            $radios[] = $oneradio;
+        if($this->topics && count($this->topics)) {
+            foreach ($this->topics as $topic) {
+                $oneradio = array();
+                $oneradio['name'] = $name;
+                $oneradio['fontcode'] = $topic->fonticon;
+                $oneradio['topicname'] = $topic->name;
+                $oneradio['value'] = $topic->id;
+                $radios[] = $oneradio;
+            }
+            $staticcontent =
+                    $OUTPUT->render_from_template(constants::M_COMPONENT . '/fontawesomecombo', array('radios' => $radios));
+        }else{
+            $staticcontent = get_string('notopicsavailable',constants::M_COMPONENT);
         }
-        $staticcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/fontawesomecombo', array('radios'=>$radios));
 
         $this->_form->addElement('static', 'combo_' . $name, $label, $staticcontent);
 
