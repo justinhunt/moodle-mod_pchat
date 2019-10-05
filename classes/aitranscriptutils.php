@@ -666,7 +666,7 @@ class aitranscriptutils{
         $opts_html =
                 \html_writer::tag('input', '', array('id' => $passageopts['opts_id'], 'type' => 'hidden', 'value' => $jsonstring));
         $PAGE->requires->js_call_amd("mod_pchat/passagemarkup", 'init', array(array('id' => $passageopts['opts_id'])));
-        $PAGE->requires->strings_for_js(array('transcript'),
+        $PAGE->requires->strings_for_js(array('heard'),
                 'mod_pchat');
 
         //these need to be returned and echo'ed to the page

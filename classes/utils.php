@@ -172,6 +172,21 @@ class utils{
         return true;
     }
 
+    //fetch interlocutor array to string
+    public static function interlocutors_array_to_string($interlocutors) {
+        //the incoming data is an array, and we need to csv it.
+        if($interlocutors) {
+            if(is_array($interlocutors)) {
+                $ret = implode(',', $interlocutors);
+            }else{
+                $ret = $interlocutors;
+            }
+        }else{
+            $ret ='';
+        }
+        return $ret;
+    }
+
     //fetch interlocutor names
     public static function fetch_interlocutor_names($attempt) {
         global $DB;
@@ -217,14 +232,17 @@ class utils{
         global $DB;
         //if we have stats in the database, lets use those
         $stats = $DB->get_record(constants::M_STATSTABLE,array('attemptid'=>$attempt->id));
-        if($stats){
-            return $stats;
+        if(!$stats){
+            $stats = self::calculate_stats($attempt->selftranscript, $attempt);
+            //if that worked, and why wouldn't it, lets save them too.
+            if ($stats) {
+                self::save_stats($stats, $attempt);
+            }
         }
-
-        $stats = self::calculate_stats($attempt->selftranscript, $attempt);
-        //if that worked, and why wouldn't it, lets save them too.
-        if ($stats) {
-            self::save_stats($stats, $attempt);
+        //0 aiaccuracy means absolutely nothing was matched
+        //-1 means we do not have ai data
+        if($stats && $stats->aiaccuracy < 0){
+            $stats->aiaccuracy='--';
         }
         return $stats;
     }
@@ -259,6 +277,7 @@ class utils{
         $stats->targetwords=0;
         $stats->totaltargetwords=0;
         $stats->questions=0;
+        $stats->aiaccuracy=-1;
 
         if(!$usetranscript || empty($usetranscript)){
             return false;
@@ -304,6 +323,18 @@ class utils{
 
     //clear AI data
     // we might do this if the user re-records
+    public static function update_stat_aiaccuracy($attemptid, $accuracy) {
+        global $DB;
+
+        $record = $DB->get_record(constants::M_STATSTABLE,array('attemptid'=>$attemptid));
+        if($record) {
+            $record->aiaccuracy=$accuracy;
+            $DB->update_record(constants::M_STATSTABLE, $record);
+        }
+    }
+
+    //clear AI data
+    // we might do this if the user re-records
     public static function clear_ai_data($activityid, $attemptid){
         global $DB;
         $record = new \stdClass();
@@ -311,8 +342,13 @@ class utils{
         $record->transcript='';
         $record->jsontranscript='';
         $record->vtttranscript='';
+
         //Remove AI data from attempts table
         $DB->update_record(constants::M_ATTEMPTSTABLE,$record);
+
+        //update stats table
+        self::update_stat_aiaccuracy($attemptid,-1);
+
         //Delete AI record
         $DB->delete_records(constants::M_AITABLE,array('attemptid'=>$attemptid, 'moduleid'=>$activityid));
     }

@@ -118,13 +118,6 @@ switch($type){
             $topichelper = new \mod_pchat\topichelper($cm);
         }
         $topics = $topichelper->fetch_selected_topics();
-/*
-        $allusernames = get_all_user_name_fields(true);
-        $orderby = 'lastname ASC, firstname ASC';
-        $userfields = 'id, email, ' . $allusernames;
-        $onlyactive=false;
-        $users =get_enrolled_users($context,'mod_pchat\view',0,$userfields,$orderby,0,0,$onlyactive);
-  */
         $users = get_enrolled_users($context);
         $targetwords = $attempt ? $attempt->topictargetwords : '';
         $mform = new \mod_pchat\attempt\userselectionsform(null,
@@ -216,7 +209,7 @@ if ($data = $mform->get_data()) {
         $newattempt->createdby=$USER->id;
         //this comes in as an array, but we save as string. That will be processed shortly
         //for now lets avoid the error trying to save an array in text field.
-        $newattempt->interlocutors ='';
+        $newattempt->interlocutors =utils::interlocutors_array_to_string($data->interlocutors);
 
         //try to insert it
         if (!$newattempt->id = $DB->insert_record(constants::M_ATTEMPTSTABLE,$newattempt)){
@@ -241,17 +234,7 @@ if ($data = $mform->get_data()) {
                 }
             }
             //the incoming data is an array, and we need to csv it.
-            if($data->interlocutors) {
-                if(is_array($data->interlocutors)) {
-                    //if using userselector in userselections form
-                    $newattempt->interlocutors = implode(',', $data->interlocutors);
-                }else{
-                    //if using usercombo in userselections form
-                    $newattempt->interlocutors = $data->interlocutors;
-                }
-            }else{
-                $newattempt->interlocutors ='';
-            }
+            $newattempt->interlocutors =utils::interlocutors_array_to_string($data->interlocutors);
             break;
 
         case constants::STEP_AUDIORECORDING:

@@ -112,13 +112,29 @@ class attempt_renderer extends \plugin_renderer_base {
 
     }
 
-    function show_summary($moduleinstance,$attempt,$stats){
+    function show_summary($moduleinstance,$attempt,$aidata, $stats){
         $attempt->targetwords = utils::fetch_targetwords($attempt);
         $attempt->interlocutornames = utils::fetch_interlocutor_names($attempt);
         $attempt->selftranscriptparts = utils::fetch_selftranscript_parts($attempt);
         $ret = $this->output->render_from_template( constants::M_COMPONENT . '/summaryheader', $attempt);
         $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summarychoices', $attempt);
-        $tdata=array('a'=>$attempt, 's'=>$stats);
+
+        //mark up our passage for review
+        //if we have ai we need all the js and markup, otherwise we just need the formated transcript
+        if($aidata) {
+            $simpleselftranscript='';
+            if(!empty($attempt->selftranscript)){
+                $simpleselftranscript=utils::extract_simple_transcript($attempt->selftranscript);
+            }
+            $markedpassage = \mod_pchat\aitranscriptutils::render_passage($simpleselftranscript);
+            $js_opts_html = \mod_pchat\aitranscriptutils::prepare_passage_amd($attempt, $aidata);
+            $markedpassage .= $js_opts_html;
+        }else{
+            $tdata = array('a'=>$attempt);
+            $markedpassage = $this->output->render_from_template( constants::M_COMPONENT . '/summarytranscript', $tdata);
+        }
+
+        $tdata=array('a'=>$attempt, 's'=>$stats, 'audiofilename'=>$attempt->filename, 'markedpassage'=>$markedpassage);
         $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summaryresults', $tdata);
 
         $revqs=array();

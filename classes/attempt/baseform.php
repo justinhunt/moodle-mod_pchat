@@ -291,7 +291,6 @@ abstract class baseform extends \moodleform {
 
     protected final function add_userselector_field($name,$label){
         $options = [
-            //'ajax' => 'mod_pchat/form-user-selector',
                 'multiple'=>true
         ];
 
@@ -300,7 +299,7 @@ abstract class baseform extends \moodleform {
             $selectusers[$user->id] =  fullname($user);
         }
         $this->_form->addElement('autocomplete', $name, $label,$selectusers, $options);
-        $this->_form->addRule($name, null, 'required', null, 'client');
+        //$this->_form->addRule($name, null, 'required', null, 'client');
     }
 
     protected final function add_transcript_editor($name, $label){
@@ -326,6 +325,7 @@ abstract class baseform extends \moodleform {
     protected final function add_selfreviewsummary($name, $label) {
         global $OUTPUT;
         $tdata=array();
+        $tdata['audiofilename']=$this->attempt->filename;
         $tdata['markedpassage']=$this->fetch_markedpassage();
         $tdata['stats']=$this->fetch_stats();
         $selfreviewsummary = $OUTPUT->render_from_template( constants::M_COMPONENT . '/selfreviewsummary', $tdata);
@@ -481,7 +481,7 @@ abstract class baseform extends \moodleform {
                         'data-width'=>$width,
                         'data-height'=>$height,
                         'data-updatecontrol'=>constants::M_WIDGETID . constants::RECORDINGURLFIELD,
-                        'data-timelimit'=> 0,//$moduleinstance->timelimit,
+                        'data-timelimit'=> ($moduleinstance->convlength * 60),
                         'data-transcode'=>"1",
                         'data-transcribe'=>$transcribe,
                         'data-subtitle'=>$transcribe,

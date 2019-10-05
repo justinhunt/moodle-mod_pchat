@@ -34,7 +34,7 @@ class aitranscript
                     $this->aidata = $record;
 
                     $this->do_diff();
-                    $this->send_to_gradebook();
+                    $this->update_stats();
                 }
             }
         }
@@ -55,7 +55,7 @@ class aitranscript
             $this->aidata->passage = $passage;
             $this->aidata->jsontranscript = $jsontranscript;
             $this->do_diff();
-            $this->send_to_gradebook();
+            $this->update_stats();
         }
     }
 
@@ -98,13 +98,8 @@ class aitranscript
     }
 
     //we leave it up to the grading logic how/if it adds the ai grades to gradebook
-    public function send_to_gradebook(){
-        global $CFG;
-
-        //if this were meaningful we could update gradebook ...
-
-       // require_once($CFG->dirroot.'/mod/pchat/lib.php');
-       // pchat_update_grades($this->activitydata, $this->attemptdata->userid);
+    public function update_stats(){
+        utils::update_stat_aiaccuracy($this->attemptdata->id,$this->aidata->accuracy);
     }
 
     //do we have the AI transcripts

@@ -19,7 +19,7 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
             passagecontainer: 'mod_pchat_grading_passagecont',
             summarytranscript: 'mod_pchat_summarytranscript',
             summarytranscriptplaceholder: 'mod_pchat_summarytranscriptplaceholder',
-            audioplayerclass: 'mod_pchat_grading_player',
+            audioplayerclass: 'mod_pchat_passageaudioplayer',
             wordplayerclass: 'mod_pchat_hidden_player',
             wordclass: 'mod_pchat_grading_passageword',
             spaceclass: 'mod_pchat_grading_passagespace',
@@ -151,29 +151,22 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
 
 
             //Play audio from and to spot check part
-            this.controls.passagecontainer.on('click', '.' + this.cd.spotcheckmode + ', .' + this.cd.aiunmatched, function () {
-                if (that.currentmode === 'spotcheck') {
+            this.controls.passagecontainer.on('click','.' + this.cd.wordclass, function () {
                     var wordnumber = parseInt($(this).attr('data-wordnumber'));
-                    that.doPlaySpotCheck(wordnumber);
-                }
-            });
-
-            //process word clicks
-            this.controls.eachword.click(
-                function () {
-
-
-                    //get the word that was clicked
-                    var wordnumber = $(this).attr('data-wordnumber');
-                    var theword = $(this).text();
-
-                    var chunk = that.fetchTranscriptChunk(wordnumber);
-                    if (chunk) {
-                        popoverhelper.addTranscript(this, chunk);
+                    //some clicks are opening popup, some are playing and some are closing popups
+                    //dont play when closing popups
+                    if (!popoverhelper.isShowing(this)) {
+                        that.doPlaySpotCheck(wordnumber);
                     }
 
-                }
-            ); //end of each word click
+                    if($(this).hasClass(that.cd.aiunmatched)){
+                        var chunk = that.fetchTranscriptChunk(wordnumber);
+                        if (chunk) {
+                            popoverhelper.addTranscript(this, chunk);
+                        }
+                    }
+
+            });
 
         },
 
@@ -182,7 +175,8 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
         * Here we fetch the playchain, start playing frm audiostart and add an event handler to stop at audioend
          */
         doPlaySpotCheck: function (spotcheckindex) {
-            var playchain = this.fetchPlayChain(spotcheckindex);
+            var playchain = this.fetchWordPlayChain(spotcheckindex);
+            log.debug(playchain);
             var theplayer = this.controls.audioplayer[0];
             //we pad the play audio by 0.5 seconds beginning and end
             var pad = 0.5;
@@ -213,12 +207,33 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
         /*
         * The playchain is all the words in a string of badwords.
         * The complexity comes because a bad word  is usually one that isunmatched by AI.
+         */
+        fetchWordPlayChain: function (wordnumber) {
+            var isbad = $('#' + this.cd.wordclass + '_' + wordnumber).hasClass(this.cd.badwordclass);
+            var isunmatched = $('#' + this.cd.wordclass + '_' + wordnumber).hasClass(this.cd.aiunmatched);
+            if(isbad || isunmatched){
+                return this.fetchBadWordPlayChain(wordnumber);
+            }else{
+                var starttime = this.options.sessionmatches['' + wordnumber].audiostart;
+                var endtime = this.options.sessionmatches['' + wordnumber].audioend;
+                var playchain = {};
+                playchain.startword = wordnumber;
+                playchain.endword = wordnumber;
+                playchain.audiostart = starttime;
+                playchain.audioend = endtime;
+                return playchain;
+            }
+        },
+
+        /*
+        * The playchain is all the words in a string of badwords.
+        * The complexity comes because a bad word  is usually one that isunmatched by AI.
         * So if the teacher clicks on a passage word that did not appear in the transcript, what should we play?
         * Answer: All the words from the last known to the next known word. Hence we create a play chain
         * For consistency, if the teacher flags matched words as bad, while we do know their precise location we still
         * make a play chain. Its not a common situation probably.
          */
-        fetchPlayChain: function (spotcheckindex) {
+        fetchBadWordPlayChain: function (spotcheckindex) {
 
             //find startword
             var startindex = spotcheckindex;

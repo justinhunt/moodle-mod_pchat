@@ -11,7 +11,7 @@ define(['jquery', 'core/log', 'mod_pchat/dependencyloader', 'theme_boost/popover
 
         lastitem: false,
         dispose: false, //Bv4 = dispose  Bv3 = destroy
-        transcripttitle: M.util.get_string('transcript','mod_pchat'),
+        transcripttitle: M.util.get_string('heard','mod_pchat'),
 
         init: function () {
             this.register_events();
@@ -49,6 +49,14 @@ define(['jquery', 'core/log', 'mod_pchat/dependencyloader', 'theme_boost/popover
             } else if (this.lastitem) {
                 $(this.lastitem).popover(this.disposeWord());
                 this.lastitem = false;
+            }
+        },
+
+        isShowing: function(item){
+            if(this.lastitem === item) {
+                return true;
+            }else{
+                return false;
             }
         },
 

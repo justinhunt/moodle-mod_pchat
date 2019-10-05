@@ -68,7 +68,7 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
         $attemptstats = new backup_nested_element('attemptstats');
         $attemptstat = new backup_nested_element('attemptstat', array('id'),array(
                 constants::M_MODNAME, 'userid', 'attemptid','turns','words','avturn', 'longestturn','targetwords','totaltargetwords',
-                'questions', 'timemodified','createdby','modifiedby'));
+                'questions','aiaccuracy' ,'timemodified','createdby','modifiedby'));
 
         //airesults
         $airesults = new backup_nested_element('airesults');

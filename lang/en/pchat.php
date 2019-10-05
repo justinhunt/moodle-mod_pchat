@@ -308,6 +308,7 @@ $string['stats_turns'] = 'Turns';
 $string['stats_avturn'] = 'Av. Turn Length';
 $string['stats_longestturn'] = 'Longest Turn Length';
 $string['stats_targetwords'] = 'Target Words';
+$string['stats_aiaccuracy'] = 'AI Accuracy';
 $string['transcripteditor']= 'Transcript Editor';
 $string['selfreview']= 'Self Review';
 $string['multiattempts'] = 'Allow Multiple Attempts';
@@ -332,6 +333,7 @@ $string['confirmtopicdeletetitle']= 'Confirm Delete Topic:';
 $string['userconvlength']= 'Conv. length override';
 $string['userconvlength_details']= 'Allow users to override suggested conversation length';
 $string['revq']= 'Reflection question {$a}';
+$string['heard']= 'Heard';
 
 
 
