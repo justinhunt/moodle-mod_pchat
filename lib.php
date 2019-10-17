@@ -138,7 +138,6 @@ function pchat_reset_userdata($data) {
         $DB->delete_records_select(constants::M_ATTEMPTSTABLE, constants::M_MODNAME . " IN ($sql)", $params);
         $DB->delete_records_select(constants::M_STATSTABLE, constants::M_MODNAME . " IN ($sql)", $params);
         $DB->delete_records_select(constants::M_AITABLE, "moduleid IN ($sql)", $params);
-        $DB->delete_records_select(constants::M_SELECTEDTOPIC_TABLE, "moduleid IN ($sql)", $params);
 
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {

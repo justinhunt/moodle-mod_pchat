@@ -102,11 +102,8 @@ if($start_or_continue) {
 
     $PAGE->navbar->add(get_string('attempts', constants::M_COMPONENT));
 
-    if(has_capability('mod/pchat:selecttopics', $context) || has_capability('mod/pchat:viewreports', $context) ){
-        echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('attempts', constants::M_COMPONENT));
-    }else{
-        echo $renderer->header($moduleinstance->name);
-    }
+    echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('attempts', constants::M_COMPONENT));
+
 
     $attempt = utils::fetch_latest_finishedattempt($moduleinstance);
     if($attempt) {
