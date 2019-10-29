@@ -204,6 +204,30 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
             theplayer.play();
         },
 
+
+        fetchTurnEndWord: function(currentwordindex){
+            var currentword = $('#' + this.cd.wordclass + '_' + currentwordindex);
+            var turnendword = currentword.siblings('.' + this.cd.wordclass).last();
+            var turnend = turnendword.attr('data-wordnumber');
+            if(!turnend || turnend < currentwordindex ){
+                turnend = currentwordindex;
+            }
+            return turnend;
+
+        },
+
+        fetchTurnStartWord: function(currentwordindex){
+            var currentword = $('#' + this.cd.wordclass + '_' + currentwordindex);
+            var turnstartword = currentword.siblings('.' + this.cd.wordclass).first();
+            var turnstart = turnstartword.attr('data-wordnumber');
+            if(!turnstart || turnstart >currentwordindex ){
+                turnstart = currentwordindex;
+            }
+            return turnstart;
+
+        },
+
+
         /*
         * The playchain is all the words in a string of badwords.
         * The complexity comes because a bad word  is usually one that isunmatched by AI.
@@ -235,6 +259,10 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
          */
         fetchBadWordPlayChain: function (spotcheckindex) {
 
+            //The session matched words we use to get the audiostart and end
+            var audiostartword=0;
+            var audioendword=0;
+
             //find startword
             var startindex = spotcheckindex;
             var starttime = -1;
@@ -247,6 +275,7 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
                     startindex = wordnumber;
                     if (!isunmatched) {
                         starttime = this.options.sessionmatches['' + wordnumber].audiostart;
+                        audiostartword=wordnumber;
                     } else {
                         starttime = -1;
                     }
@@ -260,6 +289,7 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
                 for (var wordnumber = startindex - 1; wordnumber > 0; wordnumber--) {
                     if (this.options.sessionmatches['' + wordnumber]) {
                         starttime = this.options.sessionmatches['' + wordnumber].audioend;
+                        audiostartword=wordnumber;
                         break;
                     }
                 }
@@ -277,6 +307,7 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
                     endindex = wordnumber;
                     if (!isunmatched) {
                         endtime = this.options.sessionmatches['' + wordnumber].audioend;
+                        audioendword=wordnumber;
                     } else {
                         endtime = -1;
                     }
@@ -290,10 +321,13 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
                 for (var wordnumber = endindex + 1; wordnumber <= passageendword; wordnumber++) {
                     if (this.options.sessionmatches['' + wordnumber]) {
                         endtime = this.options.sessionmatches['' + wordnumber].audiostart;
+                        audioendword=wordnumber;
                         break;
                     }
                 }
             }
+
+            //work out the playchain
             var playchain = {};
             playchain.startword = startindex;
             playchain.endword = parseInt(endindex);
@@ -302,6 +336,38 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
             //console.log('audiostart:' + starttime);
             //console.log('audioend:' + endtime);
 
+            //here we adjust the playback if we have gone out of the turn
+            //its totally black magic guesswork, but it works ok
+            var turnstart = this.fetchTurnStartWord(spotcheckindex);
+            var turnend = this.fetchTurnEndWord(spotcheckindex);
+            var beforelimit =0;
+            var afterlimit =0;
+            var startadjust =0;
+            var endadjust =0;
+            if(audiostartword > 0 && audiostartword < turnstart){
+                beforelimit = spotcheckindex-turnstart + 1;
+            }
+            if(audioendword > turnend){
+                afterlimit = turnend -spotcheckindex+ 1;
+            }
+            //no point trying to guess a completely mismatched turn.
+            if(beforelimit && afterlimit){
+                //give up ... what a disaster
+            }else {
+                //if the start is out of the turn
+                if (beforelimit) {
+                    startadjust = 0.5 * beforelimit;
+                    playchain.audiostart = playchain.audioend - startadjust;
+                    console.log('startadjust:' + startadjust);
+
+                    //if the end is out of the turn
+                } else if (afterlimit) {
+                    endadjust = 0.7 * afterlimit;
+                    playchain.audioend = playchain.audiostart + endadjust;
+                    console.log('endadjust:' + startadjust);
+                }
+            }
+            console.log(playchain);
             return playchain;
 
         },
@@ -434,6 +500,7 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
 
             //find startindex
             var startindex = -1;
+            var startpassageindex=-1;
             for (var wordnumber = checkindex; wordnumber > 0; wordnumber--) {
 
                 var isunmatched = $('#' + this.cd.wordclass + '_' + wordnumber).hasClass(this.cd.aiunmatched);
@@ -441,18 +508,21 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
                 //if we matched then the subsequent transcript word is the last unmatched one in the checkindex sequence
                 if (!isunmatched && !isunreadword) {
                     startindex = this.options.sessionmatches['' + wordnumber].tposition + 1;
+                    var startpassageindex=wordnumber;
                     break;
                 }
             }//end of for loop
 
             //find endindex
             var endindex = -1;
+            var endpassageindex=-1;
             for (var wordnumber = checkindex; wordnumber <= transcriptlength; wordnumber++) {
 
                 var isunmatched = $('#' + this.cd.wordclass + '_' + wordnumber).hasClass(this.cd.aiunmatched);
                 //if we matched then the previous transcript word is the last unmatched one in the checkindex sequence
                 if (!isunmatched) {
                     endindex = this.options.sessionmatches['' + wordnumber].tposition - 1;
+                    endpassageindex=wordnumber;
                     break;
                 }
             }//end of for loop --
@@ -468,6 +538,31 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
                 //word. It might not be possible for endindex to be lower than start index, but we don't want it anyway
             } else if (endindex === 0 || endindex < startindex) {
                 return false;
+            }
+
+            //here we check if we have gone out of the turn
+            var turnstart = this.fetchTurnStartWord(checkindex);
+            var turnend = this.fetchTurnEndWord(checkindex);
+            var beforelimit =0;
+            var afterlimit =0;
+            if(startpassageindex < turnstart){
+                var beforelimit = checkindex-turnstart + 1;
+            }
+            if(endpassageindex > turnend ||endpassageindex ==-1){
+                var afterlimit = turnend -checkindex+ 1;
+            }
+            //no point trying to guess a completely mismatched turn.
+            if(beforelimit && afterlimit){
+                return false;
+            }
+            //if the start is out of the turn
+            if(beforelimit){
+                startindex = endindex -beforelimit;
+                if(startindex<1){return false;}
+                //if the end is out of the turn
+            }else if(afterlimit){
+                endindex = startindex +afterlimit;
+                if(endindex>+transcriptlength){return false;}
             }
 
             //up until this point the indexes have started from 1, since the passage word numbers start from 1

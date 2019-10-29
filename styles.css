@@ -239,6 +239,7 @@ div#poodllconvedit_previewline.poodllconvedit_previewline.text-box {
 
 /* the preview container */
 div#poodllconvedit_previewbox {
+	display: none;
 	/* width: max-content; */
 }
 
@@ -313,9 +314,9 @@ button#poodllconvedit_edcancel:hover,
 		height: 300px;
 	}
 	.transcriptionpreviewplayer .top-box{border-radius: 10px 10px 0px 0px;}
-	.transcriptionpreviewplayer .control-panel,
+	.poodllconvedit_control-panel,
 	.transcriptionset_container .transcriptionset_list{border-left: none;}
-	.transcriptionpreviewplayer .control-panel{border-top: 1px solid #E3E4F1;}
+	.poodllconvedit_control-panel{border-top: 1px solid #E3E4F1;}
 }
 
 @media only screen and (max-width: 991px) {}
@@ -330,16 +331,16 @@ button#poodllconvedit_edcancel:hover,
 	}
 
 	.transcriptionpreviewplayer {width: 100%;}
-	.transcriptionpreviewplayer .control-panel{
+	.poodllconvedit_control-panel{
 		height: auto;
 		flex-direction: column;
 	}
-	.transcriptionpreviewplayer .preview-progress-bar {
+	.poodllconvedit_control-panel .preview-progress-bar {
 		margin-top: 15px;
 		width: 100%;
 	}
-	.transcriptionpreviewplayer .progress-line {width: 100%;}
-	.transcriptionpreviewplayer .buttons-group{margin: 20px 0;}
+	.poodllconvedit_control-panel .progress-line {width: 100%;}
+	.poodllconvedit_control-panel .buttons-group{margin: 20px 0;}
 
 	.transcriptionset_container .transcriptionset_list .transcriptionset_block {
 		flex-wrap: wrap;
@@ -676,18 +677,18 @@ button#poodllconvedit_edcancel:hover,
 
 /* player */
 .transcriptionpreviewplayer {
-	width: 1140px;
+	width: 100%;
 	height: 345px;
 	max-width: 100%;
 	border: 1px solid #E3E4F1;
-	border-radius: 10px;
+	/* border-radius: 10px; */
 	display: flex;
 	overflow: auto;
-	resize: both;
+	resize: vertical;
 }
 
 .transcriptionpreviewplayer.player_little {
-	width: 572px;
+	width: 100%;
 	height:auto;
 }
 .transcriptionpreviewplayer .top-box {
@@ -743,7 +744,7 @@ button#poodllconvedit_edcancel:hover,
 	min-height: 0;
 }
 
-.transcriptionpreviewplayer .control-panel{
+.poodllconvedit_control-panel{
 	width: 100%;
 	height: 50px;
 	padding: 0 20px 0 22px;
@@ -751,19 +752,19 @@ button#poodllconvedit_edcancel:hover,
 	align-items: center;
 	justify-content: space-between;
 	background: linear-gradient(180deg, #FFFFFF 0%, #F0F1F6 100%), #FFFFFF;
-	border-bottom: 1px solid #E3E4F1;
-	border-left: 1px solid #E3E4F1;
+	border: 1px solid #E3E4F1;
 	box-sizing: border-box;
 	border-top-right-radius: 10px;
+	border-top-left-radius: 10px;
 }
 
-.transcriptionpreviewplayer .preview-progress-bar{
+.poodllconvedit_control-panel .preview-progress-bar{
 	display: flex;
 	align-items: center;
 
 }
 
-.transcriptionpreviewplayer .progress-line{
+.poodllconvedit_control-panel .progress-line{
 	width: 275px;
 	height: 3px;
 	margin: 0 8px;
@@ -772,7 +773,7 @@ button#poodllconvedit_edcancel:hover,
 	cursor: pointer;
 }
 
-.transcriptionpreviewplayer .progress-line .green-progress{
+.poodllconvedit_control-panel .progress-line .green-progress{
 	content: '';
 	width: 0;
 	height: 3px;
@@ -783,7 +784,7 @@ button#poodllconvedit_edcancel:hover,
 	transition: all 0.3s ease;
 }
 
-.transcriptionpreviewplayer .progress-line .progress-marker {
+.poodllconvedit_control-panel .progress-line .progress-marker {
 	content: '';
 	width: 15px;
 	height: 15px;
@@ -797,13 +798,13 @@ button#poodllconvedit_edcancel:hover,
 	transform: translateX(-50%);
 }
 
-.transcriptionpreviewplayer .buttons-group{
+.poodllconvedit_control-panel .buttons-group{
 	display: flex;
 }
 
-.transcriptionpreviewplayer .buttons-group .btn{margin-left: 5px;}
+.poodllconvedit_control-panel .buttons-group .btn{margin-left: 5px;}
 
-.transcriptionpreviewplayer .btn{
+.poodllconvedit_control-panel .btn{
 	width: 34px;
 	height: 34px;
 	background: radial-gradient(10.62px at 50% 68.75%, #FFFFFF 0%, #F9FAFD 100%), #FFFFFF;
@@ -816,32 +817,32 @@ button#poodllconvedit_edcancel:hover,
 	background-size: 13px;
 }
 
-.transcriptionpreviewplayer .btn.play{background-image: url([[pix:mod_pchat|e/play-icon]]);}
-.transcriptionpreviewplayer .btn.play.playing {
+.poodllconvedit_control-panel .btn.play{background-image: url([[pix:mod_pchat|e/play-icon]]);}
+.poodllconvedit_control-panel .btn.play.playing {
 	background-image: url([[pix:mod_pchat|e/pause-button]]);
 }
-.transcriptionpreviewplayer .btn.prev{
+.poodllconvedit_control-panel .btn.prev{
 	background-image: url([[pix:mod_pchat|e/prev-icon]]);
 	-webkit-background-size: 16px;
 	background-size: 16px;
 }
-.transcriptionpreviewplayer .btn.next{
+.poodllconvedit_control-panel .btn.next{
 	background-image: url([[pix:mod_pchat|e/next-icon]]);
 	-webkit-background-size: 16px;
 	background-size: 16px;
 }
-.transcriptionpreviewplayer .btn.exit{
+.poodllconvedit_control-panel .btn.exit{
 	background-image: url([[pix:mod_pchat|e/exit-icon]]);
 	-webkit-background-size: 18px;
 	background-size: 18px;
 }
-.transcriptionpreviewplayer .btn.cencel{
+.poodllconvedit_control-panel .btn.cencel{
 	background-image: url([[pix:mod_pchat|e/cancel-icon]]);
 	-webkit-background-size: 18px;
 	background-size: 18px;
 }
 
-.transcriptionpreviewplayer .btn.add{
+.poodllconvedit_control-panel .btn.add{
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -888,8 +889,8 @@ button#poodllconvedit_edcancel:hover,
 	width: 100%;
 }
 
-.transcriptionpreviewplayer.player-audio .preview-progress-bar,
-.transcriptionpreviewplayer.player-audio .progress-line {
+.poodllconvedit_control-panel .preview-progress-bar,
+.poodllconvedit_control-panel .progress-line {
 	width: 100%;
 }
 
