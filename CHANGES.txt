@@ -1,5 +1,6 @@
 Version 1.0.10 (Build 2019XXXXX)
 -added better reporting of invalid API creds to user
+-Optimisations of cron task
 
 Version 1.0.10 (Build 2019102800)
 -set position of player in transcript editor to absolute

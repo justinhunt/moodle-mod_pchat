@@ -61,7 +61,7 @@ class pchat_s3_adhoc extends \core\task\adhoc_task {
          if($attempt){
 
              if(!$attempt->filename){
-                 $this->do_retry_soon('Audio file appears to not be ready yet',$trace,$cd);
+                 $this->do_retry('Audio file appears to not be ready yet',$trace,$cd);
                  return;
              }
              if($attempt->transcript){
@@ -91,7 +91,7 @@ class pchat_s3_adhoc extends \core\task\adhoc_task {
                  }
 
              }else{
-                 $this->do_retry_soon('Transcripts are not ready yet',$trace,$cd);
+                 $this->do_retry('Transcripts are not ready yet',$trace,$cd);
              }
 
          }else{
@@ -100,22 +100,28 @@ class pchat_s3_adhoc extends \core\task\adhoc_task {
          }
 	}
 
-    protected function do_retry_soon($reason,$trace,$customdata){
-        if($customdata->taskcreationtime + (MINSECS * 15) < time()){
-            $this->do_retry_delayed($reason,$trace);
-        }else {
-            $trace->output($reason . ": will try again next cron ");
-            $s3_task = new \mod_pchat\task\pchat_s3_adhoc();
-            $s3_task->set_component('mod_pchat');
-            $s3_task->set_custom_data($customdata);
-            // queue it
-            \core\task\manager::queue_adhoc_task($s3_task);
-        }
-    }
+    protected function do_retry($reason, $trace, $customdata) {
 
-    protected function do_retry_delayed($reason,$trace){
-        $trace->output($reason . ": will retry after a delay ");
-        throw new \file_exception('retrievefileproblem', 'could not fetch transcripts.');
+        if($customdata->taskcreationtime + (HOURSECS * 24) < time()){
+            //after 24 hours we give up
+            $trace->output($reason . ": Its been more than 24 hours. Giving up on this transcript.");
+            return;
+
+        }elseif ($customdata->taskcreationtime + (MINSECS * 15) < time()) {
+            //15 minute delay
+            $delay = (MINSECS * 15);
+        }else{
+            //30 second delay
+            $delay = 30;
+        }
+        $trace->output($reason . ": will try again next cron after $delay seconds");
+        $s3_task = new \mod_pchat\task\pchat_s3_adhoc();
+        $s3_task->set_component('mod_pchat');
+        $s3_task->set_custom_data($customdata);
+        //if we do not set the next run time it can extend the current cron job indef with a recurring task
+        $s3_task->set_next_run_time(time()+$delay);
+        // queue it
+        \core\task\manager::queue_adhoc_task($s3_task);
     }
 
     protected function do_forever_fail($reason,$trace){
