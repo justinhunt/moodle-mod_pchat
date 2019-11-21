@@ -126,7 +126,7 @@ class diff{
                 switch(count($set)){
                     case 0:
                     case 1:
-                        continue;
+                        break;
                     case 2:
                     default:
                         //clean each word in set
