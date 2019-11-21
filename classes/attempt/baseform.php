@@ -452,7 +452,14 @@ abstract class baseform extends \moodleform {
         if($this->attempt) {
             $timelimit = $this->attempt->convlength * 60;
         }
-        $recorder_html = $this->fetch_recorder($this->moduleinstance,'audio','fresh',$timelimit,$this->token, $width,$height);
+
+        $error_message = utils::fetch_token_error($this->token);
+        if(empty($error_message)) {
+            $recorder_html =
+                    $this->fetch_recorder($this->moduleinstance, 'audio', 'fresh', $timelimit, $this->token, $width, $height);
+        }else{
+            $recorder_html = $error_message;
+        }
         $recordingorplayerfield->setValue($player_html . $recorder_html);
 
     }

@@ -26,6 +26,7 @@ const M_CLASS='mod_pchat';
 const M_CLASS_ITEMTABLE='mod_pchat_attempttable';
 const M_CLASS_TOPICSCONTAINER ='topicscontainer';
 const M_CLASS_TOPICSCHECKBOX = 'topicscheckbox';
+const M_PLUGINSETTINGS ='/admin/settings.php?section=modsettingpchat';
 
 //AI Transcript constants
 const M_AI_PARENTFIELDNAME = 'pchat';
@@ -96,7 +97,7 @@ const M_C_TRANSCRIPTEDITOR='mod_pchat_transcripteditor';
 const M_C_CONVERSATION='mod_pchat_conversation';
 
 const M_LANG_ENUS ='en-US';
-const M_LANG_ENUK ='en-UK';
+const M_LANG_ENUK ='en-GB';
 const M_LANG_ENAU ='en-AU';
 const M_LANG_ESUS ='es-US';
 const M_LANG_FRCA ='fr-CA';
