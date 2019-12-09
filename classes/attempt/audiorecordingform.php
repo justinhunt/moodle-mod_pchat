@@ -39,5 +39,8 @@ class audiorecordingform extends baseform
         $this->add_audio_recording(get_string('audiorecording',constants::M_COMPONENT));
 
     }
+    public function get_savebutton_text(){
+        return get_string('next', constants::M_COMPONENT);
+    }
 
 }

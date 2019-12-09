@@ -15,7 +15,7 @@ class attempts extends basereport
 {
 
     protected $report="attempts";
-    protected $fields = array('id','username','topicname','partners','turns','ATL','LTL','TW','QS','ACC','timemodified','deletenow');
+    protected $fields = array('id','username','audiofile','topicname','partners','turns','ATL','LTL','TW','QS','ACC','timemodified','view','deletenow');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -89,8 +89,36 @@ class attempts extends basereport
 
                 break;
 
+            case 'audiofile':
+                if ($withlinks && !empty($record->filename)) {
+
+
+                    $ret = \html_writer::tag('audio','',
+                            array('controls'=>'1','src'=>$record->filename));
+                    //hidden player works but less useful right now
+                    /*
+                    $ret = \html_writer::div('<i class="fa fa-play-circle fa-2x"></i>',
+                            constants::M_HIDDEN_PLAYER_BUTTON, array('data-audiosource' => $record->filename));
+                    */
+
+                } else {
+                    $ret = get_string('submitted', constants::M_COMPONENT);
+                }
+                break;
+
             case 'timemodified':
                 $ret = date("Y-m-d H:i:s", $record->timemodified);
+                break;
+
+            case 'view':
+                if ($withlinks && has_capability('mod/pchat:manageattempts', $this->context)) {
+                    $url = new \moodle_url(constants::M_URL . '/reports.php',
+                            array('format'=>'html','report' => 'singleattempt', 'id' => $this->cm->id, 'attemptid' => $record->id));
+                    $btn = new \single_button($url, get_string('view'), 'post');
+                    $ret = $OUTPUT->render($btn);
+                }else {
+                    $ret = '';
+                }
                 break;
 
             case 'deletenow':
@@ -130,7 +158,7 @@ class attempts extends basereport
         $this->headingdata = new \stdClass();
 
         $emptydata = array();
-        $sql = 'SELECT at.id, at.userid, at.topicname, at.interlocutors, st.turns, st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy, at.timemodified ';
+        $sql = 'SELECT at.id, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy, at.timemodified ';
         $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
         $sql .= ' WHERE at.pchat = :pchatid';
         $alldata = $DB->get_records_sql($sql,array('pchatid'=>$formdata->pchatid));

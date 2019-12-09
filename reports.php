@@ -95,6 +95,8 @@ $PAGE->requires->jquery();
 	
 
 $aph_opts =Array();
+//this inits the grading helper JS
+$PAGE->requires->js_call_amd("mod_pchat/hiddenplayerhelper", 'init', array($aph_opts));
 
 
 //This puts all our display logic into the renderer.php files in this plugin
@@ -129,6 +131,22 @@ switch ($showreport){
 		$formdata->modulecontextid = $modulecontext->id;
 		break;
 
+    case 'singleattempt':
+        $attempt = $DB->get_record(constants::M_ATTEMPTSTABLE,array('id'=>$attemptid));
+        if($attempt) {
+            if($attempt->userid === $USER->id ||  has_capability('mod/pchat:manageattempts', $modulecontext)) {
+                echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
+                $stats = utils::fetch_stats($attempt);
+                $aidata = $DB->get_record(constants::M_AITABLE, array('attemptid' => $attemptid));
+                $attempt_renderer = $PAGE->get_renderer(constants::M_COMPONENT,'attempt');
+                echo $attempt_renderer->show_userattemptsummary($moduleinstance, $attempt, $aidata, $stats);
+                $link = new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'menu', 'id' => $cm->id, 'n' => $moduleinstance->id));
+                echo  \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT));
+                echo $renderer->footer();
+                return;
+            }
+        }
+        break;
 		
 	default:
 		echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
@@ -159,6 +177,7 @@ switch($format){
 		$pagingbar = $reportrenderer->show_paging_bar($allrowscount, $paging,$PAGE->url);
 		echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
 		echo $extraheader;
+        echo $reportrenderer->render_hiddenaudioplayer();
 		echo $pagingbar;
 		echo $reportrenderer->render_section_html($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows, $report->fetch_fields());
 		echo $pagingbar;

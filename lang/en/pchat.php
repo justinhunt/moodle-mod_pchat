@@ -84,6 +84,8 @@ $string['audiofile'] = 'Audio';
 $string['timecreated'] = 'Time Created';
 $string['nodataavailable'] = 'No Data Available Yet';
 $string['saveandnext'] = 'Save .... and next';
+$string['next'] = 'Next';
+$string['finish'] = 'Finish';
 $string['reattempt'] = 'Try Again';
 $string['notgradedyet'] = 'Your submission has been received, but has not been graded yet';
 $string['enabletts'] = 'Enable TTS(experimental)';
@@ -326,6 +328,8 @@ $string['LTL']= 'LTL';
 $string['TW']= 'TW';
 
 $string['audiorecording']= 'Audio Recording';
+$string['summaryuserattemptheadertitle']= '(Attempt: {$a}) Conversation Details';
+$string['summaryuserattemptheaderintro']= '';
 $string['summaryheadertitle']= 'Your Conversation Details';
 $string['summaryheaderintro']= 'Check the details and the results of your conversation below. How do you think? You should be getting better each time.';
 $string['leaveedittopic']= 'Edit (diff. activity)';
@@ -343,6 +347,11 @@ $string['QS']= 'Qs';
 $string['ACC']= 'Acc';
 
 $string['notopicsavailable'] = "No topics have been added by your teacher.";
+
+$string['postattemptedit'] = 'Can edit after finished';
+$string['postattemptedit_details'] = 'Allow student to edit their submission after they have submitted it.';
+$string['dopostattemptedit'] = 'Edit the last attempt';
+$string['audiofilename'] = 'Audio';
 
 
 

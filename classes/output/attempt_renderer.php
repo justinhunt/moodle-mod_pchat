@@ -111,12 +111,34 @@ class attempt_renderer extends \plugin_renderer_base {
         return $ret;
 
     }
+    /**
+     *
+     */
+    public function fetch_postattemptedit_link($cm, $attemptid){
+        $editurl = new \moodle_url('/mod/pchat/attempt/manageattempts.php',
+                array('id' => $cm->id, 'attemptid' => $attemptid, 'type' => constants::STEP_SELFREVIEW));
 
-    function show_summary($moduleinstance,$attempt,$aidata, $stats){
+        $button = \html_writer::link($editurl,get_string('dopostattemptedit',constants::M_COMPONENT),array('class'=>''));
+        $ret = \html_writer::div($button ,constants::M_CLASS  . '_postattemptedit_cont');
+        return $ret;
+
+    }
+
+    function show_userattemptsummary($moduleinstance,$attempt,$aidata, $stats){
+        $userheader=true;
+        return $this->show_summary($moduleinstance,$attempt,$aidata, $stats,$userheader);
+    }
+
+    function show_summary($moduleinstance,$attempt,$aidata, $stats,$userheader=false){
         $attempt->targetwords = utils::fetch_targetwords($attempt);
         $attempt->interlocutornames = utils::fetch_interlocutor_names($attempt);
         $attempt->selftranscriptparts = utils::fetch_selftranscript_parts($attempt);
-        $ret = $this->output->render_from_template( constants::M_COMPONENT . '/summaryheader', $attempt);
+        if($userheader){
+            $ret = $this->output->render_from_template( constants::M_COMPONENT . '/summaryuserattemptheader', $attempt);
+        }else{
+            $ret = $this->output->render_from_template( constants::M_COMPONENT . '/summaryheader', $attempt);
+        }
+
         $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summarychoices', $attempt);
 
         //mark up our passage for review

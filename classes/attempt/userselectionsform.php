@@ -46,5 +46,8 @@ class userselectionsform extends baseform
        $this->set_targetwords();
 
     }
+    public function get_savebutton_text(){
+        return get_string('next', constants::M_COMPONENT);
+    }
 
 }

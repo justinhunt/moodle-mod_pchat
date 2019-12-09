@@ -102,4 +102,10 @@ const M_LANG_ENAU ='en-AU';
 const M_LANG_ESUS ='es-US';
 const M_LANG_FRCA ='fr-CA';
 
+const M_HIDDEN_PLAYER = 'mod_pchat_hidden_player';
+const M_HIDDEN_PLAYER_BUTTON = 'mod_pchat_hidden_player_button';
+const M_HIDDEN_PLAYER_BUTTON_ACTIVE = 'mod_pchat_hidden_player_button_active';
+const M_HIDDEN_PLAYER_BUTTON_PAUSED = 'mod_pchat_hidden_player_button_paused';
+const M_HIDDEN_PLAYER_BUTTON_PLAYING = 'mod_pchat_hidden_player_button_playing';
+
 }

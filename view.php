@@ -119,5 +119,10 @@ if($start_or_continue) {
     if($moduleinstance->multiattempts || has_capability('mod/pchat:manageattempts', $context) ){
         echo $attempt_renderer->fetch_reattempt_button($cm);
     }
+    if($attempt) {
+        if ($moduleinstance->postattemptedit || has_capability('mod/pchat:manageattempts', $context)) {
+            echo $attempt_renderer->fetch_postattemptedit_link($cm, $attempt->id);
+        }
+    }
 }
 echo $renderer->footer();

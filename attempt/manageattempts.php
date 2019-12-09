@@ -107,7 +107,9 @@ switch($type){
 
     case constants::STEP_AUDIORECORDING:
         $targetwords = $attempt ? $attempt->topictargetwords : '';
-        $targetwords .= $attempt ? PHP_EOL . trim($attempt->mywords) : '';
+        if($attempt && !empty(trim($attempt->mywords))){
+            $targetwords .= $attempt ? PHP_EOL . trim($attempt->mywords) : '';
+        }
         $mform = new \mod_pchat\attempt\audiorecordingform(null,
                 array('moduleinstance'=>$moduleinstance,
                         'token'=>$token,
@@ -181,7 +183,7 @@ switch($type){
                         'stats'=>$stats));
         break;
 
-    case constants::NONE:
+    case constants::STEP_NONE:
     default:
         print_error('No attempt type specifified');
 }

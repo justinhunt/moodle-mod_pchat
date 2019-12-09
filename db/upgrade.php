@@ -140,6 +140,17 @@ function xmldb_pchat_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2019100500, 'pchat');
     }
 
+    if ($oldversion < 2019120900) {
+        $table = new xmldb_table('pchat');
+        $field =  new xmldb_field('postattemptedit', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2019120900, 'pchat');
+    }
+
 
     // Final return of upgrade result (true, all went good) to Moodle.
     return true;

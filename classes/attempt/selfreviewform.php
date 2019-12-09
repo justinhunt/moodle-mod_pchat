@@ -36,5 +36,8 @@ class selfreviewform extends baseform
 
 
     }
+    public function get_savebutton_text(){
+        return get_string('finish', constants::M_COMPONENT);
+    }
 
 }

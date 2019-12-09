@@ -134,14 +134,19 @@ abstract class baseform extends \moodleform {
 
         $this->custom_definition();
 
+        $savebutton_text = $this->get_savebutton_text();
+
         //add the action buttons
-        $this->add_action_buttons(get_string('cancel'), get_string('saveitem', constants::M_COMPONENT));
+        $this->add_action_buttons(get_string('cancel'), $savebutton_text);
 
     }
 
     public final function definition_after_data() {
         parent::definition_after_data();
         $this->custom_definition_after_data();
+    }
+    public function get_savebutton_text(){
+        return get_string('saveitem', constants::M_COMPONENT);
     }
 
     protected final function add_fontawesomecombo_field($name, $label) {
@@ -185,7 +190,7 @@ abstract class baseform extends \moodleform {
                     array("size" => "5"));
             $this->_form->setDefault('convlength', $this->moduleinstance->convlength);
         }else{
-            $this->_form->addElement('hidden','convlength');
+            $this->_form->addElement('hidden','convlength', $this->moduleinstance->convlength);
             $this->_form->setType('convlength',PARAM_INT);
             $this->_form->addElement('static','convlengthtitle',get_string('convlength', constants::M_COMPONENT),get_string('xminutes', constants::M_COMPONENT, $this->moduleinstance->convlength));
         }
@@ -304,7 +309,7 @@ abstract class baseform extends \moodleform {
             $selectusers[$user->id] =  fullname($user);
         }
         $this->_form->addElement('autocomplete', $name, $label,$selectusers, $options);
-        //$this->_form->addRule($name, null, 'required', null, 'client');
+        $this->_form->addRule($name, null, 'required', null, 'client');
     }
 
     protected final function add_transcript_editor($name, $label){

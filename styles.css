@@ -185,7 +185,12 @@ div.mod_pchat_mbuttons {
 	width: 100px;
 }
 
-
+.mod_pchat_postattemptedit_cont {
+	margin: auto;
+	width: 250px;
+	text-align: center;
+	padding-top: 10px;
+}
 
 
 /* CONVERSATION EDITOR STYLES FROM HERE */

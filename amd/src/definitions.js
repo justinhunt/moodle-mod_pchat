@@ -23,7 +23,13 @@ This file contains class and ID definitions.
         C_BUTTONMOVEDOWN: 'poodllconvedit_edmovedown',
         C_BUTTONCANCEL: 'poodllconvedit_edcancel',
         C_EDITFIELD: 'poodllconvedit_edpart',
-        C_TARGETWORDSDISPLAY: 'mod_pchat_targetwordsdisplay'
+        C_TARGETWORDSDISPLAY: 'mod_pchat_targetwordsdisplay',
+        //hidden player
+        hiddenplayer: 'mod_pchat_hidden_player',
+        hiddenplayerbutton: 'mod_pchat_hidden_player_button',
+        hiddenplayerbuttonactive: 'mod_pchat_hidden_player_button_active',
+        hiddenplayerbuttonpaused: 'mod_pchat_hidden_player_button_paused',
+        hiddenplayerbuttonplaying: 'mod_pchat_hidden_player_button_playing',
 
 
     };//end of return value

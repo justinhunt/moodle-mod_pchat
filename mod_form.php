@@ -73,6 +73,10 @@ class mod_pchat_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'multiattempts', get_string('multiattempts', constants::M_COMPONENT), get_string('multiattempts_details', constants::M_COMPONENT));
         $mform->setDefault('multipleattempts',true);
 
+        //allow post attempt edit
+        $mform->addElement('advcheckbox', 'postattemptedit', get_string('postattemptedit', constants::M_COMPONENT), get_string('postattemptedit_details', constants::M_COMPONENT));
+        $mform->setDefault('postattemptedit',false);
+
         //time limits
         $options = utils::get_conversationlength_options();
         //the size attribute doesn't work because the attributes are applied on the div container holding the select

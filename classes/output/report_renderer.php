@@ -29,6 +29,11 @@ class report_renderer extends \plugin_renderer_base
 
         return $ret;
     }
+    public function render_hiddenaudioplayer() {
+        $audioplayer = \html_writer::tag('audio', '',
+                array('src' => '', 'id' => constants::M_HIDDEN_PLAYER, 'class' => constants::M_HIDDEN_PLAYER));
+        return $audioplayer;
+    }
 
     public function render_reporttitle_html($course, $username)
     {
