@@ -475,7 +475,7 @@ abstract class baseform extends \moodleform {
      * PARAM $recordertype something like "upload" or "fresh" or "bmr"
      */
     public function fetch_recorder($moduleinstance, $media, $recordertype,$timelimit, $token,$width,$height){
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $USER;
 
         $recorderdiv_domid = constants::M_WIDGETID;
         //we never need more than a recorder on the page of this mod
@@ -494,6 +494,7 @@ abstract class baseform extends \moodleform {
                 array('id'=>$recorderdiv_domid,
                         'data-id'=>'therecorder',
                         'data-parent'=>$CFG->wwwroot,
+                        'data-owner'=>hash('md5',$USER->username),
                         'data-localloading'=>'auto',
                         'data-localloader'=> constants::M_URL . '/poodllloader.html',
                         'data-media'=>$media,
