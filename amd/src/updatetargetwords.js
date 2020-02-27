@@ -10,6 +10,18 @@ This file contains class and ID definitions.
     return{
 
         init: function(opts) {
+            //pick up opts from html
+            var theid = '#amdopts_' + opts.controlid;
+            var configcontrol = $(theid).get(0);
+            if (configcontrol) {
+                opts = JSON.parse(configcontrol.value);
+                $(theid).remove();
+            } else {
+                //if there is no config we might as well give up
+                log.debug('Read Seed Test Controller: No config found on page. Giving up.');
+                return;
+            }
+
             this.register_events(opts['topics'],opts['triggercontrol'], opts['updatecontrol']);
         },
 

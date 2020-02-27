@@ -213,7 +213,17 @@ abstract class baseform extends \moodleform {
         $opts['topics']=$this->topics;
         $opts['triggercontrol']='topicid';
         $opts['updatecontrol']='targetwords';
-        $PAGE->requires->js_call_amd("mod_pchat/updatetargetwords", 'init', array($opts));
+        //convert opts to json
+        $jsonstring = json_encode($opts);
+
+        $controlid = constants::M_RECORDERID . '_opts_targetwords';
+        $this->_form->addElement('hidden','targetwordsopts',$jsonstring,
+                array('id' => 'amdopts_' . $controlid, 'type' => 'hidden'));
+        $this->_form->setType('targetwordsopts',PARAM_RAW);
+
+
+        $basicopts=array('controlid'=>$controlid);
+        $PAGE->requires->js_call_amd("mod_pchat/updatetargetwords", 'init', array($basicopts));
     }
 
     //add a field to display target words in a "tag" like way.
