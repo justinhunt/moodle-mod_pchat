@@ -584,15 +584,6 @@ define(['jquery', 'core/log', 'mod_pchat/popoverhelper'], function ($, log, popo
             }
         },
 
-
-        playword: function () {
-            var m = this;//M.mod_readaloud.gradenowhelper;
-            m.controls.wordplayer.attr('src', M.cfg.wwwroot + '/mod/readaloud/tts.php?txt=' + encodeURIComponent($(this).text())
-                + '&lang=' + m.options.ttslanguage + '&n=' + m.options.activityid);
-            m.controls.wordplayer[0].pause();
-            m.controls.wordplayer[0].load();
-            m.controls.wordplayer[0].play();
-        },
         markup_badwords: function () {
             var m = this;
             this.processunread();

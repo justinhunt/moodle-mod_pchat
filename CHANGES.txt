@@ -1,3 +1,6 @@
+Version 1.0.13 (Build 2020022800)
+-removed unnecessary references to ReadAloud module
+
 Version 1.0.12 (Build 2020012500)
 - Added user tagging
 - Added several languages

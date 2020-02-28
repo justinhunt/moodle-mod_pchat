@@ -115,7 +115,7 @@ class mod_pchat_mod_form extends moodleform_mod {
         //transcriber options
         $name = 'transcriber';
         $label = get_string($name, constants::M_COMPONENT);
-        $options = \mod_readaloud\utils::fetch_options_transcribers();
+        $options = \mod_pchat\utils::fetch_options_transcribers();
         $mform->addElement('select', $name, $label, $options);
         $mform->setDefault($name,constants::TRANSCRIBER_AMAZONTRANSCRIBE);// $config->{$name});
 

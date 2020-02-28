@@ -270,33 +270,10 @@ class aitranscriptutils{
 
         ////wpm score
         $wpmerrors = $errorcount;
-        //accuracy adjust is a ReadaLoud feature. We *might* use here. But not currently
-        $accadjustmethod=constants::ACCMETHOD_NONE;
+
         //target WPM is a ReadaLoud feature. We probably won't use it here.
         $targetwpm = 100;
 
-        switch($accadjustmethod){
-
-            case constants::ACCMETHOD_FIXED:
-                $wpmerrors = $wpmerrors - $activitydata->accadjust;
-                if($wpmerrors < 0){$wpmerrors=0;}
-                break;
-
-            case constants::ACCMETHOD_NOERRORS:
-                $wpmerrors = 0;
-                break;
-
-            case constants::ACCMETHOD_AUTO:
-                $adjust= \mod_readaloud\utils::estimate_errors($activitydata->id);
-                $wpmerrors = $wpmerrors - $adjust;
-                if($wpmerrors < 0){$wpmerrors=0;}
-                break;
-
-            case constants::ACCMETHOD_NONE:
-            default:
-                $wpmerrors = $errorcount;
-                break;
-        }
         if($sessiontime > 0) {
             $wpmscore = round(($sessionendword - $wpmerrors) * 60 / $sessiontime);
         }else{

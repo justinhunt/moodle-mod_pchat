@@ -1,7 +1,7 @@
 define(['jquery', 'core/log', 'mod_pchat/definitions'], function ($, log, def) {
     "use strict"; // jshint ;_;
 
-    log.debug('Readaloud hidden player helper: initialising');
+    log.debug('P-CHAT hidden player helper: initialising');
 
     return {
 

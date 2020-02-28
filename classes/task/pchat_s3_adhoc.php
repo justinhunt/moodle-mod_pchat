@@ -17,7 +17,7 @@
 /**
  * A mod_pchat adhoc task
  *
- * @package    mod_readaloud
+ * @package    mod_pchat
  * @copyright  2015 Justin Hunt (poodllsupport@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
