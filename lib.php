@@ -340,9 +340,13 @@ function pchat_print_recent_mod_activity($activity, $courseid, $detail, $modname
  * @return boolean
  * @todo Finish documenting this function
  **/
+/*
 function pchat_cron () {
+    global $CFG;
+
     return true;
 }
+*/
 
 /**
  * Returns all other caps used in the module
