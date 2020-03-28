@@ -1,4 +1,4 @@
-Version 1.0.14 (unreleased)
+Version 1.0.14 (Build 2020032800)
 -added poodllloader.html which safari needs
 -removed function pchat_cron
 -added instant transcription from AWS
