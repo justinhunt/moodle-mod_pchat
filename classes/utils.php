@@ -90,6 +90,76 @@ class utils{
         return $ret;
     }
 
+    public static function can_streaming_transcribe($instance){
+
+        $ret = false;
+
+        //The instance languages
+        switch($instance->ttslanguage){
+            case constants::M_LANG_ENAU:
+            case constants::M_LANG_ENGB:
+            case constants::M_LANG_ENUS:
+            case constants::M_LANG_FRFR:
+            case constants::M_LANG_FRCA:
+                $ret =true;
+                break;
+            default:
+                $ret = false;
+        }
+
+        //The supported regions
+        if($ret) {
+            switch ($instance->region) {
+                case "useast1":
+                case "useast2":
+                case "uswest2":
+                case "sydney":
+                case "dublin":
+                case "ottawa":
+                    $ret =true;
+                    break;
+                default:
+                    $ret = false;
+            }
+        }
+
+        return $ret;
+    }
+
+    //streaming results are not the same format as non streaming, we massage the streaming to look like a non streaming
+    //to our code that will go on to process it.
+    public static function parse_streaming_results($streaming_results){
+        $results = json_decode($streaming_results);
+        $alltranscript = '';
+        $allitems=[];
+        foreach($results as $result){
+            foreach($result as $completion) {
+                foreach ($completion->Alternatives as $alternative) {
+                    $alltranscript .= $alternative->Transcript . ' ';
+                    foreach ($alternative->Items as $item) {
+                        $processeditem = new \stdClass();
+                        $processeditem->alternatives = [['content' => $item->Content, 'confidence' => "1.0000"]];
+                        $processeditem->end_time = "" . round($item->EndTime,3);
+                        $processeditem->start_time = "" . round($item->StartTime,3);
+                        $processeditem->type = $item->Type;
+                        $allitems[] = $processeditem;
+                    }
+                }
+            }
+        }
+        $ret = new \stdClass();
+        $ret->jobName="streaming";
+        $ret->accountId="streaming";
+        $ret->results =[];
+        $ret->status='COMPLETED';
+        $ret->results['transcripts']=[['transcript'=>$alltranscript]];
+        $ret->results['items']=$allitems;
+
+        return json_encode($ret);
+    }
+
+
+
     public static function extract_simple_transcript($selftranscript){
         if(!$selftranscript || empty($selftranscript)){
             return '';
@@ -111,7 +181,8 @@ class utils{
         return true;
     }
 
-    public static function retrieve_transcripts($attempt){
+
+    public static function retrieve_transcripts_from_s3($attempt){
         global $DB;
 
         //if the audio filename is empty or wrong, its hopeless ...just return false
@@ -250,7 +321,8 @@ class utils{
         $stats->userid=$attempt->userid;
         $stats->timemodified=time();
 
-        $oldstats =$DB->get_record(constants::M_STATSTABLE,array('attemptid'=>$attempt->id));
+        $oldstats =$DB->get_record(constants::M_STATSTABLE,
+                array('pchat'=>$attempt->pchat,'attemptid'=>$attempt->id,'userid'=>$attempt->userid));
         if($oldstats){
             $stats->id = $oldstats->id;
             $DB->update_record(constants::M_STATSTABLE,$stats);
@@ -328,6 +400,17 @@ class utils{
         }
     }
 
+    //remove stats
+    public static function remove_stats($attempt){
+        global $DB;
+
+        $oldstats =$DB->get_record(constants::M_STATSTABLE,
+                array('pchat'=>$attempt->pchat,'attemptid'=>$attempt->id,'userid'=>$attempt->userid));
+        if($oldstats) {
+            $DB->delete_records(constants::M_STATSTABLE, array('id'=>$oldstats->id));
+        }
+    }
+
     //clear AI data
     // we might do this if the user re-records
     public static function clear_ai_data($activityid, $attemptid){
@@ -364,6 +447,28 @@ class utils{
         \core\task\manager::queue_adhoc_task($s3_task);
         return true;
     }
+
+
+    public static function toggle_topic_selected($topicid, $activityid) {
+        global $DB;
+
+        // Require view and make sure the user did not previously mark as seen.
+        $params = ['moduleid' => $activityid, 'topicid' => $topicid];
+        $selected = $DB->record_exists(constants::M_SELECTEDTOPIC_TABLE, $params);
+
+        if($selected){
+            $DB->delete_records(constants::M_SELECTEDTOPIC_TABLE, $params);
+        }else{
+            $entry = new \stdClass();
+            $entry->topicid=$topicid;
+            $entry->moduleid=$activityid;
+            $entry->timemodified=time();
+
+            $DB->insert_record(constants::M_SELECTEDTOPIC_TABLE, $entry);
+        }
+        return true;
+    }
+
 
     /*
    * Clean word of things that might prevent a match
@@ -652,6 +757,7 @@ class utils{
     public static function fetch_options_transcribers() {
         $options =
                 array(constants::TRANSCRIBER_AMAZONTRANSCRIBE => get_string("transcriber_amazontranscribe", constants::M_COMPONENT),
+                        constants::TRANSCRIBER_AMAZONSTREAMING => get_string("transcriber_amazonstreaming", constants::M_COMPONENT),
                         constants::TRANSCRIBER_GOOGLECLOUDSPEECH => get_string("transcriber_googlecloud", constants::M_COMPONENT));
         return $options;
     }

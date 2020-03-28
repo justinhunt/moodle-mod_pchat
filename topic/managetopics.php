@@ -119,6 +119,9 @@ if ($data = $mform->get_data()) {
         if (!$thetopic->id = $DB->insert_record(constants::M_TOPIC_TABLE,$thetopic)){
             print_error("Could not insert pchat topic!");
             redirect($redirecturl);
+        }else{
+            //lets select it , because everyine seems to forget to otherwise
+            \mod_pchat\utils::toggle_topic_selected($thetopic->id,$moduleinstance->id);
         }
     }else{
         //now update the db once we have saved files and stuff

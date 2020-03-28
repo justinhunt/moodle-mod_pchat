@@ -46,21 +46,8 @@ class external extends \external_api {
             return false;
         }
 
-        // Require view and make sure the user did not previously mark as seen.
-        $params = ['moduleid' => $mod->id, 'topicid' => $topicid];
-        $selected = $DB->record_exists(constants::M_SELECTEDTOPIC_TABLE, $params);
-
-        if($selected){
-            $DB->delete_records(constants::M_SELECTEDTOPIC_TABLE, $params);
-        }else{
-            $entry = new \stdClass();
-            $entry->topicid=$topicid;
-            $entry->moduleid=$mod->id;
-            $entry->timemodified=time();
-
-            $DB->insert_record(constants::M_SELECTEDTOPIC_TABLE, $entry);
-        }
-        return true;
+        $success= utils::toggle_topic_selected($topic->id,$mod->id);
+        return $success;
     }
 
     public static function toggle_topic_selected_returns() {

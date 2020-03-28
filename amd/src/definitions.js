@@ -15,6 +15,7 @@ This file contains class and ID definitions.
         C_ATTRFORMAT: 'vs_attrformat',
         C_FILENAMETEXT: 'vs_filenametext',
         C_UPDATECONTROL: 'filename',
+        C_STREAMINGCONTROL: 'streamingtranscript',
         topicscontainer: 'topicscontainer',
         topiccheckbox: 'topicscheckbox',
         C_BUTTONAPPLY: 'poodllconvedit_edapply',
@@ -30,6 +31,7 @@ This file contains class and ID definitions.
         hiddenplayerbuttonactive: 'mod_pchat_hidden_player_button_active',
         hiddenplayerbuttonpaused: 'mod_pchat_hidden_player_button_paused',
         hiddenplayerbuttonplaying: 'mod_pchat_hidden_player_button_playing',
+        transcriber_amazonstreaming: 4
 
 
     };//end of return value

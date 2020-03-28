@@ -139,6 +139,13 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
               that.editorToTile(that.controls,that.currentindex,that.currentitemcontainer);
           });
 
+          //if the user clicks out of the editor (probably by clicking the form "next button)
+          //editor button apply changesclick event
+          this.controls.container.on("focusout",function(){
+              that.editorToTile(that.controls,that.currentindex,that.currentitemcontainer);
+          });
+
+
           //editor button cancel changes click event
           this.controls.container.on("click",'#' + def.C_BUTTONCANCEL,function(){
               that.restoreTile();

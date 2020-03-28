@@ -66,12 +66,12 @@ class pchat_s3_adhoc extends \core\task\adhoc_task {
              }
              if($attempt->transcript){
                  //woa!! Its already been got. This can happen if user goes to selfreview page which will try and do the
-                 //retrieve if transcripts are not back. Too many users do not have cron going, so this helps.
+                 //retrieve if transcripts are not back. It can also happen if streaming transcription is going
                  $trace->output("Transcript has already been fetched. Nothing to do");
                  return;
              }
 
-             $attempt_with_transcripts = utils::retrieve_transcripts($attempt);
+             $attempt_with_transcripts = utils::retrieve_transcripts_from_s3($attempt);
              if($attempt_with_transcripts){
                  $trace->output("Transcripts are fetched for " . $cd->attemptid . " ...all ok");
                  //process transcripts (find matches etc)

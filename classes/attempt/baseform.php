@@ -412,6 +412,8 @@ abstract class baseform extends \moodleform {
     protected final function add_recordingurl_field() {
         $this->_form->addElement('hidden', constants::RECORDINGURLFIELD,null,array('id'=>constants::M_WIDGETID . constants::RECORDINGURLFIELD));
         $this->_form->setType(constants::RECORDINGURLFIELD, PARAM_TEXT);
+        $this->_form->addElement('hidden', constants::STREAMINGTRANSCRIPTFIELD,null,array('id'=>constants::M_WIDGETID . constants::STREAMINGTRANSCRIPTFIELD));
+        $this->_form->setType(constants::STREAMINGTRANSCRIPTFIELD, PARAM_TEXT);
         $this->_form->addElement('static', constants::RECORDERORPLAYERFIELD, get_string('audiorecording', constants::M_COMPONENT), '','class="mod_pchat_audiorecordercont');
 
     }
@@ -499,7 +501,21 @@ abstract class baseform extends \moodleform {
         // $hints->allowearlyexit = $moduleinstance->allowearlyexit;
         // $string_hints = base64_encode (json_encode($hints));
         $can_transcribe = utils::can_transcribe($moduleinstance);
-        $transcribe = $can_transcribe  ? "1" : "0";
+
+
+        //if they choose streaming transcription we also transcribe on server(just in case)
+        //we will turn this off after streaming has proved stable 03/2020
+        switch ($moduleinstance->transcriber){
+            case constants::TRANSCRIBER_AMAZONSTREAMING :
+                $transcribe = $can_transcribe ? constants::TRANSCRIBER_AMAZONTRANSCRIBE : "0";
+                break;
+            case constants::TRANSCRIBER_AMAZONTRANSCRIBE:
+            case constants::TRANSCRIBER_GOOGLECLOUDSPEECH:
+            case constants::TRANSCRIBER_NONE:
+            default:
+                $transcribe = $can_transcribe ? $moduleinstance->transcriber : "0";
+        }
+
         $recorderdiv= \html_writer::div('', constants::M_CLASS  . '_center',
                 array('id'=>$recorderdiv_domid,
                         'data-id'=>'therecorder',
@@ -541,8 +557,24 @@ abstract class baseform extends \moodleform {
         $recopts =Array();
         $recopts['recorderid']=$recorderdiv_domid;
 
+        //streaming transcriber
+        //if not available we switch to amazon transcribe
+        if($moduleinstance->transcriber == constants::TRANSCRIBER_AMAZONSTREAMING &&
+                !utils::can_streaming_transcribe($moduleinstance)){
+            $moduleinstance->transcriber=constants::TRANSCRIBER_AMAZONTRANSCRIBE;
+        }
+        $recopts['transcriber']=$moduleinstance->transcriber;
+        $recopts['language']=$moduleinstance->ttslanguage;
+        $recopts['region']= $moduleinstance->region;
+        $recopts['token']=$token;
+        $recopts['parent']=$CFG->wwwroot;
+        $recopts['owner']=hash('md5',$USER->username);
+        $recopts['appid']=constants::M_COMPONENT;
+        $recopts['expiretime']=300;//max expire time is 300 seconds
 
-        //this inits the M.mod_pchat thingy, after the page has loaded.
+
+
+        //this inits the M.mod_pchat recoorder controller, after the page has loaded.
         //we put the opts in html on the page because moodle/AMD doesn't like lots of opts in js
         $jsonstring = json_encode($recopts);
         $opts_html = \html_writer::tag('input', '', array('id' => 'amdopts_' . $recorderdiv_domid, 'type' => 'hidden', 'value' => $jsonstring));

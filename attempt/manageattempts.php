@@ -153,7 +153,7 @@ switch($type){
             //try to pull transcripts if we have none. Why wait for cron?
             $hastranscripts = !empty($attempt->jsontranscript);
             if(!$hastranscripts){
-                $attempt_with_transcripts = utils::retrieve_transcripts($attempt);
+                $attempt_with_transcripts = utils::retrieve_transcripts_from_s3($attempt);
                 $hastranscripts = $attempt_with_transcripts !==false;
                 if($hastranscripts && !empty($selftranscript)){
                     $autotranscript=$attempt_with_transcripts->transcript;
@@ -244,14 +244,31 @@ if ($data = $mform->get_data()) {
         case constants::STEP_AUDIORECORDING:
             $rerecording = $attempt && $newattempt->filename
                     && $attempt->filename != $newattempt->filename;
+
             //if rerecording we want to clear old AI data out
+            //as well as self transcript and force us back to self transcript
             if($rerecording) {
                 utils::clear_ai_data($moduleinstance->id, $newattempt->id);
+                utils::remove_stats($newattempt);
+                $newattempt->selftranscript="";
+                $newattempt->completedsteps = $type;
             }
             //if rerecording, or we are in "new" mode (first recording) we register our AWS task
             if($rerecording || !$edit){
                 utils::register_aws_task($moduleinstance->id, $newattempt->id, $context->id);
             }
+
+            //if we have streaming transcriptdata
+            if($data->streamingtranscript){
+                $jsontranscript = utils::parse_streaming_results($data->streamingtranscript);
+                $objecttranscript = json_decode($jsontranscript);
+                $newattempt->jsontranscript = $jsontranscript;
+                $newattempt->transcript = $objecttranscript->results->transcripts[0]->transcript;
+                //we do not need this, so just blank it.
+                $newattempt->vtttranscript = '';
+
+            }
+
             break;
         case constants::STEP_SELFTRANSCRIBE:
             //if the user has altered their self transcript, we ought to recalc all the stats and ai data

@@ -1,6 +1,8 @@
 Version 1.0.14 (unreleased)
 -added poodllloader.html which safari needs
 -removed function pchat_cron
+-added instant transcription from AWS
+-added detection for leaving transcript editor while last line still in edit mode
 
 Version 1.0.13 (Build 2020022800)
 -removed unnecessary references to ReadAloud module
