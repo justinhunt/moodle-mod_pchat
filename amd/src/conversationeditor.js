@@ -59,6 +59,10 @@ define(["jquery", "mod_pchat/definitions", "mod_pchat/conversationconstants", "m
 
           var that = this;
           var on_fetch_finish = function(tile){
+              //occasionally two event handlers will fire this and we get two tiles in one
+              //this is an ugly check to prevent that
+              if(!that.editoropen){return;}
+
               that.hideEditor();
               currentitemcontainer.append(tile);
               $(currentitemcontainer).removeClass('warning');
