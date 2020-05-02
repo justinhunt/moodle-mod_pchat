@@ -1,6 +1,6 @@
 
-define(['jquery', 'core/log','mod_pchat/definitions','mod_pchat/cloudpoodllloader','mod_pchat/recorderhelper','mod_pchat/transcriber-lazy'],
-    function($, log, def, cloudpoodllloader,recorderhelper, transcriber) {
+define(['jquery', 'core/log','mod_pchat/definitions','mod_pchat/cloudpoodllloader','mod_pchat/recorderhelper'],
+    function($, log, def, cloudpoodllloader,recorderhelper) {
 
     "use strict"; // jshint ;_;
 
@@ -40,13 +40,8 @@ define(['jquery', 'core/log','mod_pchat/definitions','mod_pchat/cloudpoodllloade
             if(!dd.is_browser_ok()){
                 return;
             }
-
-            dd.setup_transcriber();
             
             dd.setup_recorder();
-
-
-
 
         },
 
@@ -55,38 +50,6 @@ define(['jquery', 'core/log','mod_pchat/definitions','mod_pchat/cloudpoodllloade
                 && navigator.mediaDevices.getUserMedia);
         },
 
-        setup_transcriber: function(){
-            var dd = this;
-            dd.streamingresults = false;
-
-            //init streaming transcriber
-            var opts={};
-            opts['language']=dd.activitydata.language;
-            opts['region']=dd.activitydata.region;
-            opts['transcriber']=dd.activitydata.transcriber;
-            opts['token'] = dd.activitydata.token;
-            opts['parent'] = dd.activitydata.parent;
-            opts['owner'] = dd.activitydata.owner;
-            opts['appid'] = dd.activitydata.appid;
-            opts['expiretime'] = dd.activitydata.expiretime;
-            opts['transcriber']=dd.activitydata.transcriber;
-
-            if(opts['transcriber'] == def.transcriber_amazonstreaming) {
-                transcriber.init(opts);
-                transcriber.onFinalResult = function (transcript, result) {
-                    dd.streamingresults.push(result);
-                    //if recording over deal with final result
-                    //if(!transcriber.active){
-                    log.debug(dd.streamingresults);
-                    //}
-
-                    // theCallback(message);
-                };
-                transcriber.onPartialResult = function (transcript, result) {
-                    //do nothing
-                };
-            }
-        },
 
         setup_recorder: function(){
             var dd = this;
@@ -97,38 +60,26 @@ define(['jquery', 'core/log','mod_pchat/definitions','mod_pchat/cloudpoodllloade
             //contains no meaningful data
             //See https://api.poodll.com
             var on_recording_start= function(eventdata){
-                //start streaming transcriber
+                //init streaming transcriber results
                 if(dd.activitydata.transcriber == def.transcriber_amazonstreaming) {
-                    if (transcriber.active) {
-                        return;
-                    }
-                    //init our streamingresults
                     dd.streamingresults = [];
-                    // first we get the microphone input from the browser (as a promise)...
-                    window.navigator.mediaDevices.getUserMedia({
-                        video: false,
-                        audio: true,
-                    }).then(function (stream) {
-                        transcriber.start(stream, transcriber)
-                    }).catch(function (error) {
-                            log.debug(error);
-                            log.debug('There was an error streaming your audio to Amazon Transcribe. Please try again.');
-                        }
-                    );
                 }//end of if amazonstreaming
+            };
+
+            var on_speech = function (eventdata) {
+                var speech = eventdata.capturedspeech;
+                var speechresults = eventdata.speechresults;
+                if(dd.activitydata.transcriber == def.transcriber_amazonstreaming) {
+                    dd.streamingresults.push(speechresults);
+                    log.debug(dd.streamingresults);
+                }
             };
 
             //originates from the recording:ended event
             //contains no meaningful data
             //See https://api.poodll.com
             var on_recording_end= function(eventdata){
-                //stop streaming transcriber
-                if(dd.activitydata.transcriber == def.transcriber_amazonstreaming) {
-                    if (!transcriber.active) {
-                        return;
-                    }
-                    transcriber.closeSocket();
-                }
+                //nothing to do here
             };
 
             //data sent here originates from the awaiting_processing event
@@ -143,13 +94,15 @@ define(['jquery', 'core/log','mod_pchat/definitions','mod_pchat/cloudpoodllloade
                     var streamingresults = $('#' + dd.streamingresultsid);
                     streamingresults.val(JSON.stringify(dd.streamingresults));
                 }
+
             };
 
             //init the recorder
             recorderhelper.init(dd.activitydata,
                 on_recording_start,
                 on_recording_end,
-                on_media_processing);
+                on_media_processing,
+                on_speech);
         },
 
 

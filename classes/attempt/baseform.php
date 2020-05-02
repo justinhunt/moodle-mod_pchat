@@ -495,26 +495,31 @@ abstract class baseform extends \moodleform {
         //\html_writer::random_id(constants::M_WIDGETID);
 
 
-        //recorder
-        //=======================================
-        // $hints = new \stdClass();
-        // $hints->allowearlyexit = $moduleinstance->allowearlyexit;
-        // $string_hints = base64_encode (json_encode($hints));
-        $can_transcribe = utils::can_transcribe($moduleinstance);
 
+        ///recorder
+        //=======================================
+        $can_transcribe = \mod_pchat\utils::can_transcribe($moduleinstance);
+        $hints = new \stdClass();
 
         //if they choose streaming transcription we also transcribe on server(just in case)
         //we will turn this off after streaming has proved stable 03/2020
         switch ($moduleinstance->transcriber){
             case constants::TRANSCRIBER_AMAZONSTREAMING :
                 $transcribe = $can_transcribe ? constants::TRANSCRIBER_AMAZONTRANSCRIBE : "0";
+                $hints->streamingtranscriber = 'aws';
+                $speechevents = '1';
                 break;
             case constants::TRANSCRIBER_AMAZONTRANSCRIBE:
             case constants::TRANSCRIBER_GOOGLECLOUDSPEECH:
             case constants::TRANSCRIBER_NONE:
             default:
                 $transcribe = $can_transcribe ? $moduleinstance->transcriber : "0";
+                $speechevents="0";
         }
+
+        //we encode any hints
+        $string_hints = base64_encode(json_encode($hints));
+
 
         $recorderdiv= \html_writer::div('', constants::M_CLASS  . '_center',
                 array('id'=>$recorderdiv_domid,
@@ -536,6 +541,8 @@ abstract class baseform extends \moodleform {
                         'data-language'=>$moduleinstance->ttslanguage,
                         'data-expiredays'=>$moduleinstance->expiredays,
                         'data-region'=>$moduleinstance->region,
+                        'data-speechevents' => $speechevents,
+                        'data-hints' => $string_hints,
                         'data-fallback'=>'warning',
                         'data-token'=>$token
                     //'data-hints'=>$string_hints,
