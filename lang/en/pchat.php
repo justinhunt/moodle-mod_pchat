@@ -295,6 +295,8 @@ $string['createtopic'] = 'Create Topic';
 $string['topicformtitle'] = 'Add/edit Topic';
 $string['topiclevelcustom'] = 'Custom';
 $string['topiclevelcourse'] = 'Course';
+$string['grades'] = 'Grades';
+$string['managegrades'] = 'Manage Grades';
 $string['topics'] = 'Topics';
 $string['managetopics'] = 'Manage Topics';
 $string['topicselected'] = 'Selected';
@@ -387,6 +389,11 @@ $string['postattemptedit_details'] = 'Allow student to edit their submission aft
 $string['dopostattemptedit'] = 'Edit the last attempt';
 $string['audiofilename'] = 'Audio';
 
-
+#ID, Name, ai score, turns, av turn length
+$string['gradesid'] = 'ID';
+$string['gradesname'] = 'Name';
+$string['gradesaiscore'] = 'AI Score';
+$string['gradesturns'] = 'Turns';
+$string['gradesavturnlength'] = 'AV Turn Length';
 
 

@@ -52,6 +52,7 @@ function pchat_supports($feature) {
 		case FEATURE_COMPLETION_HAS_RULES: return false;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return false;
         case FEATURE_GRADE_HAS_GRADE:         return true;
+        case FEATURE_ADVANCED_GRADING:        return true;
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
         default:                        return null;
@@ -421,7 +422,7 @@ function pchat_pluginfile($course, $cm, $context, $filearea, array $args, $force
     }
 
     require_login($course, true, $cm);
-	
+
 	$itemid = (int)array_shift($args);
 
     require_course_login($course, true, $cm);

@@ -52,6 +52,13 @@ if(has_capability('mod/pchat:managetopics',$context) || has_capability('mod/pcha
     $row[] = new tabobject('topics', "$CFG->wwwroot/mod/pchat/topic/topics.php?id=$cm->id",
             get_string('topics', constants::M_COMPONENT), get_string('managetopics', constants::M_COMPONENT));
 }
+
+if(has_capability('mod/pchat:grades',$context)) {
+    $row[] = new tabobject('grades', "$CFG->wwwroot/mod/pchat/grades.php?id=$cm->id",
+        get_string('grades', constants::M_COMPONENT),
+        get_string('managegrades', constants::M_COMPONENT));
+}
+
 if(has_capability('mod/pchat:viewreports',$context)) {
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/pchat/reports.php?id=$cm->id",
             get_string('reports', constants::M_COMPONENT), get_string('viewreports', constants::M_COMPONENT));
