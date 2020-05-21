@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Grades listing for pchat
+ * Grades submission page for pchat
  *
  * @package    mod_pchat
  * @copyright  2020 Justin Hunt (poodllsupport@gmail.com)
@@ -26,12 +26,12 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 
 use mod_pchat\constants;
-use mod_pchat\grades\grades AS grades;
+use mod_pchat\grades\gradesubmissions AS gradesubmissions;
 
 global $DB;
 
 // Page classes
-$grades = new grades();
+$gradesubmissions = new gradesubmissions();
 
 // Course module ID.
 $id = required_param('id', PARAM_INT);
@@ -43,13 +43,15 @@ $modulecontext = context_module::instance($cm->id);
 require_capability('mod/pchat:grades', $modulecontext);
 
 // Set page login data.
-$PAGE->set_url(constants::M_URL . '/gradesubmissions.php');
+$PAGE->set_url(constants::M_URL . '/grades.php');
 require_login($course, true, $cm);
 
-// Get grades list data by course module and course.
-$studentgrades = $grades->getGrades($course->id, $id, $moduleinstance->id);
+// Get student grade data.
+$studentData = $gradesubmissions->getGradeData($course->id, $id, $moduleinstance->id);
 $data = new ArrayIterator($studentgrades);
 
+var_dump($studentData);
+die();
 // Set page meta data.
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
@@ -60,7 +62,7 @@ $PAGE->requires->jquery();
 // Render template and display page.
 $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
 $gradesrenderer =
-    $OUTPUT->render_from_template(constants::M_COMPONENT . '/gradesubmissions', array('cmid' => $id, 'data' => $data));
+    $OUTPUT->render_from_template(constants::M_COMPONENT . '/grades', array('data' => $data));
 
 echo $renderer->header($moduleinstance, $cm, "grades");
 echo $extraheader;

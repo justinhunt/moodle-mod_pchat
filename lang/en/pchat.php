@@ -391,9 +391,21 @@ $string['audiofilename'] = 'Audio';
 
 #ID, Name, ai score, turns, av turn length
 $string['gradesid'] = 'ID';
-$string['gradesname'] = 'Name';
+$string['gradesfirst'] = 'First';
+$string['gradeslast'] = 'Last';
 $string['gradesaiscore'] = 'AI Score';
 $string['gradesturns'] = 'Turns';
 $string['gradesavturnlength'] = 'AV Turn Length';
-
+$string['gradesactions'] = 'Actions';
+$string['gradesgraded'] = 'Graded';
+$string['gradesgradedno'] = 'No';
+$string['gradesgradedyes'] = 'Graded';
+$string['gradesgraded'] = 'Graded';
+$string['gradeschoose'] = 'Choose one:';
+$string['gradesstudent'] = 'Student';
+$string['gradesdatapoint'] = 'Data point';
+$string['gradesrubric'] = 'Rubric';
+$string['gradestranscript'] = 'Transcript';
+$string['gradesfeedback'] = 'Feedback:';
+$string['gradessubmit'] = 'Submit';
 

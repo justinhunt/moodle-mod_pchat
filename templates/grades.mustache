@@ -22,11 +22,12 @@
 
   The purpose of this template is to display submissions by students to be graded.
 }}
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
 <table cellpadding="0" cellspacing="0" width="100%" class="table table-striped" id="mod_pchat_grade_submissions_table">
     <thead>
     <tr>
-        <th>{{# str }} gradesid, mod_pchat {{/ str }}</th>
-        <th>{{# str }} gradesname, mod_pchat {{/ str }}</th>
+        <th>{{# str }} gradeslast, mod_pchat {{/ str }}</th>
+        <th>{{# str }} gradesfirst, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesaiscore, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesturns, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesavturnlength, mod_pchat {{/ str }}</th>
@@ -36,25 +37,27 @@
     </thead>
     <tfoot>
     <tr>
-        <th>{{# str }} gradesid, mod_pchat {{/ str }}</th>
-        <th>{{# str }} gradesname, mod_pchat {{/ str }}</th>
+        <th>{{# str }} gradeslast, mod_pchat {{/ str }}</th>
+        <th>{{# str }} gradesfirst, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesaiscore, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesturns, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesavturnlength, mod_pchat {{/ str }}</th>
-        <th>Actions&nbsp;</th>
-        <th>&nbsp;Graded</th>
+        <th>{{# str }} gradesactions, mod_pchat {{/ str }}&nbsp;</th>
+        <th>&nbsp;{{# str }} gradesgraded, mod_pchat {{/ str }}</th>
     </tr>
     </tfoot>
     <tbody id="history-table-body">
     {{#data}}
         <tr data-history-id="{{id}}" class="history-row">
-            <td>{{{id}}}</td>
-            <td>{{firstname}} {{lastname}}</td>
-            <td>{{aiscore}}</td>
-            <td>{{turns}}</td>
-            <td>{{avturn}}</td>
-            <td><a href="gradesubmissions.php"><button type="button" class="btn btn-primary">Grade</button>&nbsp;</a></td>
-            <th class="alert alert-danger m-0">No</th>
+            <td>{{lastname}}</td>
+            <td>{{firstname}}</td>
+            <td class="text-center">{{aiscore}}</td>
+            <td class="text-center">{{turns}}</td>
+            <td class="text-center">{{avturn}}</td>
+            <td><a href="gradesubmissions.php?id={cmid}"><button type="button" class="btn btn-primary">
+                {{# str }} gradesgraded, mod_pchat {{/ str }}
+            </button>&nbsp;</a></td>
+            <th class="alert alert-danger m-0 class="text-center">{{# str }} gradesgradedno, mod_pchat {{/ str }}</th>
         </tr>
     {{/data}}
     </tbody>
@@ -63,7 +66,7 @@
 {{#js}}
     require([
     "jquery",
-    '//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js',
+    '//cdn.datatables.net/v/bs4/dt-1.10.20/af-2.3.4/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/b-print-1.6.1/cr-1.5.2/fc-3.3.0/fh-3.1.6/kt-2.5.1/r-2.2.3/rg-1.1.1/rr-1.2.6/sc-2.0.1/sp-1.0.1/sl-1.3.1/datatables.min.js',
     ], function ($, datatable) {
         let table = $("#mod_pchat_grade_submissions_table").dataTable();
     });
