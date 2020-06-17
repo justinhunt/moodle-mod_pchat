@@ -1,3 +1,6 @@
+Version 1.0.15 (Build 2020061600)
+-unreleased. fix for tether in M3.9
+
 Version 1.0.14 (Build 2020032800)
 -added poodllloader.html which safari needs
 -removed function pchat_cron

@@ -7,10 +7,9 @@ define(['jquery', 'core/log', 'theme_boost/tether'], function ($, log, Tether) {
 
     log.debug('PChat deps: initialising');
 
-    window.Tether = Tether;
-    //really wish we did not have to do this, but theme_boost/popover can not be relied on to have a jquery
-    if(!window.jQuery) {
-        window.jQuery = $;
+    //from moodle 3,9 we no longer need to do this
+    if(M.cfg.version<2020061500) {
+        window.Tether = Tether;
     }
     return {};//end of return value
 });
