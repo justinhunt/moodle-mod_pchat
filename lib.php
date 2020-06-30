@@ -696,7 +696,6 @@ function mod_pchat_output_fragment_new_group_form($args) {
         0,
         0);
 
-    $fromform= null;
     $mform = new grade_form(null, array('editoroptions' => $editoroptions, 'gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
     if ($mform->is_cancelled()) {
         //Handle form cancel operation, if cancel button is present on form
@@ -716,9 +715,10 @@ function mod_pchat_output_fragment_new_group_form($args) {
 
     ob_start();
     $mform->display();
-    var_dump($fromform);
-    var_dump($fromform->advancedgrading);
-
+    if (!empty($fromform)) {
+        var_dump($fromform);
+        var_dump($fromform->advancedgrading);
+    }
     if ($mform->get_data()) {
 //        $grade = $gradinginstance->submit_and_get_grade('advancedgrading', $instanceid);
 //        var_dump($grade);
