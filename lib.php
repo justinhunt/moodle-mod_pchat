@@ -685,20 +685,7 @@ function mod_pchat_output_fragment_new_group_form($args) {
         parse_str($serialiseddata, $formdata);
     }
 
-    list($ignored, $course) = get_context_info_array($context->id);
-    $group = new stdClass();
-    $group->courseid = $course->id;
-
     require_capability('moodle/course:managegroups', $context);
-    $editoroptions = [
-        'maxfiles' => EDITOR_UNLIMITED_FILES,
-        'maxbytes' => $course->maxbytes,
-        'trust' => false,
-        'context' => $context,
-        'noclean' => true,
-        'subdirs' => false
-    ];
-    $group = file_prepare_standard_editor($group, 'description', $editoroptions, $context, 'group', 'description', null);
 
     $modulecontext = context_module::instance($args->cmid);
 
@@ -725,8 +712,6 @@ function mod_pchat_output_fragment_new_group_form($args) {
     if (!empty($args->jsonformdata)) {
         // If we were passed non-empty form data we want the mform to call validation functions and show errors.
         $mform->is_validated();
-
-
     }
 
     ob_start();
