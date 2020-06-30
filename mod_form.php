@@ -144,7 +144,7 @@ class mod_pchat_mod_form extends moodleform_mod {
         // add standard buttons, common to all modules
         $this->add_action_buttons();
     }
-	
+
 
 	public function data_preprocessing(&$form_data) {
 		//$edfileoptions = pchat_editor_with_files_options($this->context);

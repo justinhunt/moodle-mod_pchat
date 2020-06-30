@@ -21,7 +21,7 @@ class gradesubmissions {
      * @return array
      * @throws dml_exception
      */
-    public function getGradeData(int $courseid, int $studentid, int $moduleinstance) : array {
+    public function getGradeData(int $courseid, int $studentid, int $moduleinstance): array {
         global $DB;
 
         $sql = "select pa.id, u.lastname, u.firstname, p.name, p.transcriber, turns, avturn, par.accuracy
@@ -40,5 +40,45 @@ class gradesubmissions {
                 order by u.lastname";
 
         return $DB->get_records_sql($sql, [$studentid, $moduleinstance, $courseid]);
+    }
+
+    public function getSubmissionData(int $userid, int $moduleid, int $cmid): array {
+        global $DB;
+
+        $sql = "select pa.id,
+                   u.lastname,
+                   u.firstname,
+                   p.name,
+                   p.transcriber,
+                   pat.turns,
+                   pat.avturn,
+                   par.accuracy,
+                   p.id,
+                   pa.pchat,
+                   pat.pchat,
+       ca.filename, ca.transcript, ca.jsontranscript
+            from mdl_pchat as p
+                inner join (select max(mpa.id) as id, mpa.userid, mpa.pchat
+            from mdl_pchat_attempts mpa group by  mpa.userid, mpa.pchat ) as pa
+            on p.id = pa.pchat
+                inner join mdl_course_modules as cm on cm.course = p.course and cm.id = 5
+                inner join mdl_user as u on pa.userid = u.id
+                inner join mdl_pchat_attemptstats as pat on pat.attemptid = pa.id and pat.userid = u.id
+                left outer join mdl_pchat_ai_result as par on par.attemptid = pa.id and par.courseid = p.course
+                left outer join mdl_pchat_attempts as ca on ca.pchat = pa.pchat and ca.userid = u.id
+            where u.id = ?
+            and cm.id = ?;";
+
+        return $DB->get_records_sql($sql, [$userid, $cmid]);
+    }
+
+    public function getStudentsToGrade(int $attempt): array {
+        global $DB;
+
+        $sql = "select concat(userid, ',', interlocutors) as students
+                    from {pchat_attempts} pa
+                    where pa.id = ?";
+
+        return $DB->get_records_sql($sql, [$attempt]);
     }
 }

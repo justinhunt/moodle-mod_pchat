@@ -23,11 +23,19 @@ class grades {
     public function getGrades(int $courseid, int $coursemoduleid, int $moduleinstance) : array {
         global $DB;
 
-        $sql = "select pa.id, u.lastname, u.firstname, p.name, p.transcriber, turns, avturn, par.accuracy
+        $sql = "select pa.id as attemptid,
+                    u.lastname,
+                    u.firstname,
+                    p.name,
+                    p.transcriber,
+                    pat.turns,
+                    pat.avturn,
+                    par.accuracy,
+                    pa.pchat
                 from {pchat} as p
                     inner join  (select max(mpa.id) as id, mpa.userid, mpa.pchat
                             from {pchat_attempts} mpa
-                            group by id, mpa.userid, mpa.pchat
+                            group by mpa.userid, mpa.pchat
                         ) as pa on p.id = pa.pchat
                     inner join {course_modules} as cm on cm.course = p.course and cm.id = ?
                     inner join {user} as u on pa.userid = u.id

@@ -400,7 +400,7 @@ $string['gradesactions'] = 'Actions';
 $string['gradesgraded'] = 'Graded';
 $string['gradesgradedno'] = 'No';
 $string['gradesgradedyes'] = 'Graded';
-$string['gradesgraded'] = 'Graded';
+$string['gradesgrade'] = 'Grade';
 $string['gradeschoose'] = 'Choose one:';
 $string['gradesstudent'] = 'Student';
 $string['gradesdatapoint'] = 'Data point';
@@ -408,4 +408,5 @@ $string['gradesrubric'] = 'Rubric';
 $string['gradestranscript'] = 'Transcript';
 $string['gradesfeedback'] = 'Feedback:';
 $string['gradessubmit'] = 'Submit';
+$string['gradesubmissions'] = 'Grade submissions';
 

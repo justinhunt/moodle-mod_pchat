@@ -43,7 +43,7 @@ $modulecontext = context_module::instance($cm->id);
 require_capability('mod/pchat:grades', $modulecontext);
 
 // Set page login data.
-$PAGE->set_url(constants::M_URL . '/gradesubmissions.php');
+$PAGE->set_url(constants::M_URL . '/grades.php');
 require_login($course, true, $cm);
 
 // Get grades list data by course module and course.
@@ -60,9 +60,8 @@ $PAGE->requires->jquery();
 // Render template and display page.
 $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
 $gradesrenderer =
-    $OUTPUT->render_from_template(constants::M_COMPONENT . '/gradesubmissions', array('cmid' => $id, 'data' => $data));
+    $OUTPUT->render_from_template(constants::M_COMPONENT . '/grades', array('cmid' => $id, 'data' => $data));
 
 echo $renderer->header($moduleinstance, $cm, "grades");
-echo $extraheader;
 echo $gradesrenderer;
 echo $renderer->footer();
