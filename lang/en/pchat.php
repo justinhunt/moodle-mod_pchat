@@ -411,4 +411,5 @@ $string['gradessubmit'] = 'Submit';
 $string['gradesubmissions'] = 'Grade submissions';
 
 $string['gradeitem:pchat'] = 'P-CHAT';
+$string['developer'] = 'Developer';
 
