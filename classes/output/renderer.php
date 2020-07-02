@@ -120,4 +120,14 @@ class renderer extends \plugin_renderer_base {
         $this->page->requires->css('/mod/pchat/3rdparty/semantic/Semantic-UI-CSS-master/semantic.min.css');
     }
 
+    public function developerpage($cmid,$moduleid){
+        $items = array();
+        $items[]= "<div>Generate random attempts from the last attempt in the table, 1 for each enrolled user</div>";
+        $sb= new \single_button(
+            new \moodle_url(constants::M_URL . '/developer.php', array('action' => 'generatedata', 'id' => $cmid, 'n' => $moduleid)),
+            "Generate Attempt Data", 'get');
+        $items[]=$this->render($sb);
+        return $items;
+    }
+
 }

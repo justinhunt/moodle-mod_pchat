@@ -96,6 +96,7 @@ $mform = new grade_form(null, array('gradinginstance' => $gradinginstance));
 if ($mform->is_cancelled()) {
 } else if ($fromform = $mform->get_data()) {
 } else {
+    $toform = new \stdClass();
     $toform->gradinginstance = $gradinginstance;
     $mform->set_data($toform);
 }
