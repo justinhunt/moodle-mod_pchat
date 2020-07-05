@@ -685,8 +685,6 @@ function mod_pchat_output_fragment_new_group_form($args) {
         parse_str($serialiseddata, $formdata);
     }
 
-    require_capability('moodle/course:managegroups', $context);
-
     $modulecontext = context_module::instance($args->cmid);
 
     $instanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
@@ -696,17 +694,9 @@ function mod_pchat_output_fragment_new_group_form($args) {
         0,
         0);
 
-    $mform = new grade_form(null, array('editoroptions' => $editoroptions, 'gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
-    if ($mform->is_cancelled()) {
-        //Handle form cancel operation, if cancel button is present on form
-    } else if ($fromform = $mform->get_data()) {
-        //In this case you process validated data. $mform->get_data() returns data posted in form.
-         //       $grade = $gradinginstance->submit_and_get_grade($args->jsonformdata, $gradinginstance->get_id());
-
-    } else {
-        // Used to set the courseid.
-        $mform->set_data($group);
-    }
+    $mform = new grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
+    // Used to set the courseid.
+    $mform->set_data($group);
 
     if (!empty($args->jsonformdata)) {
         // If we were passed non-empty form data we want the mform to call validation functions and show errors.
@@ -718,10 +708,6 @@ function mod_pchat_output_fragment_new_group_form($args) {
     if (!empty($fromform)) {
         var_dump($fromform);
         var_dump($fromform->advancedgrading);
-    }
-    if ($mform->get_data()) {
-//        $grade = $gradinginstance->submit_and_get_grade('advancedgrading', $instanceid);
-//        var_dump($grade);
     }
     $o .= ob_get_contents();
     ob_end_clean();
