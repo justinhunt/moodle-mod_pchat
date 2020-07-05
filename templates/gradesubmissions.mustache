@@ -87,7 +87,7 @@
             </tbody>
         </table>
         <div class="alert alert-secondary justify-content-center align-middle" style="text-align: center;" role="alert">
-            <input type="button" data-action="creategroupmodal"
+            <input type="button" data-action="creategroupmodal" disabled="disabled"
                    data-cm-id="{{cmid}}"
                    data-attempt-id="{{attemptid}}"
                    data-student-id="0" class=" justify-content-center align-middle" name="grade" id="create-modal" value="Grade entry">
@@ -151,7 +151,7 @@
                         $(element).find('.chatquestions').html(response.response[0].questions);
                     }
                 }).fail(function(ex) {
-                    // do something with the exception
+                    // @todo do something with the exception
                 });
             }
         }

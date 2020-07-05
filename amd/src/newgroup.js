@@ -176,6 +176,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
                 done: this.handleFormSubmissionResponse.bind(this, formData),
                 fail: this.handleFormSubmissionFailure.bind(this, formData)
             }]);
+            $("[data-original-student]").trigger('change');
         };
 
         /**
