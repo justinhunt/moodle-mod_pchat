@@ -12,10 +12,6 @@ class grade_form extends moodleform {
 
         $mform->addElement('grading', 'advancedgrading' , 'Rubric', array('gradinginstance' => $this->_customdata['gradinginstance']));
         $mform->addElement('textarea', 'feedback', 'Feedback', 'wrap="virtual" style="width:100%;" rows="10" ');
-
-
-       // $this->add_action_buttons(false);
-
     }
 
     //Custom validation should be added here
