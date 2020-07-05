@@ -31,9 +31,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \mod_pchat\constants;
-use \mod_pchat\utils;
-use core_grades\component_gradeitems;
+use mod_pchat\constants;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -695,8 +693,20 @@ function mod_pchat_output_fragment_new_group_form($args) {
         0);
 
     $mform = new grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
-    // Used to set the courseid.
-    $mform->set_data($group);
+
+    if ($mform->is_cancelled()) {
+        //Handle form cancel operation, if cancel button is present on form
+    } else if ($fromform = $mform->get_data()) {
+        //In this case you process validated data. $mform->get_data() returns data posted in form.
+        //       $grade = $gradinginstance->submit_and_get_grade($args->jsonformdata, $gradinginstance->get_id());
+    } else {
+        // $mform->set_data();
+    }
+
+    if (!empty($args->jsonformdata)) {
+// If we were passed non-empty form data we want the mform to call validation functions and show errors.
+        $mform->is_validated();
+    }
 
     if (!empty($args->jsonformdata)) {
         // If we were passed non-empty form data we want the mform to call validation functions and show errors.
