@@ -69,37 +69,6 @@ array_walk($submissionCandidates, function ($candidate) use ($studentAndInterloc
     }
 });
 $submissionCandidates = new ArrayIterator($submissionCandidates);
-//
-//// need to store grade form in AJAX CALLA
-//// get grade form instance to show up per each item
-//// popup feedback/rubric in each modal
-//// submit with ajax on feedback screen
-//// refresh parent div
-//// show graded
-///**
-// * $instanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
-// * $gradinginstance = $controller->get_or_create_instance($instanceid,
-// * $USER->id,
-// * $itemid);
-// */
-//
-//$instanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
-//$gradingmanager = get_grading_manager($modulecontext, 'mod_pchat', 'pchat');
-//$controller = $gradingmanager->get_active_controller();
-//$gradinginstance = $controller->get_or_create_instance($instanceid,
-//    0,
-//    0);
-//
-////Instantiate simplehtml_form
-//$mform = new grade_form(null, array('gradinginstance' => $gradinginstance));
-////Form processing and displaying is done here
-//if ($mform->is_cancelled()) {
-//} else if ($fromform = $mform->get_data()) {
-//} else {
-//    $toform = new \stdClass();
-//    $toform->gradinginstance = $gradinginstance;
-//    $mform->set_data($toform);
-//}
 
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
@@ -119,6 +88,7 @@ $gradesrenderer =
             'submissionCandidates' => $submissionCandidates,
             'contextid' => $context->id,
             'cmid' => $cm->id,
+            'attemptid' => $attempt,
         )
     );
 

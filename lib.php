@@ -719,6 +719,7 @@ function mod_pchat_output_fragment_new_group_form($args) {
         var_dump($fromform);
         var_dump($fromform->advancedgrading);
     }
+    var_dump($args);
     $o .= ob_get_contents();
     ob_end_clean();
 

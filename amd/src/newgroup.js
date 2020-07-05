@@ -46,6 +46,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
             var triggers = selector;
             this.studentid = $(selector).attr('data-student-id');
             this.cmid = $(selector).attr('data-cm-id');
+            this.attemptid = $(selector).attr('data-attempt-id');
 
             // Fetch the title string.
             return Str.get_string('creategroup', 'core_group').then(function(title) {
@@ -96,6 +97,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
             var params = {jsonformdata: JSON.stringify(formdata)};
             params.studentid = this.studentid;
             params.cmid = this.cmid;
+            params.attemptid = this.attemptid;
 
             return Fragment.loadFragment(
                 'mod_pchat',
