@@ -1,6 +1,6 @@
 <div class="card-group">
     {{#studentsToGrade}}
-    <div class="card" id="student-data-{{.}}">
+    <div class="card" data-original-student="{{.}}">
         <div class="card-header">
             <div class="input-group mb-3">
                 {{selected}}
@@ -17,15 +17,34 @@
         </div>
         <div class="card-body">
             <h5 class="card-title">{{# str }} gradestranscript, mod_pchat {{/ str }}</h5>
-            <div class="overflow-auto min-vh-400">
-                <div class="mod_pchat_grading_passagecont mod_pchat_summarytranscriptplaceholder">
-                    <span id="mod_pchat_grading_passageword_1" data-wordnumber="1" class="mod_pchat_grading_passageword chattranscript"></span><span class="mod_pchat_grading_passagespace" data-wordnumber="1" id="mod_pchat_grading_passagespace_1"> </span><span id="mod_pchat_grading_passageword_2" data-wordnumber="2" class="mod_pchat_grading_passageword"></span><span class="mod_pchat_grading_passagespace" data-wordnumber="2" id="mod_pchat_grading_passagespace_2"> </span>
+            <div class="overflow-auto">
+                <div class="mod_pchat_grading_passagecont mod_pchat_summarytranscriptplaceholder overflow-auto min-vh-400" style="height: 400px;">
+                    <span id="mod_pchat_grading_passageword_1" data-wordnumber="1" class="mod_pchat_grading_passageword chattranscript">Loading...</span><span class="mod_pchat_grading_passagespace" data-wordnumber="1" id="mod_pchat_grading_passagespace_1"> </span><span id="mod_pchat_grading_passageword_2" data-wordnumber="2" class="mod_pchat_grading_passageword"></span><span class="mod_pchat_grading_passagespace" data-wordnumber="2" id="mod_pchat_grading_passagespace_2"> </span>
                 </div>
             </div>
         </div>
         <div class="alert alert-secondary justify-content-center align-middle" role="alert" style="text-align: center;">
             <div class="mod_pchat_nativeaudioplayer_cont">
                 <audio class="chatplayer" controls=""></audio>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <span class="badge badge-light">Turns: <span class="chatturns">7</span></span>
+                </div>
+                <div class="col">
+                    <span class="badge badge-light">Words: <span class="chatwords">7</span></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <span class="badge badge-secondary">Secondary</span>
+                </div>
+                <div class="col">
+                    <span class="badge badge-light">Light</span>
+                </div>
             </div>
         </div>
         <table class="table table-striped table-light">
@@ -87,45 +106,54 @@
     $('[data-action=creategroupmodal]').attr('disabled', 'disabled');
 
     require(['jquery', 'core/modal_factory', 'core/ajax', 'mod_pchat/newgroup'], function($, ModalFactory, ajax, NewGroup) {
-        document.querySelectorAll("div[id^='student-data-']").forEach(
+        document.querySelectorAll("[data-original-student]").forEach(
             function(element) {
-                let studentId = element.id.match(/\d+/);
-                $(element).find('input[type=button]').attr('data-student-id', studentId);
-
-
-                if (studentId) {
-                    $(element).find('input[type=button]').removeAttr("disabled");
-                    NewGroup.init($(element).find('input[type=button]'), {{contextid}});
-                    studentId = studentId[0];
-                    const selectBox = element.querySelector('select[name="gradesUserSelect"]');
-                    selectBox.value = studentId;
-                    // show loading for others, run ajax to pull data and fill
-                    // move js out.
-                    var promises = ajax.call([
-                    { methodname: 'mod_pchat_get_grade_submission', args: {  cmid: {{cmid}}, moduleid: {{contextid}}, userid: studentId } },
-                    ]);
-
-                    promises[0].done(function(response) {
-                        if(response && response.response[0]) {
-                            $(element).find('.chatplayer').attr('src', response.response[0].filename);
-                            $(element).find('.chattranscript').html(response.response[0].transcript);
-                            $(element).find('.chatturns').html(response.response[0].turns);
-                            $(element).find('.chatwords').html(response.response[0].words);
-                            $(element).find('.chatavturns').html(response.response[0].avturns);
-                            $(element).find('.chatlongestturns').html(response.response[0].longestturns);
-                            $(element).find('.chattargetwords').html(response.response[0].targetwords);
-                            $(element).find('.chattotaltargetwords').html(response.response[0].totaltargetwords);
-                            $(element).find('.chatquestions').html(response.response[0].questions);
-                        }
-                    }).fail(function(ex) {
-                    // do something with the exception
-                    });
-                }
+                const originalStudentId = $(element).attr("data-original-student");
+                const selectBox = element.querySelector('select[name="gradesUserSelect"]');
+                selectBox.value = originalStudentId;
+                $("[data-original-student]").first().find('select').attr('disabled','disabled');
+                loadStudentData(element);
             }
         );
 
+        $("[data-original-student]").change(function () { loadStudentData(this); });
 
+        function loadStudentData(element) {
+            const selectBox = element.querySelector('select[name="gradesUserSelect"]');
+            studentId = selectBox.value;
+            $(element).find('.chatplayer').removeAttr('src');
+            $(element).find('.chattranscript').html("No data.");
+            $(element).find('.chatturns').html(0);
+            $(element).find('.chatwords').html(0);
+            $(element).find('.chatavturns').html(0);
+            $(element).find('.chatlongestturns').html(0);
+            $(element).find('.chattargetwords').html(0);
+            $(element).find('.chattotaltargetwords').html(0);
+            $(element).find('.chatquestions').html(0);
+            if (studentId) {
+                $(element).find('input[type=button]').removeAttr("disabled");
+                NewGroup.init($(element).find('input[type=button]'), {{contextid}});
 
+                var promises = ajax.call([
+                { methodname: 'mod_pchat_get_grade_submission', args: {  cmid: {{cmid}}, moduleid: {{contextid}}, userid: studentId } },
+                ]);
 
+                promises[0].done(function(response) {
+                    if(response && response.response[0]) {
+                        $(element).find('.chatplayer').attr('src', response.response[0].filename);
+                        $(element).find('.chattranscript').html(response.response[0].transcript);
+                        $(element).find('.chatturns').html(response.response[0].turns);
+                        $(element).find('.chatwords').html(response.response[0].words);
+                        $(element).find('.chatavturns').html(response.response[0].avturns);
+                        $(element).find('.chatlongestturns').html(response.response[0].longestturns);
+                        $(element).find('.chattargetwords').html(response.response[0].targetwords);
+                        $(element).find('.chattotaltargetwords').html(response.response[0].totaltargetwords);
+                        $(element).find('.chatquestions').html(response.response[0].questions);
+                    }
+                }).fail(function(ex) {
+                    // do something with the exception
+                });
+            }
+        }
     });
 {{/js}}

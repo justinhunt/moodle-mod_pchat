@@ -1,4 +1,5 @@
 <?php
+global $CFG;
 
 require_once("$CFG->libdir/formslib.php");
 require_once($CFG->libdir . '/pear/HTML/QuickForm/input.php');

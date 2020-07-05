@@ -670,11 +670,19 @@ function mod_pchat_grading_areas_list() {
  * @return string
  */
 function mod_pchat_output_fragment_new_group_form($args) {
-    global $CFG;
+    global $CFG, $DB;
 
     require_once('grade_form.php');
+
+    // Get data @todo move to method
+
     $args = (object) $args;
-    $context = $args->context;
+    $conditions = [
+        'attemptid' => $args->attemptid,
+        'userid' => $args->userid,
+    ];
+    $rubricscores = $DB->get_record('pchat_rubric_scores', $conditions);
+
     $o = '';
 
     $formdata = [];
@@ -695,7 +703,7 @@ function mod_pchat_output_fragment_new_group_form($args) {
     $mform = new grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
 
     if ($mform->is_cancelled()) {
-        //Handle form cancel operation, if cancel button is present on form
+        // @todo close window
     } else if ($fromform = $mform->get_data()) {
         //In this case you process validated data. $mform->get_data() returns data posted in form.
         //       $grade = $gradinginstance->submit_and_get_grade($args->jsonformdata, $gradinginstance->get_id());
@@ -719,6 +727,10 @@ function mod_pchat_output_fragment_new_group_form($args) {
         var_dump($fromform);
         var_dump($fromform->advancedgrading);
     }
+    if (!empty($rubricscores)) {
+        var_dump($rubricscores);
+    }
+
     var_dump($args);
     $o .= ob_get_contents();
     ob_end_clean();
