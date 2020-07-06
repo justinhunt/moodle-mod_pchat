@@ -670,7 +670,7 @@ function mod_pchat_grading_areas_list() {
  * @return string
  */
 function mod_pchat_output_fragment_new_group_form($args) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
 
     require_once('grade_form.php');
 
@@ -679,9 +679,9 @@ function mod_pchat_output_fragment_new_group_form($args) {
     $args = (object) $args;
     $conditions = [
         'attemptid' => $args->attemptid,
-        'userid' => $args->userid,
+        'userid' => $args->studentid,
     ];
-    $rubricscores = $DB->get_record('pchat_rubric_scores', $conditions);
+    $rubricscores = $DB->get_records('pchat_rubric_scores', $conditions);
 
     $o = '';
 
@@ -705,11 +705,46 @@ function mod_pchat_output_fragment_new_group_form($args) {
     if ($mform->is_cancelled()) {
         // @todo close window
     } else if ($fromform = $mform->get_data()) {
-        //In this case you process validated data. $mform->get_data() returns data posted in form.
-        //       $grade = $gradinginstance->submit_and_get_grade($args->jsonformdata, $gradinginstance->get_id());
-    } else {
-        // $mform->set_data();
+        if (!empty($rubricscores)) {
+            // Delete current entries for repush.
+            $DB->delete_records('pchat_rubric_scores', $conditions);
+        }
+        // Insert rubric
+        if (!empty($fromform->advancedgrading['criteria'])) {
+            $data = $fromform->advancedgrading['criteria'];
+            $dataobjects = [];
+            foreach ($data as $rdata => $idx) {
+                $dataobject = new stdClass();
+                $dataobject->criteria = $rdata;
+                $dataobject->levelid = $idx['levelid'];
+                $dataobject->remark = $idx['remark'];
+                $dataobject->attemptid = $args->attemptid;
+                $dataobject->userid = $args->studentid;
+                $dataobject->usermodified = $USER->id;
+                $dataobject->timecreated = time();
+                $dataobjects[] = $dataobject;
+            }
+            if (!empty($dataobjects)) {
+                $DB->insert_records('pchat_rubric_scores', $dataobjects);
+            }
+        }
+        $feedbackobject = new stdClass();
+        $feedbackobject->id = $args->attemptid;
+        $feedbackobject->feedback = $fromform->feedback;
+        $DB->update_record('pchat_attempts', $feedbackobject);
     }
+
+    if (!empty($rubricscores)) {
+        foreach ($rubricscores as $rubricscore) {
+            $testdata['advancedgrading']['criteria'][$rubricscore->criteria]['levelid'] =
+                $rubricscore->levelid;
+            $testdata['advancedgrading']['criteria'][$rubricscore->criteria]['remark'] =
+                $rubricscore->remark;
+        }
+
+    }
+    $testdata['feedback'] = $DB->get_record('pchat_attempts', ['id' => $args->attemptid], 'feedback')->feedback;
+    $mform->set_data($testdata);
 
     if (!empty($args->jsonformdata)) {
 // If we were passed non-empty form data we want the mform to call validation functions and show errors.
@@ -723,15 +758,6 @@ function mod_pchat_output_fragment_new_group_form($args) {
 
     ob_start();
     $mform->display();
-    if (!empty($fromform)) {
-        var_dump($fromform);
-        var_dump($fromform->advancedgrading);
-    }
-    if (!empty($rubricscores)) {
-        var_dump($rubricscores);
-    }
-
-    var_dump($args);
     $o .= ob_get_contents();
     ob_end_clean();
 

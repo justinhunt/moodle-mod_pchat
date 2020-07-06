@@ -132,6 +132,8 @@
             $(element).find('.chatquestions').html(0);
             if (studentId) {
                 $(element).find('input[type=button]').removeAttr("disabled");
+                $(element).find('input[type=button]').attr("data-student-id",studentId);
+
                 NewGroup.init($(element).find('input[type=button]'), {{contextid}});
 
                 var promises = ajax.call([
