@@ -758,6 +758,11 @@ function mod_pchat_output_fragment_new_group_form($args) {
 
     ob_start();
     $mform->display();
+    if (!empty($testdata)) {
+        var_dump($testdata);
+    }
+
+    var_dump($args);
     $o .= ob_get_contents();
     ob_end_clean();
 

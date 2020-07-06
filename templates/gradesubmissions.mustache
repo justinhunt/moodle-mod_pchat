@@ -113,7 +113,8 @@
                 selectBox.value = originalStudentId;
                 $("[data-original-student]").first().find('select').attr('disabled','disabled');
                 loadStudentData(element);
-            }
+                NewGroup.init($(element).find('input[type=button]'), {{contextid}});
+                }
         );
 
         $("[data-original-student]").change(function () { loadStudentData(this); });
@@ -133,8 +134,6 @@
             if (studentId) {
                 $(element).find('input[type=button]').removeAttr("disabled");
                 $(element).find('input[type=button]').attr("data-student-id",studentId);
-
-                NewGroup.init($(element).find('input[type=button]'), {{contextid}});
 
                 var promises = ajax.call([
                 { methodname: 'mod_pchat_get_grade_submission', args: {  cmid: {{cmid}}, moduleid: {{contextid}}, userid: studentId } },
