@@ -46,9 +46,10 @@ require_capability('mod/pchat:grades', $modulecontext);
 $PAGE->set_url(constants::M_URL . '/grades.php');
 require_login($course, true, $cm);
 
-// Get grades list data by course module and course.
-$studentgrades = $grades->getGrades($course->id, $id, $moduleinstance->id);
-$data = new ArrayIterator($studentgrades);
+require_once($CFG->dirroot.'/grade/grading/lib.php');
+
+$gradingmanager = get_grading_manager($modulecontext, 'mod_pchat', 'pchat');
+$method = $gradingmanager->get_active_method();
 
 // Set page meta data.
 $PAGE->set_title(format_string($moduleinstance->name));
@@ -56,6 +57,23 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 $PAGE->set_pagelayout('course');
 $PAGE->requires->jquery();
+
+if($method !='rubric'){
+    $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
+    $gradesrenderer =
+        $OUTPUT->render_from_template(constants::M_COMPONENT . '/grades', array('cmid' => $id, 'data' => $data));
+
+    echo $renderer->header($moduleinstance, $cm, "grades");
+
+    \core\notification::error("Rubric grading must be selected in the activity settings to grade submissions.");
+    echo $renderer->footer();
+
+    exit();
+}
+
+// Get grades list data by course module and course.
+$studentgrades = $grades->getGrades($course->id, $id, $moduleinstance->id);
+$data = new ArrayIterator($studentgrades);
 
 // Render template and display page.
 $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
