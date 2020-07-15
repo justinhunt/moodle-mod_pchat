@@ -40,26 +40,26 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <span class="badge badge-light">AV Turn: <span class="chatwords">0</span></span>
+                    <span class="badge badge-light">AV Turn: <span class="chatavturns">0</span></span>
                 </div>
                 <div class="col">
-                    <span class="badge badge-light">Longest: <span class="chatwords">0</span></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <span class="badge badge-light">Target: <span class="chatwords">0</span></span>
-                </div>
-                <div class="col">
-                    <span class="badge badge-light">Total target: <span class="chatwords">0</span></span>
+                    <span class="badge badge-light">Longest: <span class="chatlongesturns">0</span></span>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <span class="badge badge-light">Questions: <span class="chatwords">0</span></span>
+                    <span class="badge badge-light">Target: <span class="chattargetwords">0</span></span>
                 </div>
                 <div class="col">
-                    <span class="badge badge-light">AI Score: <span class="chatwords">0</span></span>
+                    <span class="badge badge-light">Total target: <span class="chattotaltargetwords">0</span></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <span class="badge badge-light">Questions: <span class="chatquestions">0</span></span>
+                </div>
+                <div class="col">
+                    <span class="badge badge-light">AI Score: <span class="chataiscore">0</span></span>
                 </div>
             </div>
         </div>
@@ -110,6 +110,7 @@
             $(element).find('.chatquestions').html(0);
             $(element).find('.chatrubricscore').html(0);
             $(element).find('.chatfeedback').html("");
+            $(element).find('.chataiscore').html("");
             if (studentId) {
                 $(element).find('input[type=button]').removeAttr("disabled");
                 $(element).find('input[type=button]').attr("data-student-id",studentId);
@@ -132,6 +133,7 @@
                         $(element).find('.chatquestions').html(response.response[0].questions);
                         $(element).find('.chatrubricscore').html(response.response[0].rubricscore);
                         $(element).find('.chatfeedback').html(response.response[0].feedback);
+                        $(element).find('.chataiscore').html(response.response[0].aiaccuracy);
                     }
                 }).fail(function(ex) {
                     // @todo do something with the exception
