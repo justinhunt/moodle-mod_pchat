@@ -743,7 +743,11 @@ function mod_pchat_output_fragment_new_group_form($args) {
         }
 
     }
-    $testdata['feedback'] = $DB->get_record('pchat_attempts', ['id' => $args->attemptid], 'feedback')->feedback;
+    $testdata['feedback'] = $DB->get_record(
+        'pchat_attempts',
+        ['id' => $args->attemptid, 'userid' => $args->studentid,],
+        'feedback'
+    )->feedback;
     $mform->set_data($testdata);
 
     if (!empty($args->jsonformdata)) {

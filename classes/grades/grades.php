@@ -31,7 +31,8 @@ class grades {
                     pat.turns,
                     pat.avturn,
                     par.accuracy,
-                    pa.pchat
+                    pa.pchat,
+                    pat.aiaccuracy
                 from {pchat} as p
                     inner join  (select max(mpa.id) as id, mpa.userid, mpa.pchat
                             from {pchat_attempts} mpa

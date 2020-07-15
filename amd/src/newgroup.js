@@ -113,8 +113,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
          */
         NewGroup.prototype.handleFormSubmissionResponse = function() {
             this.modal.hide();
-            // We could trigger an event instead.
-            // Yuk.
+
             Y.use('moodle-core-formchangechecker', function() {
                 M.core_formchangechecker.reset_form_dirty_state();
             });
@@ -176,8 +175,9 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
                 done: this.handleFormSubmissionResponse.bind(this, formData),
                 fail: this.handleFormSubmissionFailure.bind(this, formData)
             }]);
-            $("[data-original-student]").trigger('change');
+
             this.modal.hide();
+            $("[data-original-student]").trigger('change');
         };
 
         /**

@@ -24,7 +24,7 @@ class gradesubmissions {
     public function getGradeData(int $courseid, int $studentid, int $moduleinstance): array {
         global $DB;
 
-        $sql = "select pa.id, u.lastname, u.firstname, p.name, p.transcriber, turns, avturn, par.accuracy
+        $sql = "select pa.id, u.lastname, u.firstname, p.name, p.transcriber, pat.words, pat.avturn, pat.longestturn, pat.targetwords, pat.totaltargetwords, pat.questions, pat.aiaccuracy
                 from {pchat} as p
                     inner join  (select max(mpa.id) as id, mpa.userid, mpa.pchat
                             from {pchat_attempts} mpa
@@ -50,20 +50,36 @@ class gradesubmissions {
                    u.firstname,
                    p.name,
                    p.transcriber,
-                   pat.turns,
-                   pat.avturn,
-                   par.accuracy,
                    p.id,
                    pa.pchat,
                    pat.pchat,
-       ca.filename, ca.transcript, ca.jsontranscript
+                   ca.filename,
+                    ca.transcript,
+                    ca.jsontranscript,
+                    pat.turns,
+                    pat.words,
+                    pat.avturn,
+                    pat.longestturn,
+                    pat.targetwords,
+                    pat.totaltargetwords,
+                    pat.questions,
+                    pat.aiaccuracy,
+                    (select round(sum(grl.score), 2) 
+                    from mdl_grading_definitions AS gd
+                    JOIN mdl_gradingform_rubric_criteria AS grc ON (grc.definitionid = gd.id)
+                    JOIN mdl_gradingform_rubric_levels AS grl ON (grl.criterionid = grc.id)
+                    where grl.criterionid = prs.criteria
+                    and grl.id = prs.levelid) as rubricscore,
+                    prs.remark,
+                    pa.feedback
             from mdl_pchat as p
-                inner join (select max(mpa.id) as id, mpa.userid, mpa.pchat
+                inner join (select max(mpa.id) as id, mpa.userid, mpa.pchat, mpa.feedback
             from mdl_pchat_attempts mpa group by  mpa.userid, mpa.pchat ) as pa
             on p.id = pa.pchat
                 inner join mdl_course_modules as cm on cm.course = p.course and cm.id = 5
                 inner join mdl_user as u on pa.userid = u.id
                 inner join mdl_pchat_attemptstats as pat on pat.attemptid = pa.id and pat.userid = u.id
+                left outer join mdl_pchat_rubric_scores as prs on prs.userid = pat.userid and prs.attemptid = pa.id
                 left outer join mdl_pchat_ai_result as par on par.attemptid = pa.id and par.courseid = p.course
                 left outer join mdl_pchat_attempts as ca on ca.pchat = pa.pchat and ca.userid = u.id
             where u.id = ?

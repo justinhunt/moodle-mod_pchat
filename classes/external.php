@@ -79,6 +79,7 @@ class external extends external_api {
         return new external_function_parameters([
             'response' => new external_multiple_structure(
                 new external_single_structure([
+
                     'id' => new external_value(PARAM_INT, 'ID'),
                     'lastname' => new external_value(PARAM_TEXT, 'Date of entry'),
                     'firstname' => new external_value(PARAM_TEXT, 'File title'),
@@ -91,6 +92,16 @@ class external extends external_api {
                     'filename' => new external_value(PARAM_TEXT, 'File name', VALUE_OPTIONAL),
                     'transcript' => new external_value(PARAM_TEXT, 'Transcript', VALUE_OPTIONAL),
                     'jsontranscript' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'words' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'avturn' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'longestturn' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'targetwords' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'totaltargetwords' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'questions' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'aiaccuracy' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'rubricscore' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'remark' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'feedback' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
                 ])
             )
         ]);

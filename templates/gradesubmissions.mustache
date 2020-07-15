@@ -32,81 +32,37 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <span class="badge badge-light">Turns: <span class="chatturns">7</span></span>
+                    <span class="badge badge-light">Turns: <span class="chatturns">0</span></span>
                 </div>
                 <div class="col">
-                    <span class="badge badge-light">Words: <span class="chatwords">7</span></span>
-                </div>
-                <div class="col">
-                    <span class="badge badge-light">AV Turn: <span class="chatwords">7</span></span>
+                    <span class="badge badge-light">Words: <span class="chatwords">0</span></span>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <span class="badge badge-light">Longest: <span class="chatwords">7</span></span>
+                    <span class="badge badge-light">AV Turn: <span class="chatwords">0</span></span>
                 </div>
                 <div class="col">
-                    <span class="badge badge-light">Target: <span class="chatwords">7</span></span>
-                </div>
-                <div class="col">
-                    <span class="badge badge-light">Total target: <span class="chatwords">7</span></span>
+                    <span class="badge badge-light">Longest: <span class="chatwords">0</span></span>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <span class="badge badge-light">Questions: <span class="chatwords">7</span></span>
+                    <span class="badge badge-light">Target: <span class="chatwords">0</span></span>
                 </div>
                 <div class="col">
-                    <span class="badge badge-light">AI Score: <span class="chatwords">7</span></span>
+                    <span class="badge badge-light">Total target: <span class="chatwords">0</span></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <span class="badge badge-light">Questions: <span class="chatwords">0</span></span>
                 </div>
                 <div class="col">
-                  &nbsp;
+                    <span class="badge badge-light">AI Score: <span class="chatwords">0</span></span>
                 </div>
             </div>
         </div>
-        <table class="table table-striped table-light">
-            <thead>
-            <tr>
-                <th scope="col">Data</th>
-                <th scope="col">Result</th>
-                <th scope="col">&nbsp;</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">Turns</th>
-                <td class="chatturns"></td>
-            </tr>
-            <tr>
-                <th scope="row">Words</th>
-                <td class="chatwords"></td>
-            </tr>
-            <tr>
-                <th scope="row">AV Turn</th>
-                <td class="chatavturns"></td>
-            </tr>
-            <tr>
-                <th scope="row">Longest Turn</th>
-                <td class="chatlongestturns"></td>
-            </tr>
-            <tr>
-                <th scope="row">Target Words</th>
-                <td class="chattargetwords"></td>
-            </tr>
-            <tr>
-                <th scope="row">Total target words</th>
-                <td class="chattotaltargetwords"></td>
-            </tr>
-            <tr>
-                <th scope="row">Questions</th>
-                <td class="chatquestions"></td>
-            </tr>
-            <tr>
-                <th scope="row">AI Score</th>
-                <td class="chatquestions"></td>
-            </tr>
-            </tbody>
-        </table>
         <div class="alert alert-secondary justify-content-center align-middle" style="text-align: center;" role="alert">
             <input type="button" data-action="creategroupmodal" disabled="disabled"
                    data-cm-id="{{cmid}}"
@@ -115,8 +71,8 @@
         </div>
         <div class="card-footer">
             <small class="text-muted">
-                Last modified: June 24th, 2020 1:09PM
-                Grade:
+                <strong>Rubric Score</strong>: <span class="chatrubricscore">0</span><br >
+                <strong>Feedback</strong>: <span class="chatfeedback"></span>
             </small>
         </div>
     </div>
@@ -152,6 +108,8 @@
             $(element).find('.chattargetwords').html(0);
             $(element).find('.chattotaltargetwords').html(0);
             $(element).find('.chatquestions').html(0);
+            $(element).find('.chatrubricscore').html(0);
+            $(element).find('.chatfeedback').html("");
             if (studentId) {
                 $(element).find('input[type=button]').removeAttr("disabled");
                 $(element).find('input[type=button]').attr("data-student-id",studentId);
@@ -162,6 +120,7 @@
 
                 promises[0].done(function(response) {
                     if(response && response.response[0]) {
+                        console.log(response);
                         $(element).find('.chatplayer').attr('src', response.response[0].filename);
                         $(element).find('.chattranscript').html(response.response[0].transcript);
                         $(element).find('.chatturns').html(response.response[0].turns);
@@ -171,6 +130,8 @@
                         $(element).find('.chattargetwords').html(response.response[0].targetwords);
                         $(element).find('.chattotaltargetwords').html(response.response[0].totaltargetwords);
                         $(element).find('.chatquestions').html(response.response[0].questions);
+                        $(element).find('.chatrubricscore').html(response.response[0].rubricscore);
+                        $(element).find('.chatfeedback').html(response.response[0].feedback);
                     }
                 }).fail(function(ex) {
                     // @todo do something with the exception
