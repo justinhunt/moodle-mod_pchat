@@ -111,12 +111,13 @@ if($start_or_continue) {
         $aidata = $DB->get_record(constants::M_AITABLE,array('attemptid'=>$attempt->id));
         echo $attempt_renderer->show_summary($moduleinstance,$attempt,$aidata, $stats);
     }
+    $grade =  $DB->get_record("pchat_rubric_scores",array('attemptid'=>$attempt->id));
 
     //all attempts by user table [good for debugging]
     // do not delete this I think
     // echo $attempt_renderer->show_attempts_list($attempts,$tableid,$cm);
 
-    if($moduleinstance->multiattempts || has_capability('mod/pchat:manageattempts', $context) ){
+    if(empty($grade) && ($moduleinstance->multiattempts || has_capability('mod/pchat:manageattempts', $context) )){
         echo $attempt_renderer->fetch_reattempt_button($cm);
     }
     if($attempt) {
