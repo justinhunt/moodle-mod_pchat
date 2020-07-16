@@ -32,6 +32,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use mod_pchat\constants;
+use \mod_pchat\utils;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -594,6 +595,8 @@ function pchat_get_user_grades($moduleinstance, $userid=0) {
 
     global $CFG, $DB;
 
+
+
     $params = array("moduleid" => $moduleinstance->id);
 
     if (!empty($userid)) {
@@ -605,9 +608,9 @@ function pchat_get_user_grades($moduleinstance, $userid=0) {
     }
 
     //grade_sql
-    $grade_sql = "SELECT u.id, u.id AS userid, IF(a.turns > 0, 100 , 0) AS rawgrade
-                      FROM {user} u, {". constants::M_STATSTABLE ."} a
-                     WHERE a.id= (SELECT max(id) FROM {". constants::M_STATSTABLE ."} ia WHERE ia.userid=u.id AND ia.pchat = a.pchat)  AND u.id = a.userid AND a.pchat = :moduleid
+    $grade_sql = "SELECT u.id, u.id AS userid, grade AS rawgrade
+                      FROM {user} u, {". constants::M_ATTEMPTSTABLE ."} a
+                     WHERE a.id= (SELECT max(id) FROM {". constants::M_ATTEMPTSTABLE ."} ia WHERE ia.userid=u.id AND ia.pchat = a.pchat)  AND u.id = a.userid AND a.pchat = :moduleid
                            $user
                   GROUP BY u.id";
 
@@ -692,13 +695,18 @@ function mod_pchat_output_fragment_new_group_form($args) {
     }
 
     $modulecontext = context_module::instance($args->cmid);
-
+    $attempt = $DB->get_record(constants::M_ATTEMPTSTABLE, array('id'=>$args->attemptid));
+    $moduleinstance = $DB->get_record(constants::M_TABLE, array('id'=>$attempt->pchat));
+    $gradingdisabled=false;
+    $gradinginstance = utils::get_grading_instance($args->attemptid, $gradingdisabled,$moduleinstance, $modulecontext);
+/*
     $instanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
     $gradingmanager = get_grading_manager($modulecontext, 'mod_pchat', 'pchat');
     $controller = $gradingmanager->get_active_controller();
     $gradinginstance = $controller->get_or_create_instance($instanceid,
         0,
         0);
+*/
 
     $mform = new grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
 
@@ -713,11 +721,13 @@ function mod_pchat_output_fragment_new_group_form($args) {
         if (!empty($fromform->advancedgrading['criteria'])) {
             $data = $fromform->advancedgrading['criteria'];
             $dataobjects = [];
+          //  $criteriasum=0;
             foreach ($data as $rdata => $idx) {
                 $dataobject = new stdClass();
                 $dataobject->criteria = $rdata;
                 $dataobject->levelid = $idx['levelid'];
                 $dataobject->remark = $idx['remark'];
+                $dataobject->score = $idx['score'];
                 $dataobject->attemptid = $args->attemptid;
                 $dataobject->userid = $args->studentid;
                 $dataobject->usermodified = $USER->id;
@@ -726,12 +736,25 @@ function mod_pchat_output_fragment_new_group_form($args) {
             }
             if (!empty($dataobjects)) {
                 $DB->insert_records('pchat_rubric_scores', $dataobjects);
+                //fetch the grade as calculated by advanced grading
+                $thegrade=null;
+                if (!$gradingdisabled) {
+                    if ($gradinginstance) {
+                        $thegrade = $gradinginstance->submit_and_get_grade($fromform->advancedgrading,
+                            $args->attemptid);
+                    }
+                }
             }
         }
         $feedbackobject = new stdClass();
         $feedbackobject->id = $args->attemptid;
         $feedbackobject->feedback = $fromform->feedback;
+        $feedbackobject->grade = $thegrade;
         $DB->update_record('pchat_attempts', $feedbackobject);
+        $grade = new stdClass();
+        $grade->userid = $args->studentid;
+        $grade->rawgrade = $thegrade;
+        pchat_grade_item_update($moduleinstance,$grade);
     }
 
     if (!empty($rubricscores)) {

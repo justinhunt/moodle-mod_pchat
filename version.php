@@ -23,14 +23,14 @@
  * /admin/index.php
  *
  * @package    mod_pchat
- * @copyright  2019 Justin Hunt (poodllsupport@gmail.com)
+ * @copyright  2020 Justin Hunt (poodllsupport@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   =  2020061615;
+$plugin->version   =  2020071501;
 $plugin->requires  = 2016052300;      // Requires Moodle 3.1
 $plugin->component = 'mod_pchat';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.0.14 (Build 2020061600)';
+$plugin->release = '1.0.15 (Build 2020071501)';

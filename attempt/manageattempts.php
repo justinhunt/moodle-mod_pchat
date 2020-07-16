@@ -333,18 +333,6 @@ $PAGE->navbar->add(get_string('editingattempt', constants::M_COMPONENT, get_stri
 $mode='attempts';
 
 echo $renderer->header($moduleinstance, $cm,$mode, null, get_string('edit', constants::M_COMPONENT));
-
-
-$gradingmanager = get_grading_manager($context, 'mod_pchat', 'pchat');
-$method = $gradingmanager->get_active_method();
-if($method=='rubric'){
-    echo 'rubric grading';
-}else{
-    //$method=""
-    echo 'simple direct grading';
-}
-
-
 echo $attempt_renderer->add_edit_page_links($moduleinstance, $attempt,$type);
 $mform->display();
 echo $renderer->footer();
