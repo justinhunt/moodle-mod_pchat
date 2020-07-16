@@ -828,4 +828,52 @@ class utils{
         if(strlen($fonticon)<5){return $fonticon;}
         return '<i class="fa ' . $fonticon . ' ' . $size . '"></i>';
     }
+
+    //grading stuff
+
+    /**
+     * Get an instance of a grading form if advanced grading is enabled.
+     * This is specific to the assignment, marker and student.
+     *
+     * @param int $userid - The student userid
+     * @param stdClass|false $grade - The grade record
+     * @param bool $gradingdisabled
+     * @return mixed gradingform_instance|null $gradinginstance
+     */
+    public static function get_grading_instance($gradeid, $gradingdisabled,$moduleinstance, $context) {
+        global $CFG, $USER;
+
+        $raterid = $USER->id;
+
+        $grademenu = make_grades_menu($moduleinstance->grade);
+        $allowgradedecimals = $moduleinstance->grade > 0;
+
+        $advancedgradingwarning = false;
+        $gradingmanager = get_grading_manager($context, 'mod_pchat', 'pchat');
+        $gradinginstance = null;
+        if ($gradingmethod = $gradingmanager->get_active_method()) {
+            $controller = $gradingmanager->get_controller($gradingmethod);
+            if ($controller->is_form_available()) {
+                $itemid = null;
+                if ($gradeid && $gradeid > 0) {
+                    $itemid = $gradeid;
+                }
+                if ($gradingdisabled && $itemid) {
+                    $gradinginstance = $controller->get_current_instance($raterid, $itemid);
+                } else if (!$gradingdisabled) {
+                    $instanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
+                    $gradinginstance = $controller->get_or_create_instance($instanceid,
+                        $raterid,
+                        $itemid);
+                }
+            } else {
+                $advancedgradingwarning = $controller->form_unavailable_notification();
+            }
+        }
+        if ($gradinginstance) {
+            $gradinginstance->get_controller()->set_grade_range($grademenu, $allowgradedecimals);
+        }
+        return $gradinginstance;
+    }
+
 }

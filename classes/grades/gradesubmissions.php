@@ -3,6 +3,7 @@
 namespace mod_pchat\grades;
 
 use dml_exception;
+use mod_pchat\constants;
 
 /**
  * Class grades
@@ -25,15 +26,15 @@ class gradesubmissions {
         global $DB;
 
         $sql = "select pa.id, u.lastname, u.firstname, p.name, p.transcriber, pat.words, pat.avturn, pat.longestturn, pat.targetwords, pat.totaltargetwords, pat.questions, pat.aiaccuracy
-                from {pchat} as p
+                from {" .constants::M_TABLE ."} as p
                     inner join  (select max(mpa.id) as id, mpa.userid, mpa.pchat
-                            from {pchat_attempts} mpa
+                            from {" .constants::M_ATTEMPTSTABLE ."} mpa
                             group by mpa.userid, mpa.pchat
                         ) as pa on p.id = pa.pchat
                     inner join {course_modules} as cm on cm.course = p.course and cm.id = ?
                     inner join {user} as u on pa.userid = u.id
-                    inner join {pchat_attemptstats} as pat on pat.attemptid = pa.id and pat.userid = u.id
-                    left outer join {pchat_ai_result} as par on par.attemptid = pa.id and par.courseid = p.course
+                    inner join {" .constants::M_STATSTABLE ."} as pat on pat.attemptid = pa.id and pat.userid = u.id
+                    left outer join {" .constants::M_AITABLE ."} as par on par.attemptid = pa.id and par.courseid = p.course
                 where u.id = ?
                     AND pa.pchat = ?
                     AND p.course = ?
@@ -65,27 +66,27 @@ class gradesubmissions {
                     pat.questions,
                     pat.aiaccuracy,
                     (select round(sum(grl.score), 2) 
-                    from mdl_grading_definitions AS gd
-                    JOIN mdl_gradingform_rubric_criteria AS grc ON (grc.definitionid = gd.id)
-                    JOIN mdl_gradingform_rubric_levels AS grl ON (grl.criterionid = grc.id)
+                    from {grading_definitions} AS gd
+                    JOIN {gradingform_rubric_criteria} AS grc ON (grc.definitionid = gd.id)
+                    JOIN {gradingform_rubric_levels} AS grl ON (grl.criterionid = grc.id)
                     where grl.criterionid = prs.criteria
                     and grl.id = prs.levelid) as rubricscore,
                     prs.remark,
                     pa.feedback
-            from mdl_pchat as p
+            from {" .constants::M_TABLE ."} as p
                 inner join (select max(mpa.id) as id, mpa.userid, mpa.pchat, mpa.feedback
-            from mdl_pchat_attempts mpa group by  mpa.userid, mpa.pchat ) as pa
+            from {" .constants::M_ATTEMPTSTABLE ."} mpa group by  mpa.userid, mpa.pchat, mpa.feedback ) as pa
             on p.id = pa.pchat
-                inner join mdl_course_modules as cm on cm.course = p.course and cm.id = 5
-                inner join mdl_user as u on pa.userid = u.id
-                inner join mdl_pchat_attemptstats as pat on pat.attemptid = pa.id and pat.userid = u.id
-                left outer join mdl_pchat_rubric_scores as prs on prs.userid = pat.userid and prs.attemptid = pa.id
-                left outer join mdl_pchat_ai_result as par on par.attemptid = pa.id and par.courseid = p.course
-                left outer join mdl_pchat_attempts as ca on ca.pchat = pa.pchat and ca.userid = u.id
+                inner join {course_modules} as cm on cm.course = p.course and cm.id = ?
+                inner join {user} as u on pa.userid = u.id
+                inner join {" .constants::M_STATSTABLE ."} as pat on pat.attemptid = pa.id and pat.userid = u.id
+                left outer join {pchat_rubric_scores} as prs on prs.userid = pat.userid and prs.attemptid = pa.id
+                left outer join  {" .constants::M_AITABLE ."} as par on par.attemptid = pa.id and par.courseid = p.course
+                left outer join {" .constants::M_ATTEMPTSTABLE ."} as ca on ca.pchat = pa.pchat and ca.userid = u.id
             where u.id = ?
             and cm.id = ?;";
 
-        return $DB->get_records_sql($sql, [$userid, $cmid]);
+        return $DB->get_records_sql($sql, [$cmid, $userid, $cmid]);
     }
 
     public function getStudentsToGrade(int $attempt): array {
