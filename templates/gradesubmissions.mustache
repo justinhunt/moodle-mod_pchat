@@ -112,7 +112,6 @@
             $(element).find('.chatfeedback').html("");
             $(element).find('.chataiscore').html("");
             if (studentId) {
-                $(element).find('input[type=button]').removeAttr("disabled");
                 $(element).find('input[type=button]').attr("data-student-id",studentId);
 
                 var promises = ajax.call([
@@ -121,7 +120,7 @@
 
                 promises[0].done(function(response) {
                     if(response && response.response[0]) {
-                        console.log(response);
+                        $(element).find('input[type=button]').removeAttr("disabled");
                         $(element).find('.chatplayer').attr('src', response.response[0].filename);
                         $(element).find('.chattranscript').html(response.response[0].transcript);
                         $(element).find('.chatturns').html(response.response[0].turns);

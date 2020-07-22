@@ -160,29 +160,6 @@ function xmldb_pchat_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Define table pchat_rubric_scores to be created.
-        $table = new xmldb_table('pchat_rubric_scores');
-
-        // Adding fields to table pchat_rubric_scores.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('attemptid', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
-        $table->add_field('criteria', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
-        $table->add_field('remark', XMLDB_TYPE_TEXT, null, null, null, null, null);
-        $table->add_field('levelid', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
-        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-
-        // Adding keys to table pchat_rubric_scores.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
-
-        // Conditionally launch create table for pchat_rubric_scores.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
         // Pchat savepoint reached.
         upgrade_mod_savepoint(true, 2020061615, 'pchat');
     }

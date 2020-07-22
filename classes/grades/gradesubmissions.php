@@ -65,13 +65,10 @@ class gradesubmissions {
                     pat.totaltargetwords,
                     pat.questions,
                     pat.aiaccuracy,
-                    (select round(sum(grl.score), 2) 
-                    from {grading_definitions} AS gd
-                    JOIN {gradingform_rubric_criteria} AS grc ON (grc.definitionid = gd.id)
-                    JOIN {gradingform_rubric_levels} AS grl ON (grl.criterionid = grc.id)
-                    where grl.criterionid = prs.criteria
-                    and grl.id = prs.levelid) as rubricscore,
-                    prs.remark,
+                    (select round(gg.rawgrade, 2) as rawgrade
+                        from {grade_grades} gg
+                        where gg.userid = u.id
+                        and gg.itemid = pat.attemptid) as rubricscore,
                     pa.feedback
             from {" .constants::M_TABLE ."} as p
                 inner join (select max(mpa.id) as id, mpa.userid, mpa.pchat, mpa.feedback
@@ -80,7 +77,6 @@ class gradesubmissions {
                 inner join {course_modules} as cm on cm.course = p.course and cm.id = ?
                 inner join {user} as u on pa.userid = u.id
                 inner join {" .constants::M_STATSTABLE ."} as pat on pat.attemptid = pa.id and pat.userid = u.id
-                left outer join {pchat_rubric_scores} as prs on prs.userid = pat.userid and prs.attemptid = pa.id
                 left outer join  {" .constants::M_AITABLE ."} as par on par.attemptid = pa.id and par.courseid = p.course
                 left outer join {" .constants::M_ATTEMPTSTABLE ."} as ca on ca.pchat = pa.pchat and ca.userid = u.id
             where u.id = ?

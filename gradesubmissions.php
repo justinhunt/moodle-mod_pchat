@@ -87,8 +87,7 @@ $gradesrenderer =
             'studentsToGrade' => $studentsToGrade,
             'submissionCandidates' => $submissionCandidates,
             'contextid' => $context->id,
-            'cmid' => $cm->id,
-            'attemptid' => $attempt,
+            'cmid' => $cm->id
         )
     );
 

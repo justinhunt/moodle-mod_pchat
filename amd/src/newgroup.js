@@ -117,6 +117,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
             Y.use('moodle-core-formchangechecker', function() {
                 M.core_formchangechecker.reset_form_dirty_state();
             });
+
             document.location.reload();
         };
 
@@ -129,6 +130,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
             // Oh noes! Epic fail :(
             // Ah wait - this is normal. We need to re-display the form with errors!
             this.modal.setBody(this.getBody(data));
+            debugger;
         };
 
         /**
@@ -172,12 +174,15 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
             Ajax.call([{
                 methodname: 'core_group_submit_create_group_form',
                 args: {contextid: this.contextid, jsonformdata: JSON.stringify(formData)},
-                done: this.handleFormSubmissionResponse.bind(this, formData),
+                done: function (obj) {
+                    obj.handleFormSubmissionResponse.bind(obj, formData);
+                    $("[data-original-student]").trigger('change');
+                    debugger;
+                },
                 fail: this.handleFormSubmissionFailure.bind(this, formData)
             }]);
 
             this.modal.hide();
-            $("[data-original-student]").trigger('change');
         };
 
         /**

@@ -677,15 +677,7 @@ function mod_pchat_output_fragment_new_group_form($args) {
 
     require_once('grade_form.php');
 
-    // Get data @todo move to method
-
     $args = (object) $args;
-    $conditions = [
-        'attemptid' => $args->attemptid,
-        'userid' => $args->studentid,
-    ];
-    $rubricscores = $DB->get_records('pchat_rubric_scores', $conditions);
-
     $o = '';
 
     $formdata = [];
@@ -694,55 +686,33 @@ function mod_pchat_output_fragment_new_group_form($args) {
         parse_str($serialiseddata, $formdata);
     }
 
+    $sql = "select  pa.pchat, pa.feedback, pa.id as attemptid
+        from {" . constants::M_ATTEMPTSTABLE . "} pa
+        inner join {" . constants::M_TABLE . "} pc on pa.pchat = pc.id
+        inner join mdl_course_modules cm on cm.instance = pc.id and pc.course = cm.course and pa.userid = ?
+        where cm.id = ?";
+
     $modulecontext = context_module::instance($args->cmid);
-    $attempt = $DB->get_record(constants::M_ATTEMPTSTABLE, array('id'=>$args->attemptid));
+    $attempt = $DB->get_record_sql($sql, array($args->studentid, $args->cmid));
+
+    //if (!$attempt) { return; }
+
     $moduleinstance = $DB->get_record(constants::M_TABLE, array('id'=>$attempt->pchat));
     $gradingdisabled=false;
     $gradinginstance = utils::get_grading_instance($args->attemptid, $gradingdisabled,$moduleinstance, $modulecontext);
-/*
-    $instanceid = optional_param('advancedgradinginstanceid', 0, PARAM_INT);
-    $gradingmanager = get_grading_manager($modulecontext, 'mod_pchat', 'pchat');
-    $controller = $gradingmanager->get_active_controller();
-    $gradinginstance = $controller->get_or_create_instance($instanceid,
-        0,
-        0);
-*/
 
     $mform = new grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
 
     if ($mform->is_cancelled()) {
         // @todo close window
     } else if ($fromform = $mform->get_data()) {
-        if (!empty($rubricscores)) {
-            // Delete current entries for repush.
-            $DB->delete_records('pchat_rubric_scores', $conditions);
-        }
         // Insert rubric
         if (!empty($fromform->advancedgrading['criteria'])) {
-            $data = $fromform->advancedgrading['criteria'];
-            $dataobjects = [];
-          //  $criteriasum=0;
-            foreach ($data as $rdata => $idx) {
-                $dataobject = new stdClass();
-                $dataobject->criteria = $rdata;
-                $dataobject->levelid = $idx['levelid'];
-                $dataobject->remark = $idx['remark'];
-                $dataobject->score = $idx['score'];
-                $dataobject->attemptid = $args->attemptid;
-                $dataobject->userid = $args->studentid;
-                $dataobject->usermodified = $USER->id;
-                $dataobject->timecreated = time();
-                $dataobjects[] = $dataobject;
-            }
-            if (!empty($dataobjects)) {
-                $DB->insert_records('pchat_rubric_scores', $dataobjects);
-                //fetch the grade as calculated by advanced grading
-                $thegrade=null;
-                if (!$gradingdisabled) {
-                    if ($gradinginstance) {
-                        $thegrade = $gradinginstance->submit_and_get_grade($fromform->advancedgrading,
-                            $args->attemptid);
-                    }
+            $thegrade=null;
+            if (!$gradingdisabled) {
+                if ($gradinginstance) {
+                    $thegrade = $gradinginstance->submit_and_get_grade($fromform->advancedgrading,
+                        $attempt->attemptid);
                 }
             }
         }
@@ -757,20 +727,8 @@ function mod_pchat_output_fragment_new_group_form($args) {
         pchat_grade_item_update($moduleinstance,$grade);
     }
 
-    if (!empty($rubricscores)) {
-        foreach ($rubricscores as $rubricscore) {
-            $testdata['advancedgrading']['criteria'][$rubricscore->criteria]['levelid'] =
-                $rubricscore->levelid;
-            $testdata['advancedgrading']['criteria'][$rubricscore->criteria]['remark'] =
-                $rubricscore->remark;
-        }
-
-    }
-    $testdata['feedback'] = $DB->get_record(
-        'pchat_attempts',
-        ['id' => $args->attemptid, 'userid' => $args->studentid,],
-        'feedback'
-    )->feedback;
+    $testdata = [];
+    $testdata['feedback'] = $attempt->feedback;
     $mform->set_data($testdata);
 
     if (!empty($args->jsonformdata)) {
@@ -785,10 +743,6 @@ function mod_pchat_output_fragment_new_group_form($args) {
 
     ob_start();
     $mform->display();
-    if (!empty($testdata)) {
-        var_dump($testdata);
-    }
-
     var_dump($args);
     $o .= ob_get_contents();
     ob_end_clean();
