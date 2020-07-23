@@ -60,6 +60,7 @@ $PAGE->requires->jquery();
 
 if($method !='rubric'){
     $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
+    $data=array('data'=>[]);
     $gradesrenderer =
         $OUTPUT->render_from_template(constants::M_COMPONENT . '/grades', array('cmid' => $id, 'data' => $data));
 

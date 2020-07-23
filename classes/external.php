@@ -65,14 +65,13 @@ class external extends external_api {
     public static function get_grade_submission_parameters() {
         return new external_function_parameters([
             'userid' => new external_value(PARAM_INT),
-            'moduleid' => new external_value(PARAM_INT),
             'cmid' => new external_value(PARAM_INT),
         ]);
     }
 
-    public static function get_grade_submission($userid, $moduleid, $cmid) {
+    public static function get_grade_submission($userid,  $cmid) {
         $gradesubmissions = new gradesubmissions();
-            return ['response' => $gradesubmissions->getSubmissionData($userid, $moduleid, $cmid)];
+            return ['response' => $gradesubmissions->getSubmissionData($userid,$cmid)];
     }
 
     public static function get_grade_submission_returns() {
@@ -153,7 +152,7 @@ class external extends external_api {
         $sql = "select  pa.pchat, pa.feedback, pa.id as attemptid
         from {" . constants::M_ATTEMPTSTABLE . "} pa
         inner join {" . constants::M_TABLE . "} pc on pa.pchat = pc.id
-        inner join mdl_course_modules cm on cm.instance = pc.id and pc.course = cm.course and pa.userid = ?
+        inner join {course_modules} cm on cm.instance = pc.id and pc.course = cm.course and pa.userid = ?
         where cm.id = ?";
 
         $modulecontext = context_module::instance($cmid);
@@ -191,7 +190,7 @@ class external extends external_api {
             \pchat_grade_item_update($moduleinstance,$grade);
         } else {
             // Generate a warning.
-            throw new moodle_exception('erroreditgroup', 'group');
+            throw new \moodle_exception('erroreditgroup', 'group');
         }
 
         return 1;

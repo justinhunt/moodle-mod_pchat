@@ -43,7 +43,7 @@ class gradesubmissions {
         return $DB->get_records_sql($sql, [$studentid, $moduleinstance, $courseid]);
     }
 
-    public function getSubmissionData(int $userid, int $moduleid, int $cmid): array {
+    public function getSubmissionData(int $userid, int $cmid): array {
         global $DB;
 
         $sql = "select pa.id,
@@ -65,10 +65,7 @@ class gradesubmissions {
                     pat.totaltargetwords,
                     pat.questions,
                     pat.aiaccuracy,
-                    (select round(gg.rawgrade, 2) as rawgrade
-                        from {grade_grades} gg
-                        where gg.userid = u.id
-                        and gg.itemid = pat.attemptid) as rubricscore,
+                    ca.grade as rubricscore,
                     pa.feedback
             from {" .constants::M_TABLE ."} as p
                 inner join (select max(mpa.id) as id, mpa.userid, mpa.pchat, mpa.feedback

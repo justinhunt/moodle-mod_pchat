@@ -20,7 +20,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
          */
         var NewGroup = function(selector, contextid) {
             this.contextid = contextid;
-            this.init(selector);
+            this.preinit(selector);
         };
 
         /**
@@ -34,6 +34,61 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
          * @private
          */
         NewGroup.prototype.contextid = -1;
+
+
+        /**
+         * Initialise the class.
+         *
+         * @param {String} selector used to find triggers for the new group modal.
+         * @private
+         * @return {Promise}
+         */
+        NewGroup.prototype.preinit = function(selector) {
+            var triggers = selector;
+            var that = this;
+
+            Str.get_string('dorubricgrade', 'mod_pchat').then(function(title){that.formtitle=title;});
+            // Fetch the title string.
+            $(triggers).on('click', function(e){
+                e.preventDefault();
+
+                that.studentid = $(this).attr('data-student-id');
+                that.cmid = $(this).attr('data-cm-id');
+
+                // Create the modal.
+                ModalFactory.create({
+                    type: ModalFactory.types.SAVE_CANCEL,
+                    title: that.formtitle,
+                    body: that.getBody()
+                }).then(function(modal) {
+                    // Keep a reference to the modal.
+                    that.modal = modal;
+
+                    // Forms are big, we want a big modal.
+                    that.modal.setLarge();
+
+                    // We want to reset the form every time it is opened.
+                    that.modal.getRoot().on(ModalEvents.hidden, function () {
+                        that.modal.setBody(that.getBody());
+                    }.bind(that));
+
+                    // We want to hide the submit buttons every time it is opened.
+                    that.modal.getRoot().on(ModalEvents.shown, function () {
+                        that.modal.getRoot().append('<style>[data-fieldtype=submit] { display: none ! important; }</style>');
+                    });
+
+
+                    // We catch the modal save event, and use it to submit the form inside the modal.
+                    // Triggering a form submission will give JS validation scripts a chance to check for errors.
+                    that.modal.getRoot().on(ModalEvents.save, that.submitForm.bind(that));
+                    // We also catch the form submit event and use it to submit the form with ajax.
+                    that.modal.getRoot().on('submit', 'form', that.submitFormAjax.bind(that));
+                    that.modal.show();
+                    return that.modal;
+                });//end of then(function(modal)
+            });//end of click event
+        };
+
 
         /**
          * Initialise the class.
@@ -116,7 +171,22 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
                 M.core_formchangechecker.reset_form_dirty_state();
             });
 
-            $("[data-original-student]").trigger('change');
+         //   $("[data-original-student]").trigger('change');
+
+            var element = $(".card[data-original-student='" + this.studentid + "']");
+            var promises = Ajax.call([
+                { methodname: 'mod_pchat_get_grade_submission', args: {  userid: this.studentid, cmid: this.cmid } }]);
+
+            promises[0].done(function(response) {
+                if(response && response.response[0]) {
+                    $(element).find('.chatrubricscore').html(response.response[0].rubricscore);
+                    $(element).find('.chatfeedback').html(response.response[0].feedback);
+                }
+            }).fail(function(ex) {
+                // @todo do something with the exception
+            });
+
+
         };
 
         /**
