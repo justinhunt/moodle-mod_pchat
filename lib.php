@@ -689,7 +689,7 @@ function mod_pchat_output_fragment_new_group_form($args) {
     $sql = "select  pa.pchat, pa.feedback, pa.id as attemptid
         from {" . constants::M_ATTEMPTSTABLE . "} pa
         inner join {" . constants::M_TABLE . "} pc on pa.pchat = pc.id
-        inner join mdl_course_modules cm on cm.instance = pc.id and pc.course = cm.course and pa.userid = ?
+        inner join {course_modules} cm on cm.instance = pc.id and pc.course = cm.course and pa.userid = ?
         where cm.id = ?";
 
     $modulecontext = context_module::instance($args->cmid);

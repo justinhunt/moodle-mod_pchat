@@ -115,7 +115,7 @@
                 $(element).find('input[type=button]').attr("data-student-id",studentId);
 
                 var promises = ajax.call([
-                { methodname: 'mod_pchat_get_grade_submission', args: {  userid: studentId, moduleid: {{contextid}}, cmid: {{cmid}} } },
+                { methodname: 'mod_pchat_get_grade_submission', args: {  userid: studentId, cmid: {{cmid}} } },
                 ]);
 
                 promises[0].done(function(response) {
