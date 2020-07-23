@@ -74,7 +74,7 @@ class gradesubmissions {
                 inner join (select max(mpa.id) as id, mpa.userid, mpa.pchat, mpa.feedback
             from {" .constants::M_ATTEMPTSTABLE ."} mpa group by  mpa.userid, mpa.pchat, mpa.feedback ) as pa
             on p.id = pa.pchat
-                inner join {course_modules} as cm on cm.course = p.course and cm.id = ?
+                inner join {course_modules} as cm on cm.course = p.course
                 inner join {user} as u on pa.userid = u.id
                 inner join {" .constants::M_STATSTABLE ."} as pat on pat.attemptid = pa.id and pat.userid = u.id
                 left outer join  {" .constants::M_AITABLE ."} as par on par.attemptid = pa.id and par.courseid = p.course
@@ -82,7 +82,7 @@ class gradesubmissions {
             where u.id = ?
             and cm.id = ?;";
 
-        return $DB->get_records_sql($sql, [$cmid, $userid, $cmid]);
+        return $DB->get_records_sql($sql, [$userid, $cmid]);
     }
 
     public function getStudentsToGrade(int $attempt): array {

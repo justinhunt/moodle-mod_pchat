@@ -114,7 +114,9 @@ class external extends external_api {
         return new external_function_parameters(
             array(
                 'contextid' => new external_value(PARAM_INT, 'The context id for the course'),
-                'jsonformdata' => new external_value(PARAM_RAW, 'The data from the create group form, encoded as a json array')
+                'jsonformdata' => new external_value(PARAM_RAW, 'The data from the create group form, encoded as a json array'),
+                'studentid' => new external_value(PARAM_INT, 'The id for the student', false),
+                'cmid' => new external_value(PARAM_INT, 'The course module id for the item', false),
             )
         );
     }
@@ -126,55 +128,73 @@ class external extends external_api {
      * @param string $jsonformdata The data from the form, encoded as a json array.
      * @return int new group id.
      */
-    public static function submit_create_group_form($contextid, $jsonformdata) {
-        global $CFG, $USER;
+    public static function submit_create_group_form($contextid, $jsonformdata, $studentid, $cmid) {
+        global $CFG, $DB;
 
-        require_once($CFG->dirroot . '/group/lib.php');
-        require_once($CFG->dirroot . '/group/group_form.php');
+        require_once($CFG->dirroot . '/mod/pchat/grade_form.php');
+        require_once($CFG->dirroot . '/grade/grading/lib.php');
+        require_once($CFG->dirroot . '/mod/pchat/lib.php');
 
         // We always must pass webservice params through validate_parameters.
         $params = self::validate_parameters(self::submit_create_group_form_parameters(),
             ['contextid' => $contextid, 'jsonformdata' => $jsonformdata]);
 
-        $context = context::instance_by_id($params['contextid'], IGNORE_MISSING);
+        $context = \context::instance_by_id($params['contextid'], MUST_EXIST);
 
         // We always must call validate_context in a webservice.
         self::validate_context($context);
         require_capability('moodle/course:managegroups', $context);
 
-        list($ignored, $course) = get_context_info_array($context->id);
         $serialiseddata = json_decode($params['jsonformdata']);
 
         $data = array();
         parse_str($serialiseddata, $data);
 
-        $warnings = array();
+        $sql = "select  pa.pchat, pa.feedback, pa.id as attemptid
+        from {" . constants::M_ATTEMPTSTABLE . "} pa
+        inner join {" . constants::M_TABLE . "} pc on pa.pchat = pc.id
+        inner join mdl_course_modules cm on cm.instance = pc.id and pc.course = cm.course and pa.userid = ?
+        where cm.id = ?";
 
-        $editoroptions = [
-            'maxfiles' => EDITOR_UNLIMITED_FILES,
-            'maxbytes' => $course->maxbytes,
-            'trust' => false,
-            'context' => $context,
-            'noclean' => true,
-            'subdirs' => false
-        ];
-        $group = new stdClass();
-        $group->courseid = $course->id;
-        $group = file_prepare_standard_editor($group, 'description', $editoroptions, $context, 'group', 'description', null);
+        $modulecontext = context_module::instance($cmid);
+        $attempt = $DB->get_record_sql($sql, array($studentid, $cmid));
 
-        // The last param is the ajax submitted data.
-        $mform = new group_form(null, array('editoroptions' => $editoroptions), 'post', '', null, true, $data);
+        if (!$attempt) { return 0; }
+
+        $moduleinstance = $DB->get_record(constants::M_TABLE, array('id'=>$attempt->pchat));
+        $gradingdisabled=false;
+        $gradinginstance = utils::get_grading_instance($attempt->attemptid, $gradingdisabled,$moduleinstance, $modulecontext);
+
+        $mform = new \grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $data);
+
         $validateddata = $mform->get_data();
 
         if ($validateddata) {
-            // Do the action.
-            $groupid = groups_create_group($validateddata, $mform, $editoroptions);
+            // Insert rubric
+            if (!empty($validateddata->advancedgrading['criteria'])) {
+                $thegrade=null;
+                if (!$gradingdisabled) {
+                    if ($gradinginstance) {
+                        $thegrade = $gradinginstance->submit_and_get_grade($validateddata->advancedgrading,
+                            $attempt->attemptid);
+                    }
+                }
+            }
+            $feedbackobject = new \stdClass();
+            $feedbackobject->id = $attempt->attemptid;
+            $feedbackobject->feedback = $validateddata->feedback;
+            $feedbackobject->grade = $thegrade;
+            $DB->update_record('pchat_attempts', $feedbackobject);
+            $grade = new \stdClass();
+            $grade->userid = $studentid;
+            $grade->rawgrade = $thegrade;
+            \pchat_grade_item_update($moduleinstance,$grade);
         } else {
             // Generate a warning.
             throw new moodle_exception('erroreditgroup', 'group');
         }
 
-        return $groupid;
+        return 1;
     }
 
     /**

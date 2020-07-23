@@ -32,4 +32,5 @@ $functions = array(
             'type' => 'write',
             'capabilities' => 'mod/pchat:managegrades',
         ),
+
 );

@@ -46,7 +46,6 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
             var triggers = selector;
             this.studentid = $(selector).attr('data-student-id');
             this.cmid = $(selector).attr('data-cm-id');
-            this.attemptid = $(selector).attr('data-attempt-id');
 
             // Fetch the title string.
             return Str.get_string('creategroup', 'core_group').then(function(title) {
@@ -97,7 +96,6 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
             var params = {jsonformdata: JSON.stringify(formdata)};
             params.studentid = this.studentid;
             params.cmid = this.cmid;
-            params.attemptid = this.attemptid;
 
             return Fragment.loadFragment(
                 'mod_pchat',
@@ -118,7 +116,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
                 M.core_formchangechecker.reset_form_dirty_state();
             });
 
-            document.location.reload();
+            $("[data-original-student]").trigger('change');
         };
 
         /**
@@ -130,7 +128,7 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
             // Oh noes! Epic fail :(
             // Ah wait - this is normal. We need to re-display the form with errors!
             this.modal.setBody(this.getBody(data));
-            debugger;
+            $("[data-original-student]").trigger('change');
         };
 
         /**
@@ -172,13 +170,14 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
 
             // Now we can continue...
             Ajax.call([{
-                methodname: 'core_group_submit_create_group_form',
-                args: {contextid: this.contextid, jsonformdata: JSON.stringify(formData)},
-                done: function (obj) {
-                    obj.handleFormSubmissionResponse.bind(obj, formData);
-                    $("[data-original-student]").trigger('change');
-                    debugger;
+                methodname: 'mod_pchat_submit_create_group_form',
+                args: {
+                    contextid: this.contextid,
+                    jsonformdata: JSON.stringify(formData),
+                    studentid: parseInt(this.studentid) ?? 0,
+                    cmid: parseInt(this.cmid) ?? 0
                 },
+                done: this.handleFormSubmissionResponse.bind(this, formData),
                 fail: this.handleFormSubmissionFailure.bind(this, formData)
             }]);
 

@@ -849,7 +849,7 @@ class utils{
         $allowgradedecimals = $moduleinstance->grade > 0;
 
         $advancedgradingwarning = false;
-        $gradingmanager = get_grading_manager($context, 'mod_pchat', 'pchat');
+        $gradingmanager = \get_grading_manager($context, 'mod_pchat', 'pchat');
         $gradinginstance = null;
         if ($gradingmethod = $gradingmanager->get_active_method()) {
             $controller = $gradingmanager->get_controller($gradingmethod);

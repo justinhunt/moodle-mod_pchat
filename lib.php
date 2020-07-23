@@ -695,36 +695,16 @@ function mod_pchat_output_fragment_new_group_form($args) {
     $modulecontext = context_module::instance($args->cmid);
     $attempt = $DB->get_record_sql($sql, array($args->studentid, $args->cmid));
 
-    //if (!$attempt) { return; }
+    if (!$attempt) { return; }
 
     $moduleinstance = $DB->get_record(constants::M_TABLE, array('id'=>$attempt->pchat));
     $gradingdisabled=false;
-    $gradinginstance = utils::get_grading_instance($args->attemptid, $gradingdisabled,$moduleinstance, $modulecontext);
+    $gradinginstance = utils::get_grading_instance($attempt->attemptid, $gradingdisabled,$moduleinstance, $modulecontext);
 
     $mform = new grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
 
     if ($mform->is_cancelled()) {
-        // @todo close window
-    } else if ($fromform = $mform->get_data()) {
-        // Insert rubric
-        if (!empty($fromform->advancedgrading['criteria'])) {
-            $thegrade=null;
-            if (!$gradingdisabled) {
-                if ($gradinginstance) {
-                    $thegrade = $gradinginstance->submit_and_get_grade($fromform->advancedgrading,
-                        $attempt->attemptid);
-                }
-            }
-        }
-        $feedbackobject = new stdClass();
-        $feedbackobject->id = $args->attemptid;
-        $feedbackobject->feedback = $fromform->feedback;
-        $feedbackobject->grade = $thegrade;
-        $DB->update_record('pchat_attempts', $feedbackobject);
-        $grade = new stdClass();
-        $grade->userid = $args->studentid;
-        $grade->rawgrade = $thegrade;
-        pchat_grade_item_update($moduleinstance,$grade);
+        // window closes
     }
 
     $testdata = [];
@@ -733,11 +713,6 @@ function mod_pchat_output_fragment_new_group_form($args) {
 
     if (!empty($args->jsonformdata)) {
 // If we were passed non-empty form data we want the mform to call validation functions and show errors.
-        $mform->is_validated();
-    }
-
-    if (!empty($args->jsonformdata)) {
-        // If we were passed non-empty form data we want the mform to call validation functions and show errors.
         $mform->is_validated();
     }
 

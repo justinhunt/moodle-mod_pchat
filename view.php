@@ -111,7 +111,7 @@ if($start_or_continue) {
         $aidata = $DB->get_record(constants::M_AITABLE,array('attemptid'=>$attempt->id));
         echo $attempt_renderer->show_summary($moduleinstance,$attempt,$aidata, $stats);
     }
-    $grade =  $DB->get_record("pchat_rubric_scores",array('attemptid'=>$attempt->id));
+    $grade = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $USER->id);
 
     //all attempts by user table [good for debugging]
     // do not delete this I think
