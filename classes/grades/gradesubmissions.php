@@ -18,7 +18,7 @@ class gradesubmissions {
      *
      * @param int $courseid Course ID of chat.
      * @param int $studentid Moodle student ID
-     * @param int $moduleinstanceid Module instance ID for given chat.
+     * @param int $moduleinstance
      * @return array
      * @throws dml_exception
      */
@@ -26,15 +26,15 @@ class gradesubmissions {
         global $DB;
 
         $sql = "select pa.id, u.lastname, u.firstname, p.name, p.transcriber, pat.words, pat.avturn, pat.longestturn, pat.targetwords, pat.totaltargetwords, pat.questions, pat.aiaccuracy
-                from {" .constants::M_TABLE ."} as p
+                from {" . constants::M_TABLE . "} as p
                     inner join  (select max(mpa.id) as id, mpa.userid, mpa.pchat
-                            from {" .constants::M_ATTEMPTSTABLE ."} mpa
+                            from {" . constants::M_ATTEMPTSTABLE . "} mpa
                             group by mpa.userid, mpa.pchat
                         ) as pa on p.id = pa.pchat
                     inner join {course_modules} as cm on cm.course = p.course and cm.id = ?
                     inner join {user} as u on pa.userid = u.id
-                    inner join {" .constants::M_STATSTABLE ."} as pat on pat.attemptid = pa.id and pat.userid = u.id
-                    left outer join {" .constants::M_AITABLE ."} as par on par.attemptid = pa.id and par.courseid = p.course
+                    inner join {" . constants::M_STATSTABLE . "} as pat on pat.attemptid = pa.id and pat.userid = u.id
+                    left outer join {" . constants::M_AITABLE . "} as par on par.attemptid = pa.id and par.courseid = p.course
                 where u.id = ?
                     AND pa.pchat = ?
                     AND p.course = ?
@@ -43,6 +43,14 @@ class gradesubmissions {
         return $DB->get_records_sql($sql, [$studentid, $moduleinstance, $courseid]);
     }
 
+    /**
+     * Gets full submission data for a student's entry.
+     * 
+     * @param int $userid
+     * @param int $cmid
+     * @return array
+     * @throws dml_exception
+     */
     public function getSubmissionData(int $userid, int $cmid): array {
         global $DB;
 
@@ -67,21 +75,28 @@ class gradesubmissions {
                     pat.aiaccuracy,
                     ca.grade as rubricscore,
                     pa.feedback
-            from {" .constants::M_TABLE ."} as p
+            from {" . constants::M_TABLE . "} as p
                 inner join (select max(mpa.id) as id, mpa.userid, mpa.pchat, mpa.feedback
-            from {" .constants::M_ATTEMPTSTABLE ."} mpa group by  mpa.userid, mpa.pchat, mpa.feedback ) as pa
+            from {" . constants::M_ATTEMPTSTABLE . "} mpa group by  mpa.userid, mpa.pchat, mpa.feedback ) as pa
             on p.id = pa.pchat
                 inner join {course_modules} as cm on cm.course = p.course
                 inner join {user} as u on pa.userid = u.id
-                inner join {" .constants::M_STATSTABLE ."} as pat on pat.attemptid = pa.id and pat.userid = u.id
-                left outer join  {" .constants::M_AITABLE ."} as par on par.attemptid = pa.id and par.courseid = p.course
-                left outer join {" .constants::M_ATTEMPTSTABLE ."} as ca on ca.pchat = pa.pchat and ca.userid = u.id
+                inner join {" . constants::M_STATSTABLE . "} as pat on pat.attemptid = pa.id and pat.userid = u.id
+                left outer join  {" . constants::M_AITABLE . "} as par on par.attemptid = pa.id and par.courseid = p.course
+                left outer join {" . constants::M_ATTEMPTSTABLE . "} as ca on ca.pchat = pa.pchat and ca.userid = u.id
             where u.id = ?
             and cm.id = ?;";
 
         return $DB->get_records_sql($sql, [$userid, $cmid]);
     }
 
+    /**
+     * Returns a listing of students who should be graded based on the user clicked.
+     *
+     * @param int $attempt
+     * @return array
+     * @throws dml_exception
+     */
     public function getStudentsToGrade(int $attempt): array {
         global $DB;
 

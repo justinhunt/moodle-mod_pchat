@@ -125,7 +125,15 @@ class external extends external_api {
      *
      * @param int $contextid The context id for the course.
      * @param string $jsonformdata The data from the form, encoded as a json array.
+     * @param $studentid
+     * @param $cmid
      * @return int new group id.
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \invalid_parameter_exception
+     * @throws \moodle_exception
+     * @throws \required_capability_exception
+     * @throws \restricted_context_exception
      */
     public static function submit_create_group_form($contextid, $jsonformdata, $studentid, $cmid) {
         global $CFG, $DB;

@@ -16,7 +16,8 @@ class grades {
      * Gets listing of grades for students.
      *
      * @param int $courseid Course ID of chat.
-     * @param int $moduleinstanceid Module instance ID for given chat.
+     * @param int $coursemoduleid
+     * @param int $moduleinstance Module instance ID for given chat.
      * @return array
      * @throws dml_exception
      */
