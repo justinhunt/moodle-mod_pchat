@@ -106,14 +106,14 @@ class external extends external_api {
     }
 
     /**
-     * Describes the parameters for submit_create_group_form webservice.
+     * Describes the parameters for submit_create_grade_form webservice.
      * @return external_function_parameters
      */
-    public static function submit_create_group_form_parameters() {
+    public static function submit_create_grade_form_parameters() {
         return new external_function_parameters(
             array(
                 'contextid' => new external_value(PARAM_INT, 'The context id for the course'),
-                'jsonformdata' => new external_value(PARAM_RAW, 'The data from the create group form, encoded as a json array'),
+                'jsonformdata' => new external_value(PARAM_RAW, 'The data from the create grade form, encoded as a json array'),
                 'studentid' => new external_value(PARAM_INT, 'The id for the student', false),
                 'cmid' => new external_value(PARAM_INT, 'The course module id for the item', false),
             )
@@ -121,13 +121,13 @@ class external extends external_api {
     }
 
     /**
-     * Submit the create group form.
+     * Submit the create grade form.
      *
      * @param int $contextid The context id for the course.
      * @param string $jsonformdata The data from the form, encoded as a json array.
      * @param $studentid
      * @param $cmid
-     * @return int new group id.
+     * @return int new grade id.
      * @throws \coding_exception
      * @throws \dml_exception
      * @throws \invalid_parameter_exception
@@ -135,7 +135,7 @@ class external extends external_api {
      * @throws \required_capability_exception
      * @throws \restricted_context_exception
      */
-    public static function submit_create_group_form($contextid, $jsonformdata, $studentid, $cmid) {
+    public static function submit_create_grade_form($contextid, $jsonformdata, $studentid, $cmid) {
         global $CFG, $DB;
 
         require_once($CFG->dirroot . '/mod/pchat/grade_form.php');
@@ -143,7 +143,7 @@ class external extends external_api {
         require_once($CFG->dirroot . '/mod/pchat/lib.php');
 
         // We always must pass webservice params through validate_parameters.
-        $params = self::validate_parameters(self::submit_create_group_form_parameters(),
+        $params = self::validate_parameters(self::submit_create_grade_form_parameters(),
             ['contextid' => $contextid, 'jsonformdata' => $jsonformdata]);
 
         $context = \context::instance_by_id($params['contextid'], MUST_EXIST);
@@ -207,11 +207,11 @@ class external extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_description
+     * @return external_value
      * @since Moodle 3.0
      */
-    public static function submit_create_group_form_returns() {
-        return new external_value(PARAM_INT, 'group id');
+    public static function submit_create_grade_form_returns() {
+        return new external_value(PARAM_INT, 'grade id');
     }
 
 }

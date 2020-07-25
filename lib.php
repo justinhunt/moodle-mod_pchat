@@ -673,7 +673,7 @@ function mod_pchat_grading_areas_list() {
  * @return string
  * @throws dml_exception
  */
-function mod_pchat_output_fragment_new_group_form($args) {
+function mod_pchat_output_fragment_new_grade_form($args) {
     global $DB;
 
     require_once('grade_form.php');
