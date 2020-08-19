@@ -849,6 +849,10 @@ class utils{
         $allowgradedecimals = $moduleinstance->grade > 0;
 
         $advancedgradingwarning = false;
+
+        //necessary for M3.3
+        require_once($CFG->dirroot .'/grade/grading/lib.php');
+
         $gradingmanager = \get_grading_manager($context, 'mod_pchat', 'pchat');
         $gradinginstance = null;
         if ($gradingmethod = $gradingmanager->get_active_method()) {

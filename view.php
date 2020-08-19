@@ -111,6 +111,10 @@ if($start_or_continue) {
         $aidata = $DB->get_record(constants::M_AITABLE,array('attemptid'=>$attempt->id));
         echo $attempt_renderer->show_summary($moduleinstance,$attempt,$aidata, $stats);
     }
+
+    //necessary for M3.3
+    require_once($CFG->libdir.'/gradelib.php');
+    
     $grade = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $USER->id);
 
     //all attempts by user table [good for debugging]
