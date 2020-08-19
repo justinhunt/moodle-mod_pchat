@@ -24,10 +24,10 @@ $functions = array(
             'type'        => 'write',
             'ajax' => true,
         ),
-        'mod_pchat_submit_create_group_form' => array(
+        'mod_pchat_submit_create_grade_form' => array(
             'classname' => '\mod_pchat\external',
-            'methodname' => 'submit_create_group_form',
-            'description' => 'Creates a group from submitted form data',
+            'methodname' => 'submit_create_grade_form',
+            'description' => 'Creates a grade from submitted form data',
             'ajax' => true,
             'type' => 'write',
             'capabilities' => 'mod/pchat:managegrades',

@@ -32,7 +32,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use mod_pchat\constants;
-use \mod_pchat\utils;
+use mod_pchat\utils;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -667,19 +667,21 @@ function mod_pchat_grading_areas_list() {
 }
 
 /**
- * Serve the new group form as a fragment.
+ * Displays the pchat popup window for grading.
  *
  * @param array $args List of named arguments for the fragment loader.
  * @return string
+ * @throws dml_exception
  */
-function mod_pchat_output_fragment_new_group_form($args) {
-    global $CFG, $DB, $USER;
+function mod_pchat_output_fragment_new_grade_form($args) {
+    global $DB;
 
     require_once('grade_form.php');
 
-    $args = (object) $args;
+    $args = (object)$args;
     $o = '';
 
+    // Get form data for the form if parsed to push to mform.
     $formdata = [];
     if (!empty($args->jsonformdata)) {
         $serialiseddata = json_decode($args->jsonformdata);
@@ -695,30 +697,32 @@ function mod_pchat_output_fragment_new_group_form($args) {
     $modulecontext = context_module::instance($args->cmid);
     $attempt = $DB->get_record_sql($sql, array($args->studentid, $args->cmid));
 
-    if (!$attempt) { return; }
+    if (!$attempt) {
+        return "";
+    }
 
-    $moduleinstance = $DB->get_record(constants::M_TABLE, array('id'=>$attempt->pchat));
-    $gradingdisabled=false;
-    $gradinginstance = utils::get_grading_instance($attempt->attemptid, $gradingdisabled,$moduleinstance, $modulecontext);
+    $moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $attempt->pchat));
+    $gradingdisabled = false;
+    $gradinginstance = utils::get_grading_instance($attempt->attemptid, $gradingdisabled, $moduleinstance, $modulecontext);
 
     $mform = new grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
 
     if ($mform->is_cancelled()) {
-        // window closes
+        // Window closes.
     }
 
-    $testdata = [];
-    $testdata['feedback'] = $attempt->feedback;
-    $mform->set_data($testdata);
+    $feedbackdata = [];
+    $feedbackdata['feedback'] = $attempt->feedback;
+    $mform->set_data($feedbackdata);
 
     if (!empty($args->jsonformdata)) {
-// If we were passed non-empty form data we want the mform to call validation functions and show errors.
+        // If we were passed non-empty form data we want the mform to call validation functions and show errors.
         $mform->is_validated();
     }
 
+    // Display the form. Ob* functions used since this is called in an ajax call.
     ob_start();
     $mform->display();
-    var_dump($args);
     $o .= ob_get_contents();
     ob_end_clean();
 

@@ -1,4 +1,3 @@
-
 {{!
   This file is part of Moodle - http://moodle.org/
 
@@ -54,10 +53,12 @@
             <td class="text-center">{{aiaccuracy}}</td>
             <td class="text-center">{{turns}}</td>
             <td class="text-center">{{avturn}}</td>
-            <td><a href="gradesubmissions.php?id={{cmid}}&attempt={{attemptid}}"><button type="button" class="btn btn-primary">
-                {{# str }} gradesgrade, mod_pchat {{/ str }}
-            </button>&nbsp;</a></td>
-            <th class="alert alert-danger m-0 class="text-center">{{# str }} gradesgradedno, mod_pchat {{/ str }}</th>
+            <td><a href="gradesubmissions.php?id={{cmid}}&attempt={{attemptid}}">
+                <button type="button" class="btn btn-primary">
+                    {{# str }} gradesgrade, mod_pchat {{/ str }}
+                </button>&nbsp;</a></td>
+            <th class="alert alert-danger m-0 class=" text-center
+            ">{{# str }} gradesgradedno, mod_pchat {{/ str }}</th>
         </tr>
     {{/data}}
     </tbody>
@@ -68,6 +69,6 @@
     "jquery",
     'https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js',
     ], function ($, datatable) {
-        let table = $("#mod_pchat_grade_submissions_table").dataTable();
+    let table = $("#mod_pchat_grade_submissions_table").dataTable();
     });
 {{/js}}

@@ -64,7 +64,7 @@
             </div>
         </div>
         <div class="alert alert-secondary justify-content-center align-middle" style="text-align: center;" role="alert">
-            <input type="button" data-action="creategroupmodal" disabled="disabled"
+            <input type="button" data-action="creategrademodal" disabled="disabled"
                    data-cm-id="{{cmid}}"
                    data-attempt-id="{{attemptid}}"
                    data-student-id="0" class=" justify-content-center align-middle" name="grade" id="create-modal" value="Grade entry">
@@ -78,11 +78,11 @@
     </div>
     {{/studentsToGrade}}
 </div>
-
+{{^element.frozen}}
 {{#js}}
-    $('[data-action=creategroupmodal]').attr('disabled', 'disabled');
+    $('[data-action=creategrademodal]').attr('disabled', 'disabled');
 
-    require(['jquery', 'core/modal_factory', 'core/ajax', 'mod_pchat/newgroup'], function($, ModalFactory, ajax, NewGroup) {
+    require(['jquery', 'core/modal_factory', 'core/ajax', 'mod_pchat/gradeform'], function($, ModalFactory, ajax, GradeForm) {
         document.querySelectorAll("[data-original-student]").forEach(
             function(element) {
                 const originalStudentId = $(element).attr("data-original-student");
@@ -90,14 +90,15 @@
                 selectBox.value = originalStudentId;
                 $("[data-original-student]").first().find('select').attr('disabled','disabled');
                 loadStudentData(element);
-                NewGroup.init($(element).find('input[type=button]'), {{contextid}});
-                }
+                GradeForm.init($(element).find('input[type=button]'), {{contextid}});
+            }
         );
 
         $("[data-original-student]").change(function () { loadStudentData(this); });
 
         function loadStudentData(element) {
             const selectBox = element.querySelector('select[name="gradesUserSelect"]');
+            $(element).find('input[type=button]').attr('disabled', 'disabled');
             studentId = selectBox.value;
             $(element).find('.chatplayer').removeAttr('src');
             $(element).find('.chattranscript').html("No data.");
@@ -112,6 +113,7 @@
             $(element).find('.chatfeedback').html("");
             $(element).find('.chataiscore').html("");
             if (studentId) {
+                $(selectBox).closest('[data-original-student]').attr('data-original-student', studentId);
                 $(element).find('input[type=button]').attr("data-student-id",studentId);
 
                 var promises = ajax.call([
@@ -141,3 +143,5 @@
         }
     });
 {{/js}}
+{{/element.frozen}}
+
