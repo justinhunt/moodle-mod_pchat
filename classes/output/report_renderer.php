@@ -20,12 +20,39 @@ class report_renderer extends \plugin_renderer_base
             new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'basic', 'id' => $cm->id, 'n' => $moduleinstance->id)),
             get_string('basicreport', constants::M_COMPONENT), 'get');
 
+        $buttons =[];
         $attempts = new \single_button(
             new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'attempts', 'id' => $cm->id, 'n' => $moduleinstance->id)),
             get_string('attemptsreport', constants::M_COMPONENT), 'get');
+        $buttons[] = $this->render($attempts);
+
+        $detailedattempts = new \single_button(
+                new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'detailedattempts', 'id' => $cm->id, 'n' => $moduleinstance->id)),
+                get_string('detailedattemptsreport', constants::M_COMPONENT), 'get');
+        $buttons[] = $this->render($detailedattempts);
+
+        $classprogress = new \single_button(
+                new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'classprogress', 'id' => $cm->id, 'n' => $moduleinstance->id)),
+                get_string('classprogressreport', constants::M_COMPONENT), 'get');
+        $buttons[] = $this->render($classprogress);
+
+        $myprogress = new \single_button(
+                new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'myprogress', 'id' => $cm->id, 'n' => $moduleinstance->id)),
+                get_string('myprogressreport', constants::M_COMPONENT), 'get');
+        $buttons[] = $this->render($myprogress);
+
+        $myattempts = new \single_button(
+                new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'myattempts', 'id' => $cm->id, 'n' => $moduleinstance->id)),
+                get_string('myattempts', constants::M_COMPONENT), 'get');
+        $buttons[] = $this->render($myattempts);
+
+        $downloadaudio = new \single_button(
+                new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'downloadaudio', 'id' => $cm->id, 'n' => $moduleinstance->id)),
+                get_string('downloadaudio', constants::M_COMPONENT), 'get');
+        $buttons[] = $this->render($downloadaudio);
 
 
-        $ret = \html_writer::div(  $this->render($attempts) . '<br />', constants::M_CLASS . '_listbuttons');
+        $ret = \html_writer::div(  implode("&nbsp;&nbsp;",$buttons),  constants::M_CLASS . '_listbuttons');
 
         return $ret;
     }

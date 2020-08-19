@@ -414,3 +414,8 @@ $string['gradeitem:pchat'] = 'P-CHAT';
 $string['developer'] = 'Developer';
 $string['dorubricgrade'] = 'Do Rubric Grade';
 
+$string['detailedattemptsreport'] = 'Detailed Attempts';
+$string['classprogressreport'] = 'Class Progress';
+$string['myprogressreport'] = 'My Progress';
+$string['myattempts'] = 'My Attempts';
+$string['downloadaudio'] = 'Download Audio';
