@@ -79,8 +79,7 @@ class gradesubmissions {
                     pa.feedback
             from {" . constants::M_TABLE . "} as p
                 inner join (select max(mpa.id) as id, mpa.userid, mpa.pchat, mpa.feedback
-            from {" . constants::M_ATTEMPTSTABLE . "} mpa group by  mpa.userid, mpa.pchat, mpa.feedback
-              where mpa.pchat = ? ) as pa
+                 from {" . constants::M_ATTEMPTSTABLE . "} mpa group by  mpa.userid, mpa.pchat, mpa.feedback) as pa
             on p.id = pa.pchat
                 inner join {course_modules} as cm on cm.course = p.course
                 inner join {user} as u on pa.userid = u.id
@@ -88,9 +87,10 @@ class gradesubmissions {
                 left outer join  {" . constants::M_AITABLE . "} as par on par.attemptid = pa.id and par.courseid = p.course
                 left outer join {" . constants::M_ATTEMPTSTABLE . "} as ca on ca.pchat = pa.pchat and ca.userid = u.id
             where u.id = ?
-            and cm.id = ?;";
+            and cm.id = ?
+            and p.id = ?;";
 
-        return $DB->get_records_sql($sql, [$moduleinstance->id, $userid, $cmid]);
+        return $DB->get_records_sql($sql, [$userid, $cmid,$moduleinstance->id]);
     }
 
     /**
