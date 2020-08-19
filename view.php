@@ -114,7 +114,7 @@ if($start_or_continue) {
 
     //necessary for M3.3
     require_once($CFG->libdir.'/gradelib.php');
-    
+
     $grade = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $USER->id);
 
     //all attempts by user table [good for debugging]

@@ -179,7 +179,11 @@ define(['jquery', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/f
                 { methodname: 'mod_pchat_get_grade_submission', args: {  userid: this.studentid, cmid: this.cmid } }]);
 
             promises[0].done(function(response) {
+                log.debug('promises-done');
+                log.debug(response);
                 if(response && response.response[0]) {
+                    log.debug(response.response[0]);
+                    log.debug(element);
                     $(element).find('.chatrubricscore').html(response.response[0].rubricscore);
                     $(element).find('.chatfeedback').html(response.response[0].feedback);
                 }
