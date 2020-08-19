@@ -54,6 +54,8 @@ class gradesubmissions {
     public function getSubmissionData(int $userid, int $cmid): array {
         global $DB;
 
+        $cm = get_coursemodule_from_id(constants::M_MODNAME, $cmid, 0, false, MUST_EXIST);
+        $moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $cm->instance), '*', MUST_EXIST);
         $sql = "select pa.id,
                    u.lastname,
                    u.firstname,
@@ -77,7 +79,8 @@ class gradesubmissions {
                     pa.feedback
             from {" . constants::M_TABLE . "} as p
                 inner join (select max(mpa.id) as id, mpa.userid, mpa.pchat, mpa.feedback
-            from {" . constants::M_ATTEMPTSTABLE . "} mpa group by  mpa.userid, mpa.pchat, mpa.feedback ) as pa
+            from {" . constants::M_ATTEMPTSTABLE . "} mpa group by  mpa.userid, mpa.pchat, mpa.feedback
+              where mpa.pchat = ? ) as pa
             on p.id = pa.pchat
                 inner join {course_modules} as cm on cm.course = p.course
                 inner join {user} as u on pa.userid = u.id
@@ -87,7 +90,7 @@ class gradesubmissions {
             where u.id = ?
             and cm.id = ?;";
 
-        return $DB->get_records_sql($sql, [$userid, $cmid]);
+        return $DB->get_records_sql($sql, [$moduleinstance->id, $userid, $cmid]);
     }
 
     /**
