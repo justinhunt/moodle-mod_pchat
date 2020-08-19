@@ -899,7 +899,7 @@ button#poodllconvedit_edcancel:hover,
 	width: 100%;
 }
 
-mod_pchat_togglebuttongroup {
+.mod_pchat_togglebuttongroup {
 	z-index: 0;
 }
 
