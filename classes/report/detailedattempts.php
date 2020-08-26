@@ -11,11 +11,11 @@ namespace mod_pchat\report;
 use \mod_pchat\constants;
 use \mod_pchat\utils;
 
-class attempts extends basereport
+class detailedattempts extends basereport
 {
 
-    protected $report="attempts";
-    protected $fields = array('id','username','audiofile','topicname','partners','turns','ATL','LTL','TW','QS','ACC','timemodified','view','deletenow');
+    protected $report="detailedattempts";
+    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','ATL','LTL','TW','QS','ACC','timemodified','view','deletenow');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -32,6 +32,11 @@ class attempts extends basereport
                             array('report' => 'singleattempt', 'n' => $this->cm->instance, 'id'=>$this->cm->id,'userid' => $record->userid));
                     $ret = \html_writer::link($link, $ret);
                 }
+                break;
+
+            case 'idnumber':
+                $user = $this->fetch_cache('user', $record->userid);
+                $ret = $user->idnumber;
                 break;
 
             case 'username':
@@ -157,7 +162,7 @@ class attempts extends basereport
         $record = $this->headingdata;
         $ret='';
         if(!$record){return $ret;}
-        return get_string('attemptsheading',constants::M_COMPONENT);
+        return get_string('detailedattemptsheading',constants::M_COMPONENT);
 
     }
 

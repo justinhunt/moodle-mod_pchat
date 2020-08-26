@@ -143,12 +143,27 @@ class report_renderer extends \plugin_renderer_base
             return $this->render_empty_section_html($sectiontitle);
         }
 
-        //set up our table and head attributes
+        //set up our table
         $tableattributes = array('class' => 'generaltable ' . constants::M_CLASS . '_table');
-        $headrow_attributes = array('class' => constants::M_CLASS . '_headrow');
 
         $htmltable = new \html_table();
+        $tableid = \html_writer::random_id(constants::M_COMPONENT);
+        $htmltable->id = $tableid;
         $htmltable->attributes = $tableattributes;
+
+        $headcells=[];
+        foreach ($head as $headcell) {
+            $headcells[] = new \html_table_cell($headcell);
+        }
+        $htmltable->head = $head;
+
+        //set up our table and head attributes
+        /*
+        $tableattributes = array('class' => 'generaltable ' . constants::M_CLASS . '_table');
+        $headrow_attributes = array('class' => constants::M_CLASS . '_headrow');
+        $htmltable = new \html_table();
+        $htmltable->attributes = $tableattributes;
+
 
 
         $htr = new \html_table_row();
@@ -157,6 +172,7 @@ class report_renderer extends \plugin_renderer_base
             $htr->cells[] = new \html_table_cell($headcell);
         }
         $htmltable->data[] = $htr;
+          */
 
         foreach ($rows as $row) {
             $htr = new \html_table_row();
@@ -172,6 +188,16 @@ class report_renderer extends \plugin_renderer_base
         }
         $html = $this->output->heading($sectiontitle, 4);
         $html .= \html_writer::table($htmltable);
+
+        //if datatables set up datatables
+        if(constants::M_USE_DATATABLES) {
+            $tableprops = new \stdClass();
+            $opts = Array();
+            $opts['tableid'] = $tableid;
+            $opts['tableprops'] = $tableprops;
+            $this->page->requires->js_call_amd(constants::M_COMPONENT . "/datatables", 'init', array($opts));
+        }
+
         return $html;
 
     }

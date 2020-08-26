@@ -841,13 +841,13 @@ class utils{
      * @return string rubric results
      */
     public static function display_rubricgrade($modulecontext, $moduleinstance, $attempt, $gradinginfo){
-        global  $PAGE, $USER;
+        global  $PAGE;
 
         $gradingitem = null;
         $gradebookgrade = null;
         if (isset($gradinginfo->items[0])) {
             $gradingitem = $gradinginfo->items[0];
-            $gradebookgrade = $gradingitem->grades[$USER->id];
+            $gradebookgrade = $gradingitem->grades[$attempt->userid];
         }
 
         $gradefordisplay = null;

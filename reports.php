@@ -128,8 +128,22 @@ switch ($showreport){
 		$report = new \mod_pchat\report\attempts($cm);
 		$formdata = new stdClass();
 		$formdata->pchatid = $moduleinstance->id;
-		$formdata->modulecontextid = $modulecontext->id;
+		//$formdata->modulecontextid = $modulecontext->id;
 		break;
+
+    case 'detailedattempts':
+        $report = new \mod_pchat\report\detailedattempts($cm);
+        $formdata = new stdClass();
+        $formdata->pchatid = $moduleinstance->id;
+        //$formdata->modulecontextid = $modulecontext->id;
+        break;
+
+    case 'userattempts':
+        $report = new \mod_pchat\report\userattempts($cm);
+        $formdata = new stdClass();
+        $formdata->userid = $userid;
+        break;
+
 
     case 'singleattempt':
         $attempt = $DB->get_record(constants::M_ATTEMPTSTABLE,array('id'=>$attemptid));
@@ -140,6 +154,18 @@ switch ($showreport){
                 $aidata = $DB->get_record(constants::M_AITABLE, array('attemptid' => $attemptid));
                 $attempt_renderer = $PAGE->get_renderer(constants::M_COMPONENT,'attempt');
                 echo $attempt_renderer->show_userattemptsummary($moduleinstance, $attempt, $aidata, $stats);
+
+                //grade info
+                //necessary for M3.3
+                require_once($CFG->libdir.'/gradelib.php');
+                $gradinginfo = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $attempt->userid);
+                if(!empty($gradinginfo ) && $attempt->grade !=null) {
+                    $rubricresults= utils::display_rubricgrade($modulecontext,$moduleinstance,$attempt,$gradinginfo );
+                    $feedback=$attempt->feedback;
+                    echo $attempt_renderer->show_teachereval( $rubricresults,$feedback);
+
+                }
+
                 $link = new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'menu', 'id' => $cm->id, 'n' => $moduleinstance->id));
                 echo  \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT));
                 echo $renderer->footer();
@@ -174,13 +200,27 @@ switch($format){
 		
 		$reportrows = $report->fetch_formatted_rows(true,$paging);
 		$allrowscount = $report->fetch_all_rows_count();
-		$pagingbar = $reportrenderer->show_paging_bar($allrowscount, $paging,$PAGE->url);
-		echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
-		echo $extraheader;
-        echo $reportrenderer->render_hiddenaudioplayer();
-		echo $pagingbar;
-		echo $reportrenderer->render_section_html($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows, $report->fetch_fields());
-		echo $pagingbar;
+
+		if(constants::M_USE_DATATABLES){
+		    //css must be required before header sent out
+            $PAGE->requires->css( new \moodle_url('https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css'));
+            echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
+            echo $extraheader;
+            echo $reportrenderer->render_hiddenaudioplayer();
+            echo $reportrenderer->render_section_html($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows,
+                    $report->fetch_fields());
+
+        }else {
+
+            $pagingbar = $reportrenderer->show_paging_bar($allrowscount, $paging, $PAGE->url);
+            echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
+            echo $extraheader;
+            echo $reportrenderer->render_hiddenaudioplayer();
+            echo $pagingbar;
+            echo $reportrenderer->render_section_html($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows,
+                    $report->fetch_fields());
+            echo $pagingbar;
+        }
 		echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport);
 		echo $renderer->footer();
 }

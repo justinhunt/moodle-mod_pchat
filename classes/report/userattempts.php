@@ -11,11 +11,11 @@ namespace mod_pchat\report;
 use \mod_pchat\constants;
 use \mod_pchat\utils;
 
-class attempts extends basereport
+class userattempts extends basereport
 {
 
-    protected $report="attempts";
-    protected $fields = array('id','username','audiofile','topicname','partners','turns','ATL','LTL','TW','QS','ACC','timemodified','view','deletenow');
+    protected $report="userattempts";
+    protected $fields = array('id','audiofile','topicname','partners','turns','ATL','LTL','TW','QS','ACC','timemodified','view','deletenow');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -27,21 +27,6 @@ class attempts extends basereport
         switch ($field) {
             case 'id':
                 $ret = $record->id;
-                if ($withlinks) {
-                    $link = new \moodle_url(constants::M_URL . '/reports.php',
-                            array('report' => 'singleattempt', 'n' => $this->cm->instance, 'id'=>$this->cm->id,'userid' => $record->userid));
-                    $ret = \html_writer::link($link, $ret);
-                }
-                break;
-
-            case 'username':
-                $user = $this->fetch_cache('user', $record->userid);
-                $ret = fullname($user);
-                if ($withlinks) {
-                    $link = new \moodle_url(constants::M_URL . '/reports.php',
-                            array('report' => 'userattempts', 'n' => $this->cm->instance, 'id'=>$this->cm->id,'userid' => $record->userid));
-                    $ret = \html_writer::link($link, $ret);
-                }
                 break;
 
             case 'topicname':
@@ -157,7 +142,9 @@ class attempts extends basereport
         $record = $this->headingdata;
         $ret='';
         if(!$record){return $ret;}
-        return get_string('attemptsheading',constants::M_COMPONENT);
+        $user = $this->fetch_cache('user', $record->userid);
+        $usersname = fullname($user);
+        return get_string('userattemptsheading',constants::M_COMPONENT,$usersname );
 
     }
 
@@ -166,12 +153,14 @@ class attempts extends basereport
 
         //heading data
         $this->headingdata = new \stdClass();
+        $this->headingdata->userid=$formdata->userid;
 
         $emptydata = array();
         $sql = 'SELECT at.id, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy, at.timemodified ';
         $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
-        $sql .= ' WHERE at.pchat = :pchatid';
-        $alldata = $DB->get_records_sql($sql,array('pchatid'=>$formdata->pchatid));
+        $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
+        $sql .= ' WHERE at.userid = :userid AND p.course = :courseid';
+        $alldata = $DB->get_records_sql($sql,array('userid'=>$formdata->userid, 'courseid'=>$this->cm->course));
 
         if($alldata){
             foreach($alldata as $thedata){

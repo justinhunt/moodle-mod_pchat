@@ -362,6 +362,9 @@ $string['turns']= 'Turns';
 $string['ATL']= 'ATL';
 $string['LTL']= 'LTL';
 $string['TW']= 'TW';
+$string['idnumber']= 'ID-number';
+
+
 
 $string['audiorecording']= 'Audio Recording';
 $string['summaryuserattemptheadertitle']= '(Attempt: {$a}) Conversation Details';
@@ -415,8 +418,24 @@ $string['developer'] = 'Developer';
 $string['dorubricgrade'] = 'Do Rubric Grade';
 
 $string['detailedattemptsreport'] = 'Detailed Attempts';
+$string['detailedattemptsheading']= 'Detailed Attempts';
+$string['detailedattempts']= 'Detailed Attempts';
+
 $string['classprogressreport'] = 'Class Progress';
+$string['classprogressheading']= 'Class Progress';
+$string['classprogress']= 'Class Progress';
+
 $string['myprogressreport'] = 'My Progress';
+$string['myprogressheading']= 'My Progress';
+$string['myprogress']= 'My Progress';
+
+$string['userattempts'] = 'User Attempts';
+$string['userattemptsheading']= '{$a} Attempts';
+$string['userattempts']= 'User Attempts';
+
 $string['myattempts'] = 'My Attempts';
+$string['myattemptsheading']= 'My Attempts';
+$string['myattempts']= 'My Attempts';
+
 $string['downloadaudio'] = 'Download Audio';
 $string['teachereval'] = 'Teacher Evaluation';
