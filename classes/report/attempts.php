@@ -15,7 +15,7 @@ class attempts extends basereport
 {
 
     protected $report="attempts";
-    protected $fields = array('id','username','audiofile','topicname','partners','turns','ATL','LTL','TW','QS','ACC','timemodified','view','deletenow');
+    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','ATL','LTL','TW','QS','ACC','timemodified','view','deletenow');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -29,9 +29,14 @@ class attempts extends basereport
                 $ret = $record->id;
                 if ($withlinks) {
                     $link = new \moodle_url(constants::M_URL . '/reports.php',
-                            array('report' => 'singleattempt', 'n' => $this->cm->instance, 'id'=>$this->cm->id,'userid' => $record->userid));
+                            array('format'=>'html','report' => 'singleattempt', 'id' => $this->cm->id, 'attemptid' => $record->id));
                     $ret = \html_writer::link($link, $ret);
                 }
+                break;
+
+            case 'idnumber':
+                $user = $this->fetch_cache('user', $record->userid);
+                $ret = $user->idnumber;
                 break;
 
             case 'username':

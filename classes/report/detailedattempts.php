@@ -29,7 +29,7 @@ class detailedattempts extends basereport
                 $ret = $record->id;
                 if ($withlinks) {
                     $link = new \moodle_url(constants::M_URL . '/reports.php',
-                            array('report' => 'singleattempt', 'n' => $this->cm->instance, 'id'=>$this->cm->id,'userid' => $record->userid));
+                            array('format'=>'html','report' => 'singleattempt', 'id' => $this->cm->id, 'attemptid' => $record->id));
                     $ret = \html_writer::link($link, $ret);
                 }
                 break;
