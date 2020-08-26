@@ -831,6 +831,48 @@ class utils{
 
     //grading stuff
 
+
+    /**
+     * fetch a summary of rubric grade for thje student
+     *
+     * @param \context_module| $modulecontext
+     * @param \stdClass| $moduleinstance
+     * @param \stdClass| $attempt
+     * @return string rubric results
+     */
+    public static function display_rubricgrade($modulecontext, $moduleinstance, $attempt, $gradinginfo){
+        global  $PAGE, $USER;
+
+        $gradingitem = null;
+        $gradebookgrade = null;
+        if (isset($gradinginfo->items[0])) {
+            $gradingitem = $gradinginfo->items[0];
+            $gradebookgrade = $gradingitem->grades[$USER->id];
+        }
+
+        $gradefordisplay = null;
+        $gradeddate = null;
+        $grader = null;
+        $gradingmanager = \get_grading_manager($modulecontext, 'mod_pchat', 'pchat');
+        $gradingdisabled = false;
+        $gradeid =$attempt->id;
+
+        if ($controller = $gradingmanager->get_active_controller()) {
+            $menu = make_grades_menu($moduleinstance->grade);
+            $controller->set_grade_range($menu, $moduleinstance->grade > 0);
+            $gradefordisplay = $controller->render_grade($PAGE,
+                    $gradeid,
+                    $gradingitem,
+                    $gradebookgrade->str_long_grade,
+                    $gradingdisabled);
+        } else {
+            $gradefordisplay = 'no grade available';
+        }
+        return $gradefordisplay;
+    }
+
+
+
     /**
      * Get an instance of a grading form if advanced grading is enabled.
      * This is specific to the assignment, marker and student.

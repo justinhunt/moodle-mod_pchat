@@ -33,11 +33,12 @@ class grades {
                     pat.avturn,
                     par.accuracy,
                     pa.pchat,
-                    pat.aiaccuracy
+                    pat.aiaccuracy,
+                    pa.grade
                 from {pchat} as p
-                    inner join  (select max(mpa.id) as id, mpa.userid, mpa.pchat
+                    inner join  (select max(mpa.id) as id, mpa.userid, mpa.pchat, mpa.grade
                             from {pchat_attempts} mpa
-                            group by mpa.userid, mpa.pchat
+                            group by mpa.userid, mpa.pchat, mpa.grade
                         ) as pa on p.id = pa.pchat
                     inner join {course_modules} as cm on cm.course = p.course and cm.id = ?
                     inner join {user} as u on pa.userid = u.id

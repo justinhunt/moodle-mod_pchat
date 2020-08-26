@@ -129,6 +129,13 @@ class attempt_renderer extends \plugin_renderer_base {
         return $this->show_summary($moduleinstance,$attempt,$aidata, $stats,$userheader);
     }
 
+    function show_teachereval($rubricresults, $feedback){
+        $data = new \stdClass();
+        $data->rubricresults = $rubricresults;
+        $data->feedback=$feedback;
+        return $this->output->render_from_template( constants::M_COMPONENT . '/summaryteachereval', $data);
+    }
+
     function show_summary($moduleinstance,$attempt,$aidata, $stats,$userheader=false){
         $attempt->targetwords = utils::fetch_targetwords($attempt);
         $attempt->interlocutornames = utils::fetch_interlocutor_names($attempt);

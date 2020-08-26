@@ -30,8 +30,8 @@
         <th>{{# str }} gradesaiscore, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesturns, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesavturnlength, mod_pchat {{/ str }}</th>
-        <th>Actions</th>
-        <th>&nbsp;Graded</th>
+        <th>{{# str }} gradesactions, mod_pchat {{/ str }}</th>
+        <th>{{# str }} gradesgrade, mod_pchat {{/ str }}</th>
     </tr>
     </thead>
     <tfoot>
@@ -42,7 +42,7 @@
         <th>{{# str }} gradesturns, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesavturnlength, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesactions, mod_pchat {{/ str }}&nbsp;</th>
-        <th>&nbsp;{{# str }} gradesgraded, mod_pchat {{/ str }}</th>
+        <th>{{# str }} gradesgrade, mod_pchat {{/ str }}</th>
     </tr>
     </tfoot>
     <tbody id="history-table-body">
@@ -57,8 +57,8 @@
                 <button type="button" class="btn btn-primary">
                     {{# str }} gradesgrade, mod_pchat {{/ str }}
                 </button>&nbsp;</a></td>
-            <th class="alert alert-danger m-0 class=" text-center
-            ">{{# str }} gradesgradedno, mod_pchat {{/ str }}</th>
+            <td class="m-0 text-center">{{grade}}</td>
+
         </tr>
     {{/data}}
     </tbody>

@@ -17,9 +17,9 @@
         </div>
         <div class="card-body">
             <h5 class="card-title">{{# str }} gradestranscript, mod_pchat {{/ str }}</h5>
-            <div class="overflow-auto">
-                <div class="mod_pchat_grading_passagecont mod_pchat_summarytranscriptplaceholder overflow-auto min-vh-400" style="height: 400px;">
-                    <span id="mod_pchat_grading_passageword_1" data-wordnumber="1" class="mod_pchat_grading_passageword chattranscript">Loading...</span><span class="mod_pchat_grading_passagespace" data-wordnumber="1" id="mod_pchat_grading_passagespace_1"> </span><span id="mod_pchat_grading_passageword_2" data-wordnumber="2" class="mod_pchat_grading_passageword"></span><span class="mod_pchat_grading_passagespace" data-wordnumber="2" id="mod_pchat_grading_passagespace_2"> </span>
+            <div class="mod_pchat_overflow_auto">
+                <div class="mod_pchat_grading_passagecont mod_pchat_summarytranscriptplaceholder mod_pchat_overflow_auto min-vh-400" style="height: 400px;">
+                    <span class="chattranscript">Loading...</span>
                 </div>
             </div>
         </div>
@@ -82,7 +82,8 @@
 {{#js}}
     $('[data-action=creategrademodal]').attr('disabled', 'disabled');
 
-    require(['jquery', 'core/modal_factory', 'core/ajax', 'mod_pchat/gradeform'], function($, ModalFactory, ajax, GradeForm) {
+    require(['jquery', 'core/modal_factory', 'core/ajax','core/templates', 'mod_pchat/gradeform'],
+    function($, ModalFactory, ajax, templates, GradeForm) {
         document.querySelectorAll("[data-original-student]").forEach(
             function(element) {
                 const originalStudentId = $(element).attr("data-original-student");
@@ -121,10 +122,25 @@
                 ]);
 
                 promises[0].done(function(response) {
+
+
                     if(response && response.response[0]) {
                         $(element).find('input[type=button]').removeAttr("disabled");
                         $(element).find('.chatplayer').attr('src', response.response[0].filename);
-                        $(element).find('.chattranscript').html(response.response[0].transcript);
+
+    var a ={};
+    var st = JSON.parse(response.response[0].selftranscript);
+    a.selftranscriptparts=[];
+    $.each(st,function(index,oneturn){
+      a.selftranscriptparts.push(oneturn.part);
+    });
+    templates.render('mod_pchat/summarytranscript',{a: a}).then(
+         function(html,js){
+            $(element).find('.chattranscript').html(html);
+          }
+    );
+
+                      // $(element).find('.chattranscript').html(response.response[0].transcript);
                         $(element).find('.chatturns').html(response.response[0].turns);
                         $(element).find('.chatwords').html(response.response[0].words);
                         $(element).find('.chatavturns').html(response.response[0].avturns);

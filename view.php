@@ -115,13 +115,19 @@ if($start_or_continue) {
     //necessary for M3.3
     require_once($CFG->libdir.'/gradelib.php');
 
-    $grade = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $USER->id);
+    $gradinginfo = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $USER->id);
+    if(!empty($gradinginfo ) && $attempt->grade !=null) {
+        $rubricresults= utils::display_rubricgrade($context,$moduleinstance,$attempt,$gradinginfo );
+        $feedback=$attempt->feedback;
+        echo $attempt_renderer->show_teachereval( $rubricresults,$feedback);
+
+    }
 
     //all attempts by user table [good for debugging]
     // do not delete this I think
     // echo $attempt_renderer->show_attempts_list($attempts,$tableid,$cm);
 
-    if(empty($grade) && ($moduleinstance->multiattempts || has_capability('mod/pchat:manageattempts', $context) )){
+    if(empty($gradinginfo ) && ($moduleinstance->multiattempts || has_capability('mod/pchat:manageattempts', $context) )){
         echo $attempt_renderer->fetch_reattempt_button($cm);
     }
     if($attempt) {

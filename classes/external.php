@@ -91,6 +91,7 @@ class external extends external_api {
                     'filename' => new external_value(PARAM_TEXT, 'File name', VALUE_OPTIONAL),
                     'transcript' => new external_value(PARAM_TEXT, 'Transcript', VALUE_OPTIONAL),
                     'jsontranscript' => new external_value(PARAM_TEXT, 'JSON transcript', VALUE_OPTIONAL),
+                    'selftranscript' => new external_value(PARAM_TEXT, 'Self Transcript', VALUE_OPTIONAL),
                     'words' => new external_value(PARAM_TEXT, 'Words', VALUE_OPTIONAL),
                     'longestturn' => new external_value(PARAM_TEXT, 'Longest Turn', VALUE_OPTIONAL),
                     'targetwords' => new external_value(PARAM_TEXT, 'Target Words', VALUE_OPTIONAL),

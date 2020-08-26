@@ -74,6 +74,11 @@ if($method !='rubric'){
 
 // Get grades list data by course module and course.
 $studentgrades = $grades->getGrades($course->id, $id, $moduleinstance->id);
+foreach($studentgrades as $studentgrade){
+    if($studentgrade->grade===null){
+        $studentgrade->grade ='';
+    }
+}
 $data = new ArrayIterator($studentgrades);
 
 // Render template and display page.

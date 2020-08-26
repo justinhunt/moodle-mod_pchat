@@ -65,6 +65,7 @@ class gradesubmissions {
                    pa.pchat,
                    pat.pchat,
                    ca.filename,
+                   ca.selftranscript,
                     ca.transcript,
                     ca.jsontranscript,
                     pat.turns,

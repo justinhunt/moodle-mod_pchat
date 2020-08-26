@@ -966,3 +966,6 @@ div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
     text-decoration: underline #0000FF;
     font-weight: bold;
 }
+.mod_pchat_overflow_auto {
+	overflow: auto;
+}
