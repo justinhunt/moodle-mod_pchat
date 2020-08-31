@@ -114,7 +114,7 @@ if($start_or_continue) {
 
     //necessary for M3.3
     require_once($CFG->libdir.'/gradelib.php');
-
+    //rubric grades
     $gradinginfo = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $USER->id);
     if(!empty($gradinginfo ) && $attempt->grade !=null) {
         $rubricresults= utils::display_rubricgrade($context,$moduleinstance,$attempt,$gradinginfo );
@@ -122,6 +122,8 @@ if($start_or_continue) {
         echo $attempt_renderer->show_teachereval( $rubricresults,$feedback);
 
     }
+    //myreports
+    echo $attempt_renderer->show_myreports($moduleinstance,$cm);
 
     //all attempts by user table [good for debugging]
     // do not delete this I think

@@ -17,45 +17,49 @@ class report_renderer extends \plugin_renderer_base
     {
 
         $basic = new \single_button(
-            new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'basic', 'id' => $cm->id, 'n' => $moduleinstance->id)),
+            new \moodle_url(constants::M_URL . '/reports.php',
+                    array('report' => 'basic', 'id' => $cm->id, 'n' => $moduleinstance->id)),
             get_string('basicreport', constants::M_COMPONENT), 'get');
 
         $buttons =[];
         $attempts = new \single_button(
-            new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'attempts', 'id' => $cm->id, 'n' => $moduleinstance->id)),
+            new \moodle_url(constants::M_URL . '/reports.php',
+                    array('report' => 'attempts', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'tabular')),
             get_string('attemptsreport', constants::M_COMPONENT), 'get');
         $buttons[] = $this->render($attempts);
 
         $detailedattempts = new \single_button(
-                new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'detailedattempts', 'id' => $cm->id, 'n' => $moduleinstance->id)),
+                new \moodle_url(constants::M_URL . '/reports.php',
+                        array('report' => 'detailedattempts', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'tabular')),
                 get_string('detailedattemptsreport', constants::M_COMPONENT), 'get');
         $buttons[] = $this->render($detailedattempts);
 
         $classprogress = new \single_button(
-                new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'classprogress', 'id' => $cm->id, 'n' => $moduleinstance->id)),
+                new \moodle_url(constants::M_URL . '/reports.php',
+                        array('report' => 'classprogress', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'linechart')),
                 get_string('classprogressreport', constants::M_COMPONENT), 'get');
         $buttons[] = $this->render($classprogress);
-
-        $myprogress = new \single_button(
-                new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'myprogress', 'id' => $cm->id, 'n' => $moduleinstance->id)),
-                get_string('myprogressreport', constants::M_COMPONENT), 'get');
-        $buttons[] = $this->render($myprogress);
-
-        $myattempts = new \single_button(
-                new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'myattempts', 'id' => $cm->id, 'n' => $moduleinstance->id)),
-                get_string('myattempts', constants::M_COMPONENT), 'get');
-        $buttons[] = $this->render($myattempts);
-
+/*
         $downloadaudio = new \single_button(
-                new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'downloadaudio', 'id' => $cm->id, 'n' => $moduleinstance->id)),
+                new \moodle_url(constants::M_URL . '/reports.php',
+                        array('report' => 'downloadaudio', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'tabular')),
                 get_string('downloadaudio', constants::M_COMPONENT), 'get');
         $buttons[] = $this->render($downloadaudio);
-
+*/
 
         $ret = \html_writer::div(  implode("&nbsp;&nbsp;",$buttons),  constants::M_CLASS . '_listbuttons');
 
         return $ret;
     }
+
+    public function render_menuinstructions(){
+        $message = $this->output->heading(get_string('reportmenuinstructions', constants::M_COMPONENT), 4);
+        $ret =\html_writer::div( $message,  constants::M_CLASS . '_menuinstructions');
+        return $ret;
+    }
+
+
+
     public function render_hiddenaudioplayer() {
         $audioplayer = \html_writer::tag('audio', '',
                 array('src' => '', 'id' => constants::M_HIDDEN_PLAYER, 'class' => constants::M_HIDDEN_PLAYER));
@@ -75,35 +79,33 @@ class report_renderer extends \plugin_renderer_base
         return $this->output->heading(get_string('nodataavailable', constants::M_COMPONENT), 3);
     }
 
-    public function render_exportbuttons_html($cm, $formdata, $showreport)
+    public function render_exportbuttons_html($cm, $formdata, $showreport, $currentformat)
     {
+        $buttons = [];
         //convert formdata to array
         $formdata = (array)$formdata;
         $formdata['id'] = $cm->id;
         $formdata['report'] = $showreport;
+
+        //CSV Button
         $formdata['format'] = 'csv';
         $excel = new \single_button(
-            new \moodle_url(constants::M_URL . '/reports.php', $formdata),
-            get_string('exportexcel', constants::M_COMPONENT), 'get');
+                new \moodle_url(constants::M_URL . '/reports.php', $formdata),
+                get_string('exportexcel', constants::M_COMPONENT), 'get');
+        $buttons[]=$this->render($excel);
 
-        return \html_writer::div($this->render($excel), constants::M_CLASS . '_actionbuttons');
+        //tabular if linechart
+        if($currentformat=='linechart'){
+            $formdata['format'] = 'tabular';
+            $tabular = new \single_button(
+                    new \moodle_url(constants::M_URL . '/reports.php', $formdata),
+                    get_string('tabular', constants::M_COMPONENT), 'get');
+            $buttons[]=$this->render($tabular);
+
+        }
+
+        return \html_writer::div(implode("&nbsp;&nbsp;",$buttons), constants::M_CLASS . '_actionbuttons');
     }
-
-    public function render_grading_exportbuttons_html($cm, $formdata, $action)
-    {
-        //convert formdata to array
-        $formdata = (array)$formdata;
-        $formdata['id'] = $cm->id;
-        $formdata['action'] = $action;
-        $formdata['format'] = 'csv';
-        $excel = new \single_button(
-            new \moodle_url(constants::M_URL . '/grading.php', $formdata),
-            get_string('exportexcel', constants::M_COMPONENT), 'get');
-
-        return \html_writer::div($this->render($excel), constants::M_CLASS . '_actionbuttons');
-    }
-
-
 
     public function render_section_csv($sectiontitle, $report, $head, $rows, $fields)
     {
@@ -191,7 +193,27 @@ class report_renderer extends \plugin_renderer_base
 
         //if datatables set up datatables
         if(constants::M_USE_DATATABLES) {
-            $tableprops = new \stdClass();
+            $tableprops = [];
+            $tableprops['paging']=true;
+            $tableprops['pageLength']=10;
+/*
+            $columns=[];
+            $columns[0]=array('orderable'=>false);
+            $columns[1]=array('orderable'=>false);
+            $columns[2]=array('orderable'=>false);
+            $columns[3]=array('orderable'=>false);
+            $columns[4]=array('orderable'=>false);
+            $columns[5]=array('orderable'=>false);
+            $tableprops['columns']=$columns;
+
+
+            //default ordering
+            $order = array();
+            $order[0] =array(0, "asc");
+            $tableprops['order']=$order;
+*/
+
+
             $opts = Array();
             $opts['tableid'] = $tableid;
             $opts['tableprops'] = $tableprops;
@@ -202,12 +224,33 @@ class report_renderer extends \plugin_renderer_base
 
     }
 
-    function show_reports_footer($moduleinstance, $cm, $formdata, $showreport)
+    public function render_linechart($chartdata){
+        global $CFG;
+        //if no chart data or lower than Moodle 3.2 we do not shopw the chart
+        if(!$chartdata || $CFG->version < 2016120500 ){return '';}
+
+        $chart = new \core\chart_line();
+        foreach($chartdata->series as $series){
+            $chart->add_series($series);
+        }
+        $chart->set_labels($chartdata->labels);
+        $renderedchart= $this->output->render($chart);
+
+        $html = \html_writer::div($renderedchart,
+                constants::M_CLASS . '_center ' . constants::M_CLASS . '_progresschart');
+
+
+        return $html;
+    }
+
+
+
+    function show_reports_footer($moduleinstance, $cm, $formdata, $showreport,$currentformat)
     {
         // print's a popup link to your custom page
         $link = new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'menu', 'id' => $cm->id, 'n' => $moduleinstance->id));
         $ret = \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT));
-        $ret .= $this->render_exportbuttons_html($cm, $formdata, $showreport);
+        $ret .= $this->render_exportbuttons_html($cm, $formdata, $showreport,$currentformat);
         return $ret;
     }
 
@@ -232,17 +275,6 @@ class report_renderer extends \plugin_renderer_base
         //add paging params to url (NOT pageno)
         $baseurl->params(array('perpage' => $paging->perpage, 'sort' => $paging->sort));
         return $this->output->paging_bar($totalcount, $paging->pageno, $paging->perpage, $baseurl, $pagevar);
-    }
-
-
-    function show_export_buttons($cm,$formdata,$showreport){
-        switch($showreport) {
-            case 'grading':
-            case 'machinegrading':
-                return $this->render_grading_exportbuttons_html($cm, $formdata, $showreport);
-            default:
-                return $this->render_exportbuttons_html($cm, $formdata, $showreport);
-        }
     }
 
 }

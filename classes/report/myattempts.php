@@ -11,11 +11,11 @@ namespace mod_pchat\report;
 use \mod_pchat\constants;
 use \mod_pchat\utils;
 
-class attempts extends basereport
+class myattempts extends basereport
 {
 
-    protected $report="attempts";
-    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','stats_words','turns','ATL','LTL','TW','QS','ACC','grade','timemodified','view','deletenow');
+    protected $report="myattempts";
+    protected $fields = array('id','audiofile','topicname','partners','turns','stats_avturn','stats_longestturn','stats_targetwords','stats_questions','stats_aiaccuracy','grade','timemodified','view');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -27,26 +27,6 @@ class attempts extends basereport
         switch ($field) {
             case 'id':
                 $ret = $record->id;
-                if ($withlinks) {
-                    $link = new \moodle_url(constants::M_URL . '/reports.php',
-                            array('format'=>'html','report' => 'singleattempt', 'id' => $this->cm->id, 'attemptid' => $record->id));
-                    $ret = \html_writer::link($link, $ret);
-                }
-                break;
-
-            case 'idnumber':
-                $user = $this->fetch_cache('user', $record->userid);
-                $ret = $user->idnumber;
-                break;
-
-            case 'username':
-                $user = $this->fetch_cache('user', $record->userid);
-                $ret = fullname($user);
-                if ($withlinks) {
-                    $link = new \moodle_url(constants::M_URL . '/reports.php',
-                            array('report' => 'userattempts', 'n' => $this->cm->instance, 'id'=>$this->cm->id,'userid' => $record->userid));
-                    $ret = \html_writer::link($link, $ret);
-                }
                 break;
 
             case 'topicname':
@@ -75,36 +55,35 @@ class attempts extends basereport
 
                 break;
 
+            case 'grade':
+
+                $ret = $record->grade==null ? '' : $record->grade . '%';
+                break;
+
+
             case 'turns':
                 $ret = $record->turns;
                 break;
 
-            case 'stats_words':
-                $ret = $record->words;
-                break;
-
-
-            case 'grade':
-                $ret = $record->grade==null ? '' : $record->grade;
-                break;
-
-            case 'ATL':
+            case 'stats_avturn':
                 $ret = $record->avturn;
                 break;
 
-            case 'LTL':
+            case 'stats_longestturn':
                 $ret = $record->longestturn;
                 break;
 
-            case 'TW':
-                $ret = $record->targetwords . '/' . $record->totaltargetwords ;
+            case 'stats_targetwords':
+
+                 $ret = $record->targetwords . '/' . $record->totaltargetwords;
+
                 break;
 
-            case 'QS':
+            case 'stats_questions':
                 $ret = $record->questions ;
                 break;
 
-            case 'ACC':
+            case 'stats_aiaccuracy':
                 if($record->aiaccuracy<0) {
                     $ret = '';
                 }else{
@@ -135,8 +114,8 @@ class attempts extends basereport
                 break;
 
             case 'view':
-                if ($withlinks && has_capability('mod/pchat:manageattempts', $this->context)) {
-                    $url = new \moodle_url(constants::M_URL . '/reports.php',
+                if ($withlinks && has_capability('mod/pchat:view', $this->context)) {
+                    $url = new \moodle_url(constants::M_URL . '/myreports.php',
                             array('format'=>'html','report' => 'singleattempt', 'id' => $this->cm->id, 'attemptid' => $record->id));
                     $btn = new \single_button($url, get_string('view'), 'post');
                     $ret = $OUTPUT->render($btn);
@@ -145,17 +124,6 @@ class attempts extends basereport
                 }
                 break;
 
-            case 'deletenow':
-                if ($withlinks && has_capability('mod/pchat:manageattempts', $this->context)) {
-                    $url = new \moodle_url(constants::M_URL . '/attempt/manageattempts.php',
-                        array('action' => 'delete', 'id' => $this->cm->id, 'attemptid' => $record->id, 'source' => $this->report));
-                    $btn = new \single_button($url, get_string('delete'), 'post');
-                    $btn->add_confirm_action(get_string('deleteattemptconfirm', constants::M_COMPONENT));
-                    $ret = $OUTPUT->render($btn);
-                }else {
-                    $ret = '';
-                }
-                break;
 
             default:
                 if (property_exists($record, $field)) {
@@ -171,24 +139,26 @@ class attempts extends basereport
         $record = $this->headingdata;
         $ret='';
         if(!$record){return $ret;}
-        return get_string('attemptsheading',constants::M_COMPONENT);
+        $user = $this->fetch_cache('user', $record->userid);
+        $usersname = fullname($user);
+        return get_string('myattemptsheading',constants::M_COMPONENT,$usersname );
 
     }
 
     public function process_raw_data($formdata){
-        global $DB;
+        global $DB,$USER;
 
         //heading data
         $this->headingdata = new \stdClass();
+        $this->headingdata->userid=$USER->id;
 
         $emptydata = array();
-        $sql = 'SELECT at.id,at.grade, st.words,at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy, at.timemodified ';
+        $sql = 'SELECT at.id,at.grade,  at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy, at.timemodified ';
         $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
-        $sql .= ' WHERE at.pchat = :pchatid';
+        $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
+        $sql .= ' WHERE at.userid = :userid AND p.course = :courseid';
         $sql .= ' ORDER BY at.timemodified DESC';
-        $alldata = $DB->get_records_sql($sql,array('pchatid'=>$formdata->pchatid));
-
-
+        $alldata = $DB->get_records_sql($sql,array('userid'=>$USER->id, 'courseid'=>$this->cm->course));
 
         if($alldata){
             foreach($alldata as $thedata){

@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Reports for pchat
+ * Personal Reports for pchat
  *
  *
  * @package    mod_pchat
@@ -56,20 +56,18 @@ if ($id) {
     error('You must specify a course_module ID or an instance ID');
 }
 
-$PAGE->set_url(constants::M_URL . '/reports.php',
+$PAGE->set_url(constants::M_URL . '/myreports.php',
 	array('id' => $cm->id,'report'=>$showreport,'format'=>$format,'userid'=>$userid,'attemptid'=>$attemptid));
 require_login($course, true, $cm);
 $modulecontext = context_module::instance($cm->id);
 
-require_capability('mod/pchat:viewreports', $modulecontext);
+require_capability('mod/pchat:view', $modulecontext);
 
 //Get an admin settings 
 $config = get_config(constants::M_COMPONENT);
 
 //set per page according to admin setting
-if(constants::M_USE_DATATABLES){
-    $paging=false;
-}elseif($paging->perpage==-1){
+if($paging->perpage==-1){
 		$paging->perpage = $config->attemptsperpage;
 }
 
@@ -111,48 +109,7 @@ $mode = "reports";
 $extraheader="";
 switch ($showreport){
 
-	//not a true report, separate implementation in renderer
-	case 'menu':
-		echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
-        echo $reportrenderer->render_menuinstructions();
-		echo $reportrenderer->render_reportmenu($moduleinstance,$cm);
-		// Finish the page
-		echo $renderer->footer();
-		return;
 
-	case 'basic':
-		$report = new \mod_pchat\report\basic($cm);
-		//formdata should only have simple values, not objects
-		//later it gets turned into urls for the export buttons
-		$formdata = new stdClass();
-		break;
-
-	case 'attempts':
-		$report = new \mod_pchat\report\attempts($cm);
-		$formdata = new stdClass();
-		$formdata->pchatid = $moduleinstance->id;
-		//$formdata->modulecontextid = $modulecontext->id;
-		break;
-
-    case 'detailedattempts':
-        $report = new \mod_pchat\report\detailedattempts($cm);
-        $formdata = new stdClass();
-        $formdata->pchatid = $moduleinstance->id;
-        //$formdata->modulecontextid = $modulecontext->id;
-        break;
-
-    case 'classprogress':
-        $report = new \mod_pchat\report\classprogress($cm);
-        $formdata = new stdClass();
-        $formdata->klassname = "The Class";
-        //$formdata->modulecontextid = $modulecontext->id;
-        break;
-
-    case 'userattempts':
-        $report = new \mod_pchat\report\userattempts($cm);
-        $formdata = new stdClass();
-        $formdata->userid = $userid;
-        break;
 
     case 'myattempts':
         $report = new \mod_pchat\report\myattempts($cm);
@@ -168,7 +125,7 @@ switch ($showreport){
     case 'singleattempt':
         $attempt = $DB->get_record(constants::M_ATTEMPTSTABLE,array('id'=>$attemptid));
         if($attempt) {
-            if($attempt->userid === $USER->id ||  has_capability('mod/pchat:manageattempts', $modulecontext)) {
+            if($attempt->userid === $USER->id) {
                 echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
                 $stats = utils::fetch_stats($attempt);
                 $aidata = $DB->get_record(constants::M_AITABLE, array('attemptid' => $attemptid));
@@ -186,8 +143,8 @@ switch ($showreport){
 
                 }
 
-                $link = new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'menu', 'id' => $cm->id, 'n' => $moduleinstance->id));
-                echo  \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT));
+                $link = new \moodle_url(constants::M_URL . '/view.php', array('id' => $cm->id, 'n' => $moduleinstance->id));
+                echo  \html_writer::link($link, get_string('returntotop', constants::M_COMPONENT));
                 echo $renderer->footer();
                 return;
             }
@@ -195,7 +152,8 @@ switch ($showreport){
         break;
 		
 	default:
-		echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
+
+        echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
 		echo "unknown report type.";
 		echo $renderer->footer();
 		return;
@@ -212,16 +170,12 @@ $report->process_raw_data($formdata);
 $reportheading = $report->fetch_formatted_heading();
 
 switch($format){
-	case 'csv':
-		$reportrows = $report->fetch_formatted_rows(false);
-		$reportrenderer->render_section_csv($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows, $report->fetch_fields());
-		exit;
+
     case 'linechart':
 
         echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
         echo $extraheader;
         echo $reportrenderer->heading($reportheading, 4);
-
         switch($showreport) {
             case 'myprogress':
                 $fields = array('pchatname', 'stats_turns', 'stats_avturn', 'stats_longestturn', 'stats_questions');
@@ -240,7 +194,8 @@ switch($format){
                 echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
                 break;
         }
-        echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format);
+        $link = new \moodle_url(constants::M_URL . '/view.php', array('id' => $cm->id, 'n' => $moduleinstance->id));
+        echo  \html_writer::link($link, get_string('returntotop', constants::M_COMPONENT));
         echo $renderer->footer();
         exit;
 
@@ -251,7 +206,6 @@ switch($format){
 		$allrowscount = $report->fetch_all_rows_count();
 
 		if(constants::M_USE_DATATABLES){
-            
 		    //css must be required before header sent out
             $PAGE->requires->css( new \moodle_url('https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css'));
             echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
@@ -271,6 +225,7 @@ switch($format){
                     $report->fetch_fields());
             echo $pagingbar;
         }
-		echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format);
+        $link = new \moodle_url(constants::M_URL . '/view.php', array('id' => $cm->id, 'n' => $moduleinstance->id));
+        echo  \html_writer::link($link, get_string('returntotop', constants::M_COMPONENT));
 		echo $renderer->footer();
 }

@@ -15,7 +15,7 @@ class detailedattempts extends basereport
 {
 
     protected $report="detailedattempts";
-    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','ATL','LTL','TW','QS','ACC','timemodified','view','deletenow');
+    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','ATL','LTL','TW','QS','ACC','grade','selftranscript','transcript','timemodified','view','deletenow');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -39,6 +39,11 @@ class detailedattempts extends basereport
                 $ret = $user->idnumber;
                 break;
 
+            case 'grade':
+
+                $ret = $record->grade==null ? '' : $record->grade;
+                break;
+
             case 'username':
                 $user = $this->fetch_cache('user', $record->userid);
                 $ret = fullname($user);
@@ -46,6 +51,34 @@ class detailedattempts extends basereport
                     $link = new \moodle_url(constants::M_URL . '/reports.php',
                             array('report' => 'userattempts', 'n' => $this->cm->instance, 'id'=>$this->cm->id,'userid' => $record->userid));
                     $ret = \html_writer::link($link, $ret);
+                }
+                break;
+
+            case 'transcript':
+                if(!empty($record->transcript)){
+                    $ret = $record->transcript;
+                    if ($withlinks) {
+                        $ret="[transcript]";
+                    }
+                }else{
+                    $ret="";
+                }
+                break;
+
+            case 'selftranscript':
+                if(!empty($record->selftranscript)){
+
+                    if ($withlinks) {
+                        $ret="[self-transcript]";
+                    }else{
+                        $parts = json_decode($record->selftranscript);
+                        $ret='';
+                        foreach($parts as $part)
+                        {
+                            $ret.=' ' . $part->part;
+                        }                    }
+                }else{
+                    $ret="";
                 }
                 break;
 
@@ -88,7 +121,9 @@ class detailedattempts extends basereport
                 break;
 
             case 'TW':
-                $ret = $record->targetwords . '/' . $record->totaltargetwords ;
+
+                 $ret = $record->targetwords . '/' . $record->totaltargetwords;
+
                 break;
 
             case 'QS':
@@ -173,9 +208,11 @@ class detailedattempts extends basereport
         $this->headingdata = new \stdClass();
 
         $emptydata = array();
-        $sql = 'SELECT at.id, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy, at.timemodified ';
+        $sql = 'SELECT at.id, at.grade, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, 
+        st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy,at.selftranscript,at.transcript, at.timemodified ';
         $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
         $sql .= ' WHERE at.pchat = :pchatid';
+        $sql .= ' ORDER BY at.userid ASC';
         $alldata = $DB->get_records_sql($sql,array('pchatid'=>$formdata->pchatid));
 
         if($alldata){

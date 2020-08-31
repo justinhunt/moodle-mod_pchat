@@ -728,3 +728,32 @@ function mod_pchat_output_fragment_new_grade_form($args) {
 
     return $o;
 }
+
+/**
+ * Obtains the completion state for this instance based on completed step count
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function pchat_get_completion_state($course,$cm,$userid,$type) {
+    global $CFG,$DB;
+
+    // Get  module details
+    $moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $cm->instance), '*', MUST_EXIST);
+
+    // If completion option is enabled, evaluate it and return true/false
+    if($moduleinstance->completionallsteps) {
+        $latestattempt = utils::fetch_latest_attempt($moduleinstance);
+        if ($latestattempt && $latestattempt->completedsteps == constants::STEP_SELFREVIEW){
+            return true;
+        }else{
+            return false;
+        }
+    } else {
+        // Completion option is not enabled so just return $type
+        return $type;
+    }
+}

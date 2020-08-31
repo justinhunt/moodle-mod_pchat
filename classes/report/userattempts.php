@@ -160,6 +160,7 @@ class userattempts extends basereport
         $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
         $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
         $sql .= ' WHERE at.userid = :userid AND p.course = :courseid';
+        $sql .= ' ORDER BY at.timemodified DESC';
         $alldata = $DB->get_records_sql($sql,array('userid'=>$formdata->userid, 'courseid'=>$this->cm->course));
 
         if($alldata){

@@ -57,11 +57,13 @@ $string['overview_help']='Overview Help';
 $string['view']='View';
 $string['preview']='Preview';
 $string['viewreports']='View Reports';
+$string['myreports']='My Reports';
 $string['reports']='Reports';
 $string['viewgrading']='View Grading';
 $string['showingattempt']='Showing attempt for: {$a}';
 $string['basicreport']='Basic Report';
 $string['returntoreports']='Return to Reports';
+$string['returntotop']='Return to Top';
 $string['exportexcel']='Export to CSV';
 $string['deletealluserdata'] = 'Delete all user data';
 $string['maxattempts'] ='Max. Attempts';
@@ -426,7 +428,7 @@ $string['classprogressheading']= 'Class Progress';
 $string['classprogress']= 'Class Progress';
 
 $string['myprogressreport'] = 'My Progress';
-$string['myprogressheading']= 'My Progress';
+$string['myprogressheading']= 'My Progress: {$a}';
 $string['myprogress']= 'My Progress';
 
 $string['userattempts'] = 'User Attempts';
@@ -434,8 +436,27 @@ $string['userattemptsheading']= '{$a} Attempts';
 $string['userattempts']= 'User Attempts';
 
 $string['myattempts'] = 'My Attempts';
-$string['myattemptsheading']= 'My Attempts';
+$string['myattemptsheading']= 'My Attempts: {$a} ';
 $string['myattempts']= 'My Attempts';
 
 $string['downloadaudio'] = 'Download Audio';
 $string['teachereval'] = 'Teacher Evaluation';
+
+$string['completionallsteps']='Complete when all steps completed';
+$string['completionallsteps_help']='Complete when all steps completed';
+$string['yes']='Yes';
+$string['no']='No';
+
+$string['avturns']='Avg Turns';
+$string['avatl']='Avg ATL';
+$string['avltl']='Avg LTL';
+$string['avw']='Avg Words';
+$string['avtw']='Avg Target Words';
+$string['avq']='Avg Questions';
+$string['avacc']='Avg Acc';
+$string['tabular']='Table View';
+
+$string['grade']='Grade';
+
+$string['reportmenuinstructions']="View reports by selecting the report from the buttons below.";
+

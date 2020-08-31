@@ -175,6 +175,28 @@ class attempt_renderer extends \plugin_renderer_base {
         }
         return $ret;
     }
+
+    function show_myreports($moduleinstance,$cm){
+
+        $myprogress = new \single_button(
+                new \moodle_url(constants::M_URL . '/myreports.php',
+                        array('report' => 'myprogress', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'linechart')),
+                get_string('myprogressreport', constants::M_COMPONENT), 'get');
+        $buttons[] = $this->render($myprogress);
+
+        $myattempts = new \single_button(
+                new \moodle_url(constants::M_URL . '/myreports.php',
+                        array('report' => 'myattempts', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'tabular')),
+                get_string('myattempts', constants::M_COMPONENT), 'get');
+        $buttons[] = $this->render($myattempts);
+
+
+
+        $buttonshtml = \html_writer::div(  implode("&nbsp;&nbsp;",$buttons),  constants::M_CLASS . '_listbuttons');
+        $data = new \stdClass();
+        $data->reportbuttons = $buttonshtml;
+        return $this->output->render_from_template( constants::M_COMPONENT . '/summarymyreports', $data);
+    }
 	
 	/**
 	 * Return the html table of attempts

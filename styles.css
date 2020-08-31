@@ -969,3 +969,13 @@ div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
 .mod_pchat_overflow_auto {
 	overflow: auto;
 }
+
+.mod_pchat_progresschart {
+
+	text-align: center;
+	max-width: 800px;
+	margin-top: 10px;
+	border: 1px solid black;
+	z-index: 100;
+	background-color: white;
+}

@@ -158,5 +158,34 @@ class mod_pchat_mod_form extends moodleform_mod {
 		}
 	}
 
+    /**
+     * Add elements for setting the custom completion rules.
+     *
+     * @category completion
+     * @return array List of added element names, or names of wrapping group elements.
+     */
+    public function add_completion_rules() {
+
+        $mform = $this->_form;
+        //time limits
+        $yesno_options = array(0 => get_string("no", constants::M_COMPONENT),
+                1 => get_string("yes", constants::M_COMPONENT));
+        //the size attribute doesn't work because the attributes are applied on the div container holding the select
+        $mform->addElement('select','completionallsteps',get_string('completionallsteps', constants::M_COMPONENT), $yesno_options,array("size"=>"5"));
+        $mform->setDefault('convlength',constants::DEF_CONVLENGTH);
+        $mform->addHelpButton('completionallsteps', 'completionallsteps', constants::M_MODNAME);
+        return ['completionallsteps'];
+    }
+
+    /**
+     * Called during validation to see whether some module-specific completion rules are selected.
+     *
+     * @param array $data Input data not yet validated.
+     * @return bool True if one or more rules is enabled, false if none are.
+     */
+    public function completion_rule_enabled($data) {
+        return (!empty($data['completionallsteps']) && $data['completionallsteps'] != 0);
+    }
+
 
 }

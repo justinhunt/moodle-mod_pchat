@@ -302,6 +302,15 @@ if ($data = $mform->get_data()) {
         redirect($redirecturl);
     }
 
+    //if we just finished the last step then lets indicate this activity complete in the Moodle sense.
+    if($type==constants::STEP_SELFREVIEW){
+        //notify completion handler that we are finished
+        $completion=new completion_info($course);
+        if($completion->is_enabled($cm) && $moduleinstance->completionallsteps) {
+            $completion->update_state($cm,COMPLETION_COMPLETE);
+        }
+    }
+
     //go back to top page
     redirect($redirecturl);
 }

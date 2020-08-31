@@ -1,3 +1,7 @@
+Version 1.0.15 (2020082500)
+-added custom completion rule
+-added lots of grading changes
+
 Version 1.0.15 (Build 2020061600)
 -unreleased. fix for tether in M3.9
 

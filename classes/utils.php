@@ -811,6 +811,8 @@ class utils{
     public static function get_conversationlength_options(){
         return array(
                 '0'=>get_string('notimelimit',constants::M_COMPONENT),
+                '1'=>get_string('xminutes',constants::M_COMPONENT,1),
+                '2'=>get_string('xminutes',constants::M_COMPONENT,2),
                 '3'=>get_string('xminutes',constants::M_COMPONENT,3),
                 '4'=>get_string('xminutes',constants::M_COMPONENT,4),
                 '5'=>get_string('xminutes',constants::M_COMPONENT,5),

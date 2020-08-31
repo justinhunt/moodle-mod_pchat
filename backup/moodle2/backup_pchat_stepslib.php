@@ -52,7 +52,8 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
         $oneactivity = new backup_nested_element(constants::M_MODNAME, array('id'), array(
             'course','name','intro','introformat','grade','gradeoptions','mingrade',
                 'convlength','userconvlength','revq1','revq2','revq3','tips','tipsformat',
-            'ttslanguage','enableai','expiredays','region','transcriber','multiattempts','postattemptedit','timecreated','timemodified'
+            'ttslanguage','enableai','expiredays','region','transcriber','multiattempts',
+                'completionallsteps','postattemptedit','timecreated','timemodified'
 			));
 
         // attempt
