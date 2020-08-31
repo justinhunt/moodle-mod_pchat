@@ -57,7 +57,7 @@ $string['overview_help']='Overview Help';
 $string['view']='View';
 $string['preview']='Preview';
 $string['viewreports']='View Reports';
-$string['myreports']='My Reports';
+$string['reports']='My Reports';
 $string['reports']='Reports';
 $string['viewgrading']='View Grading';
 $string['showingattempt']='Showing attempt for: {$a}';
@@ -419,9 +419,9 @@ $string['gradeitem:pchat'] = 'P-CHAT';
 $string['developer'] = 'Developer';
 $string['dorubricgrade'] = 'Do Rubric Grade';
 
-$string['detailedattemptsreport'] = 'Detailed Attempts';
-$string['detailedattemptsheading']= 'Detailed Attempts';
-$string['detailedattempts']= 'Detailed Attempts';
+$string['detailedattemptsreport'] = 'Researcher Report';
+$string['detailedattemptsheading']= 'Researcher Report';
+$string['detailedattempts']= 'Researcher Report';
 
 $string['classprogressreport'] = 'Class Progress';
 $string['classprogressheading']= 'Class Progress';

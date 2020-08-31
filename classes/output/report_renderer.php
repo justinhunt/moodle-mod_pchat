@@ -130,9 +130,20 @@ class report_renderer extends \plugin_renderer_base
         //echo data rows
         foreach ($rows as $row) {
             $datarow = "";
+            //old way
+            /*
             foreach ($fields as $field) {
                 $datarow .= $quote . $row->{$field} . $quote . $delim;
             }
+            */
+            //safer way
+            $newline = fopen('php://output', 'w');
+            $rowarray=[];
+            foreach ($fields as $field) {
+                $rowarray[]= $row->{$field};
+            }
+            fputcsv($newline, $rowarray,$delim,$quote);
+            fclose($newline);
             echo $datarow . $newline;
         }
         exit();

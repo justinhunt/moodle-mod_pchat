@@ -88,8 +88,8 @@
         <FIELD NAME="words" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="avturn" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="longestturn" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="targetwords" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="totaltargetwords" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="targetwords" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="total unique spoken words that matched target words" />
+        <FIELD NAME="totaltargetwords" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="total target words in the selected topic and custom" />
         <FIELD NAME="questions" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="aiaccuracy" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>

@@ -75,7 +75,8 @@ class myattempts extends basereport
 
             case 'stats_targetwords':
 
-                 $ret = $record->targetwords . '/' . $record->totaltargetwords;
+                // $ret = $record->targetwords . '/' . $record->totaltargetwords;
+                $ret = $record->targetwords;
 
                 break;
 

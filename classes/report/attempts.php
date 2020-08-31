@@ -97,7 +97,8 @@ class attempts extends basereport
                 break;
 
             case 'TW':
-                $ret = $record->targetwords . '/' . $record->totaltargetwords ;
+                //$ret = $record->targetwords . '/' . $record->totaltargetwords ;
+                $ret = $record->targetwords;
                 break;
 
             case 'QS':

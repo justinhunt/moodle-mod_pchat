@@ -122,7 +122,8 @@ class detailedattempts extends basereport
 
             case 'TW':
 
-                 $ret = $record->targetwords . '/' . $record->totaltargetwords;
+                // $ret = $record->targetwords . '/' . $record->totaltargetwords;
+                $ret = $record->targetwords;
 
                 break;
 

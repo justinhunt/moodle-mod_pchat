@@ -129,7 +129,7 @@ class classprogress extends basereport
         $this->headingdata->klassname=$formdata->klassname;
 
         $emptydata = array();
-        $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.totaltargetwords)avtw, AVG(st.questions)avq ,AVG(st.aiaccuracy) avacc';
+        $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.targetwords)avtw, AVG(st.questions)avq ,AVG(st.aiaccuracy) avacc';
         $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
         $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
         $sql .= ' WHERE p.course = :courseid';
