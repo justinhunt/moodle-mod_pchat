@@ -82,25 +82,25 @@ class classprogress extends basereport
                 break;
 
             case 'avturns':
-                $ret = $record->avturns;
+                $ret = round($record->avturns,1);
                 break;
             case 'avatl':
-                $ret = $record->avatl;
+                $ret = round($record->avatl,1);
                 break;
             case 'avltl':
-                $ret = $record->avltl;
+                $ret = round($record->avltl,1);
                 break;
             case 'avw':
-                $ret = $record->avw;
+                $ret = round($record->avw,1);
                 break;
             case 'avtw':
-                $ret = $record->avtw;
+                $ret = round($record->avtw,1);
                 break;
             case 'avq':
-                $ret = $record->avq;
+                $ret = round($record->avq,1);
                 break;
             case 'avacc':
-                $ret = $record->avacc;
+                $ret = round($record->avacc,1);
                 break;
 
             default:

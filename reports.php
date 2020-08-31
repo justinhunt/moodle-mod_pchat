@@ -251,7 +251,7 @@ switch($format){
 		$allrowscount = $report->fetch_all_rows_count();
 
 		if(constants::M_USE_DATATABLES){
-            
+
 		    //css must be required before header sent out
             $PAGE->requires->css( new \moodle_url('https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css'));
             echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));

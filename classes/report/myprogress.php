@@ -50,7 +50,7 @@ class myprogress extends basereport
                                 $chartdata->labels[] = $data->pchatname;
                                 break;
                             default:
-                                $rawdata->{$field}[] = $data->{$field};
+                                $rawdata->{$field}[] = round($data->{$field},1);
                         }
 
                     }
