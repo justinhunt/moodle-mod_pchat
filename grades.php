@@ -84,7 +84,7 @@ $data = new ArrayIterator($studentgrades);
 // Render template and display page.
 $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
 $gradesrenderer =
-    $OUTPUT->render_from_template(constants::M_COMPONENT . '/grades', array('cmid' => $id, 'data' => $data));
+    $OUTPUT->render_from_template(constants::M_COMPONENT . '/grades', array('cmid' => $id, 'data' => $data, 'totalgradeables'=>count($studentgrades)));
 
 echo $renderer->header($moduleinstance, $cm, "grades");
 echo $gradesrenderer;

@@ -460,4 +460,7 @@ $string['tabular']='Table View';
 $string['grade']='Grade';
 
 $string['reportmenuinstructions']="View reports by selecting the report from the buttons below.";
+$string['totalgradeables']='Grading {$a} students';
+
+$string['myreports']='My Reports';
 
