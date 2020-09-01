@@ -15,7 +15,7 @@ class detailedattempts extends basereport
 {
 
     protected $report="detailedattempts";
-    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','ATL','LTL','TW','QS','ACC','grade','selftranscript','transcript','timemodified','view','deletenow');
+    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','words','ATL','LTL','TW','QS','ACC','grade','selftranscript','transcript','timemodified','view','deletenow');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -106,6 +106,10 @@ class detailedattempts extends basereport
                     $ret =implode(',' , $users);
                 }
 
+                break;
+
+            case 'words':
+                $ret = $record->words;
                 break;
 
             case 'turns':
@@ -210,7 +214,7 @@ class detailedattempts extends basereport
         $this->headingdata->activityname = $formdata->activityname;
 
         $emptydata = array();
-        $sql = 'SELECT at.id, at.grade, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, 
+        $sql = 'SELECT at.id, at.grade, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.words,
         st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy,at.selftranscript,at.transcript, at.timemodified ';
         $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
         $sql .= ' WHERE at.pchat = :pchatid';

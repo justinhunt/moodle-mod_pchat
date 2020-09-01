@@ -320,6 +320,7 @@ $string['saveitem'] = 'Save';
 $string['xminutes'] = '{$a}:00 minutes';
 $string['convlength'] = 'Conversation Length';
 $string['mywords'] = 'My Target Words';
+$string['words'] = 'Words';
 $string['speakingtips'] = 'Speaking Tips';
 $string['speakingtips_details'] = '';
 $string['speakingtips_default'] = 'Speak simply and clearly. So that your partner can understand and reply.';
