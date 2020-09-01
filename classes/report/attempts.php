@@ -172,8 +172,7 @@ class attempts extends basereport
         $record = $this->headingdata;
         $ret='';
         if(!$record){return $ret;}
-        return get_string('attemptsheading',constants::M_COMPONENT);
-
+        return $record->activityname .'-'.get_string('attemptsheading',constants::M_COMPONENT);
     }
 
     public function process_raw_data($formdata){
@@ -181,6 +180,7 @@ class attempts extends basereport
 
         //heading data
         $this->headingdata = new \stdClass();
+        $this->headingdata->activityname = $formdata->activityname;
 
         $emptydata = array();
         $sql = 'SELECT at.id,at.grade, st.words,at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy, at.timemodified ';

@@ -131,13 +131,14 @@ switch ($showreport){
 		$report = new \mod_pchat\report\attempts($cm);
 		$formdata = new stdClass();
 		$formdata->pchatid = $moduleinstance->id;
-		//$formdata->modulecontextid = $modulecontext->id;
+        $formdata->activityname = $moduleinstance->name;
 		break;
 
     case 'detailedattempts':
         $report = new \mod_pchat\report\detailedattempts($cm);
         $formdata = new stdClass();
         $formdata->pchatid = $moduleinstance->id;
+        $formdata->activityname = $moduleinstance->name;
         //$formdata->modulecontextid = $modulecontext->id;
         break;
 

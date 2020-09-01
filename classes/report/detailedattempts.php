@@ -153,7 +153,7 @@ class detailedattempts extends basereport
                     */
 
                 } else {
-                    $ret = get_string('submitted', constants::M_COMPONENT);
+                    $ret = $record->filename;
                 }
                 break;
 
@@ -198,7 +198,7 @@ class detailedattempts extends basereport
         $record = $this->headingdata;
         $ret='';
         if(!$record){return $ret;}
-        return get_string('detailedattemptsheading',constants::M_COMPONENT);
+        return $record->activityname .'-'.get_string('detailedattemptsheading',constants::M_COMPONENT);
 
     }
 
@@ -207,6 +207,7 @@ class detailedattempts extends basereport
 
         //heading data
         $this->headingdata = new \stdClass();
+        $this->headingdata->activityname = $formdata->activityname;
 
         $emptydata = array();
         $sql = 'SELECT at.id, at.grade, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, 

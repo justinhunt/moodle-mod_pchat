@@ -127,26 +127,19 @@ class report_renderer extends \plugin_renderer_base
         }
         echo $heading . $newline;
 
+
         //echo data rows
+        $handle = fopen('php://output', 'w+');
         foreach ($rows as $row) {
-            $datarow = "";
-            //old way
-            /*
-            foreach ($fields as $field) {
-                $datarow .= $quote . $row->{$field} . $quote . $delim;
-            }
-            */
-            //safer way
-            $newline = fopen('php://output', 'w');
             $rowarray=[];
             foreach ($fields as $field) {
                 $rowarray[]= $row->{$field};
             }
-            fputcsv($newline, $rowarray,$delim,$quote);
-            fclose($newline);
-            echo $datarow . $newline;
+            fputcsv($handle, $rowarray,$delim,$quote);
         }
-        exit();
+        fclose($handle);
+        //After file is created, die
+        die();
     }
 
     public function render_section_html($sectiontitle, $report, $head, $rows, $fields)
