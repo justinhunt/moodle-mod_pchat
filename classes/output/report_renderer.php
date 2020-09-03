@@ -312,12 +312,14 @@ class report_renderer extends \plugin_renderer_base
 
 
 
-    function show_reports_footer($moduleinstance, $cm, $formdata, $showreport,$currentformat)
+    function show_reports_footer($moduleinstance, $cm, $formdata, $showreport,$currentformat, $showexport=true)
     {
         // print's a popup link to your custom page
         $link = new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'menu', 'id' => $cm->id, 'n' => $moduleinstance->id));
         $ret = \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT));
-        $ret .= $this->render_exportbuttons_html($cm, $formdata, $showreport,$currentformat);
+        if($showexport) {
+            $ret .= $this->render_exportbuttons_html($cm, $formdata, $showreport, $currentformat);
+        }
         return $ret;
     }
 

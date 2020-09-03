@@ -222,12 +222,36 @@ $reportheading = $report->fetch_formatted_heading();
 switch($format){
     case 'filedownload':
         $reportrows = $report->fetch_formatted_rows(false);
-        $reportrenderer->render_file_download($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows, $report->fetch_fields());
+        //first check if we actually have some data, if not we just show an "empty" message
+        if(count($reportrows)>0) {
+            $reportrenderer->render_file_download($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows,
+                    $report->fetch_fields());
+        }else{
+            echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
+            echo $extraheader;
+            echo $reportrenderer->heading($reportheading, 4);
+            echo $reportrenderer->render_empty_section_html($reportheading, 4);
+            $showexport =false;
+            echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format,$showexport);
+            echo $renderer->footer();
+        }
         exit;
 
 	case 'csv':
 		$reportrows = $report->fetch_formatted_rows(false);
-		$reportrenderer->render_section_csv($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows, $report->fetch_fields());
+        //first check if we actually have some data, if not we just show an "empty" message
+        if(count($reportrows)>0) {
+            $reportrenderer->render_section_csv($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows,
+                    $report->fetch_fields());
+        }else{
+            echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
+            echo $extraheader;
+            echo $reportrenderer->heading($reportheading, 4);
+            echo $reportrenderer->render_empty_section_html($reportheading, 4);
+            $showexport =false;
+            echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format,$showexport);
+            echo $renderer->footer();
+        }
 		exit;
 
     case 'linechart':
@@ -236,25 +260,34 @@ switch($format){
         echo $extraheader;
         echo $reportrenderer->heading($reportheading, 4);
 
-        switch($showreport) {
-            case 'myprogress':
-                $fields = array('pchatname', 'stats_turns', 'stats_avturn', 'stats_longestturn', 'stats_questions');
-                echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
-                $fields = array('pchatname', 'stats_aiaccuracy');
-                echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
-                $fields = array('pchatname', 'stats_words');
-                echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
-                break;
-            case 'classprogress':
-                $fields = array('pchatname', 'avturns', 'avatl', 'avltl', 'avtw', 'avq');
-                echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
-                $fields = array('pchatname', 'avacc');
-                echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
-                $fields = array('pchatname', 'avw');
-                echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
-                break;
+        //first check if we actually have some data, if not we just show an "empty" message
+        $fields = array('pchatname');
+        if($report->fetch_chart_data($fields)!==false) {
+
+            switch ($showreport) {
+                case 'myprogress':
+                    $fields = array('pchatname', 'stats_turns', 'stats_avturn', 'stats_longestturn', 'stats_questions');
+                    echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
+                    $fields = array('pchatname', 'stats_aiaccuracy');
+                    echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
+                    $fields = array('pchatname', 'stats_words');
+                    echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
+                    break;
+                case 'classprogress':
+                    $fields = array('pchatname', 'avturns', 'avatl', 'avltl', 'avtw', 'avq');
+                    echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
+                    $fields = array('pchatname', 'avacc');
+                    echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
+                    $fields = array('pchatname', 'avw');
+                    echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
+                    break;
+            }
+            $showexport = true;
+        }else{
+            echo $reportrenderer->render_empty_section_html($reportheading, 4);
+            $showexport = false;
         }
-        echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format);
+        echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format,$showexport);
         echo $renderer->footer();
         exit;
 
@@ -285,6 +318,7 @@ switch($format){
                     $report->fetch_fields());
             echo $pagingbar;
         }
-		echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format);
+        $showexport =count($reportrows)>0;
+		echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format,$showexport);
 		echo $renderer->footer();
 }
