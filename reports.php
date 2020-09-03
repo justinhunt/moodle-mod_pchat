@@ -165,6 +165,13 @@ switch ($showreport){
         $formdata = new stdClass();
         break;
 
+    case 'downloadaudio':
+        $report = new \mod_pchat\report\downloadaudio($cm);
+        $formdata = new stdClass();
+        $formdata->pchatid = $moduleinstance->id;
+        $formdata->activityname = $moduleinstance->name;
+        break;
+
 
     case 'singleattempt':
         $attempt = $DB->get_record(constants::M_ATTEMPTSTABLE,array('id'=>$attemptid));
@@ -213,10 +220,16 @@ $report->process_raw_data($formdata);
 $reportheading = $report->fetch_formatted_heading();
 
 switch($format){
+    case 'filedownload':
+        $reportrows = $report->fetch_formatted_rows(false);
+        $reportrenderer->render_file_download($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows, $report->fetch_fields());
+        exit;
+
 	case 'csv':
 		$reportrows = $report->fetch_formatted_rows(false);
 		$reportrenderer->render_section_csv($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows, $report->fetch_fields());
 		exit;
+
     case 'linechart':
 
         echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));

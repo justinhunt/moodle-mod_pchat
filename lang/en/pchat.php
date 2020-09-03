@@ -441,6 +441,9 @@ $string['myattemptsheading']= 'My Attempts: {$a} ';
 $string['myattempts']= 'My Attempts';
 
 $string['downloadaudio'] = 'Download Audio';
+$string['downloadaudioheading'] = 'Download Audio';
+$string['downloadaudioreport'] = 'Download Audio';
+$string['file'] = 'File';
 $string['teachereval'] = 'Teacher Evaluation';
 
 $string['completionallsteps']='Complete when all steps completed';

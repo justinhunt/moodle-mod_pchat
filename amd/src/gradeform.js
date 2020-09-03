@@ -45,8 +45,8 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
          * @return {Promise}
          */
         GradeForm.prototype.preinit = function(selector) {
-            let triggers = selector;
-            let that = this;
+            var triggers = selector;
+            var that = this;
 
             Str.get_string('dorubricgrade', 'mod_pchat').then(function(title){that.formtitle=title;});
             // Fetch the title string.
@@ -99,7 +99,7 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
          * @return {Promise}
          */
         GradeForm.prototype.init = function(selector) {
-            let triggers = selector;
+            var triggers = selector;
             this.studentid = $(selector).attr('data-student-id');
             this.cmid = $(selector).attr('data-cm-id');
 
@@ -149,7 +149,7 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
                 formdata = {};
             }
             // Get the content of the modal.
-            let params = {jsonformdata: JSON.stringify(formdata)};
+            var params = {jsonformdata: JSON.stringify(formdata)};
             params.studentid = this.studentid;
             params.cmid = this.cmid;
 
@@ -174,8 +174,8 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
 
          //   $("[data-original-student]").trigger('change');
 
-            let element = $(".card[data-original-student='" + this.studentid + "']");
-            let promises = Ajax.call([
+            var element = $(".card[data-original-student='" + this.studentid + "']");
+            var promises = Ajax.call([
                 { methodname: 'mod_pchat_get_grade_submission', args: {  userid: this.studentid, cmid: this.cmid } }]);
 
             promises[0].done(function(response) {
@@ -217,7 +217,7 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
             // We don't want to do a real form submission.
             e.preventDefault();
 
-            let changeEvent = document.createEvent('HTMLEvents');
+            var changeEvent = document.createEvent('HTMLEvents');
             changeEvent.initEvent('change', true, true);
 
             // Prompt all inputs to run their validation functions.
@@ -229,7 +229,7 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
             });
 
             // Now the change events have run, see if there are any "invalid" form fields.
-            let invalid = $.merge(
+            var invalid = $.merge(
                 this.modal.getRoot().find('[aria-invalid="true"]'),
                 this.modal.getRoot().find('.error')
             );
@@ -241,7 +241,7 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
             }
 
             // Convert all the form elements values to a serialised string.
-            let formData = this.modal.getRoot().find('form').serialize();
+            var formData = this.modal.getRoot().find('form').serialize();
 
             // Now we can continue...
             Ajax.call([{
@@ -249,8 +249,8 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
                 args: {
                     contextid: this.contextid,
                     jsonformdata: JSON.stringify(formData),
-                    studentid: parseInt(this.studentid) ?? 0,
-                    cmid: parseInt(this.cmid) ?? 0
+                    studentid: parseInt(this.studentid) ? parseInt(this.studentid) : 0,
+                    cmid: parseInt(this.cmid) ? parseInt(this.cmid) : 0
                 },
                 done: this.handleFormSubmissionResponse.bind(this, formData),
                 fail: this.handleFormSubmissionFailure.bind(this, formData)

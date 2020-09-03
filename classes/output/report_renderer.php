@@ -39,6 +39,12 @@ class report_renderer extends \plugin_renderer_base
                         array('report' => 'classprogress', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'linechart')),
                 get_string('classprogressreport', constants::M_COMPONENT), 'get');
         $buttons[] = $this->render($classprogress);
+
+        $downloadaudio = new \single_button(
+                new \moodle_url(constants::M_URL . '/reports.php',
+                        array('report' => 'downloadaudio', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'filedownload')),
+                get_string('downloadaudioreport', constants::M_COMPONENT), 'get');
+        $buttons[] = $this->render($downloadaudio);
 /*
         $downloadaudio = new \single_button(
                 new \moodle_url(constants::M_URL . '/reports.php',
@@ -105,6 +111,63 @@ class report_renderer extends \plugin_renderer_base
         }
 
         return \html_writer::div(implode("&nbsp;&nbsp;",$buttons), constants::M_CLASS . '_actionbuttons');
+    }
+
+    public function make_name_safe($name){
+        $dangerousCharacters = array(" ", '"', "'", "&", "/", "\\", "?", "#");
+        return str_replace($dangerousCharacters, '_', $name);
+
+    }
+
+    public function render_file_download($sectiontitle, $report, $head, $rows, $fields)
+    {
+        global $CFG;
+
+        $zipname = $this->make_name_safe($sectiontitle) . '.zip';
+        $filesdata=Array();
+        foreach($rows as $row){
+            $file =new \stdClass();
+            $name='';
+            foreach($fields as $field) {
+                if($field=='file'){continue;}
+                if(empty($row->{$field})){continue;}
+                // every forbidden character is replace by an underscore
+                $safefield = $this->make_name_safe($row->{$field});
+                if(!empty($name)){$name .= '_';}
+                $name .= $safefield;
+            }
+            $file->newname=$name;
+            $filebits = explode('.', $row->file);
+            $file->extension = end($filebits);
+            $file->downloadurl=$row->file;
+            $filesdata[]=$file;
+        }
+
+        # create new zip object
+        $zip = new \ZipArchive();
+
+        # create a temp file & open it
+        $tmp_file = tempnam($CFG->tempdir , '');
+        $zip->open($tmp_file, \ZipArchive::CREATE);
+
+        # loop through each file
+        foreach ($filesdata as $filedata) {
+            # download file
+            $download_file = file_get_contents($filedata->downloadurl);
+
+            #add it to the zip
+            $zip->addFromString($filedata->newname . '.' . $filedata->extension, $download_file);
+        }
+
+        # close zip
+        $zip->close();
+
+        # send the file to the browser as a download
+        header('Content-disposition: attachment; filename="'. $zipname . '"');
+        header('Content-type: application/zip');
+        readfile($tmp_file);
+        unlink($tmp_file);
+        die;
     }
 
     public function render_section_csv($sectiontitle, $report, $head, $rows, $fields)
