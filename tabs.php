@@ -70,12 +70,13 @@ if(has_capability('mod/pchat:grades',$context) && stristr($this->page->url, 'gra
         get_string('gradesubmissions', constants::M_COMPONENT),
         get_string('managegrades', constants::M_COMPONENT));
 }
-
+/*
+ * Uncomment this to show a secret extra tab which makes it easy to create lots of demo data for testing
 if(has_capability('mod/pchat:viewreports',$context)) {
     $row[] = new tabobject('developer', "$CFG->wwwroot/mod/pchat/developer.php?id=$cm->id",
         get_string('developer', constants::M_COMPONENT), get_string('developer', constants::M_COMPONENT));
 }
-
+*/
 $tabs[] = $row;
 
 print_tabs($tabs, $currenttab, $inactive, $activated);
