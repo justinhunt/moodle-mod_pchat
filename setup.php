@@ -53,7 +53,7 @@ if ($id) {
 }
 
 $modulecontext = context_module::instance($cm->id);
-require_capability('mod/pchat:manageattempts', $modulecontext);
+require_capability('mod/pchat:manage', $modulecontext);
 
 // Set page login data.
 $PAGE->set_url(constants::M_URL . '/setup.php',array('id'=>$id));
