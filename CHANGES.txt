@@ -1,3 +1,8 @@
+Version 1.0.17 (Build 2021030100)
+- Changed default language to English
+- Improved differencing
+- Added a setup tab
+
 Version 1.0.15 (2020082500)
 -added custom completion rule
 -added lots of grading changes

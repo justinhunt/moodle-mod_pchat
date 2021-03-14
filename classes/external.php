@@ -173,7 +173,7 @@ class external extends external_api {
         $gradingdisabled=false;
         $gradinginstance = utils::get_grading_instance($attempt->attemptid, $gradingdisabled,$moduleinstance, $modulecontext);
 
-        $mform = new \grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $data);
+        $mform = new \rubric_grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $data);
 
         $validateddata = $mform->get_data();
 

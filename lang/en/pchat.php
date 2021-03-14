@@ -42,6 +42,7 @@ $string['pchat:attemptedit'] = 'Edit attempts';
 $string['pchat:manageattempts'] = 'Can manage P-CHAT attempts';
 $string['pchat:manage'] = 'Can manage P-CHAT instances';
 $string['pchat:submit'] = 'Can submit P-CHAT attempts';
+$string['pchat:grades'] = 'Can see P-CHAT grades';
 $string['privacy:metadata'] = 'The Poodll P-CHAT plugin does store personal data.';
 $string['privacy:metadata:pchat'] = 'The Poodll P-CHAT plugin does store personal data.';
 $string['privacy:metadata:attemptstable'] = 'The Poodll P-CHAT attempts table.';
@@ -466,4 +467,7 @@ $string['reportmenuinstructions']="View reports by selecting the report from the
 $string['totalgradeables']='Grading {$a} students';
 
 $string['myreports']='My Reports';
+$string['enablesetuptab']="Enable setup tab";
+$string['enablesetuptab_details']="Show a tab containing the activity instance settings to admins. Not super useful in most cases.";
+$string['setup']="Setup";
 

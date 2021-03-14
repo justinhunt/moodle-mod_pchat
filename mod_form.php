@@ -38,6 +38,35 @@ use \mod_pchat\utils;
  */
 class mod_pchat_mod_form extends moodleform_mod {
 
+    public function __construct($current, $section, $cm, $course, $ajaxformdata=null, $customdata=null) {
+        global $CFG;
+        $this->current   = $current;
+        $this->_instance = $current->instance;
+        $this->_section  = $section;
+        $this->_cm       = $cm;
+        $this->_course   = $course;
+        if ($this->_cm) {
+            $this->context = context_module::instance($this->_cm->id);
+        } else {
+            $this->context = context_course::instance($course->id);
+        }
+        // Set the course format.
+        require_once($CFG->dirroot . '/course/format/lib.php');
+        $this->courseformat = course_get_format($course);
+        // Guess module name if not set.
+        if (is_null($this->_modname)) {
+            $matches = array();
+            if (!preg_match('/^mod_([^_]+)_mod_form$/', get_class($this), $matches)) {
+                debugging('Rename form to mod_xx_mod_form, where xx is name of your module');
+                print_error('unknownmodulename');
+            }
+            $this->_modname = $matches[1];
+        }
+        $this->init_features();
+        $action = 'modedit.php';
+        moodleform::__construct($action, $customdata, 'post', '', null, true, $ajaxformdata);
+    }
+
     /**
      * Defines forms elements
      */
@@ -45,89 +74,8 @@ class mod_pchat_mod_form extends moodleform_mod {
     	global $CFG, $COURSE;
 
         $mform = $this->_form;
-        $config = get_config(constants::M_COMPONENT);
 
-        //-------------------------------------------------------------------------------
-        // Adding the "general" fieldset, where all the common settings are showed
-        $mform->addElement('header', 'general', get_string('general', 'form'));
-
-        // Adding the standard "name" field
-        $mform->addElement('text', 'name', get_string('pchatname', constants::M_COMPONENT), array('size'=>'64'));
-        if (!empty($CFG->formatstringstriptags)) {
-            $mform->setType('name', PARAM_TEXT);
-        } else {
-            $mform->setType('name', PARAM_CLEAN);
-        }
-        $mform->addRule('name', null, 'required', null, 'client');
-        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'pchatname', constants::M_COMPONENT);
-
-         // Adding the standard "intro" and "introformat" fields
-        if($CFG->version < 2015051100){
-        	$this->add_intro_editor();
-        }else{
-        	$this->standard_intro_elements();
-		}
-
-        //Enable multiple attempts (or not)
-        $mform->addElement('advcheckbox', 'multiattempts', get_string('multiattempts', constants::M_COMPONENT), get_string('multiattempts_details', constants::M_COMPONENT));
-        $mform->setDefault('multipleattempts',true);
-
-        //allow post attempt edit
-        $mform->addElement('advcheckbox', 'postattemptedit', get_string('postattemptedit', constants::M_COMPONENT), get_string('postattemptedit_details', constants::M_COMPONENT));
-        $mform->setDefault('postattemptedit',false);
-
-        //time limits
-        $options = utils::get_conversationlength_options();
-        //the size attribute doesn't work because the attributes are applied on the div container holding the select
-        $mform->addElement('select','convlength',get_string('convlength', constants::M_COMPONENT), $options,array("size"=>"5"));
-        $mform->setDefault('convlength',constants::DEF_CONVLENGTH);
-
-        //Allow student override time limit
-        $mform->addElement('advcheckbox', 'userconvlength', get_string('userconvlength', constants::M_COMPONENT), get_string('userconvlength_details', constants::M_COMPONENT));
-        $mform->setDefault('userconvlength',true);
-
-        // Adding the revq 1 field
-        $mform->addElement('textarea', 'revq1', get_string('revq', constants::M_COMPONENT, '1'),  array('rows'=>'3', 'cols'=>'80'));
-        $mform->setType('revq1', PARAM_TEXT);
-        $mform->addElement('textarea', 'revq2', get_string('revq', constants::M_COMPONENT, '2'),  array('rows'=>'3', 'cols'=>'80'));
-        $mform->setType('revq2', PARAM_TEXT);
-        $mform->addElement('textarea', 'revq3', get_string('revq', constants::M_COMPONENT, '3'),  array('rows'=>'3', 'cols'=>'80'));
-        $mform->setType('revq3', PARAM_TEXT);
-
-        //add tips field
-        $edoptions = pchat_editor_no_files_options($this->context);
-        $opts = array('rows'=>'5', 'columns'=>'80');
-        $mform->addElement('editor','tips_editor',get_string('tips', constants::M_COMPONENT),$opts,$edoptions);
-        $mform->setDefault('tips_editor',array('text'=>$config->speakingtips, 'format'=>FORMAT_HTML));
-        $mform->setType('tips_editor',PARAM_RAW);
-
-        //Enable AI
-        $mform->addElement('advcheckbox', 'enableai', get_string('enableai', constants::M_COMPONENT), get_string('enableai_details', constants::M_COMPONENT));
-        $mform->setDefault('enableai',$config->enableai);
-
-        //tts options
-        $langoptions = \mod_pchat\utils::get_lang_options();
-        $mform->addElement('select', 'ttslanguage', get_string('ttslanguage', constants::M_COMPONENT), $langoptions);
-        $mform->setDefault('ttslanguage',$config->ttslanguage);
-
-
-        //transcriber options
-        $name = 'transcriber';
-        $label = get_string($name, constants::M_COMPONENT);
-        $options = \mod_pchat\utils::fetch_options_transcribers();
-        $mform->addElement('select', $name, $label, $options);
-        $mform->setDefault($name,constants::TRANSCRIBER_AMAZONTRANSCRIBE);// $config->{$name});
-
-        //region
-        $regionoptions = \mod_pchat\utils::get_region_options();
-        $mform->addElement('select', 'region', get_string('region', constants::M_COMPONENT), $regionoptions);
-        $mform->setDefault('region',$config->awsregion);
-
-        //expiredays
-        $expiredaysoptions = \mod_pchat\utils::get_expiredays_options();
-        $mform->addElement('select', 'expiredays', get_string('expiredays', constants::M_COMPONENT), $expiredaysoptions);
-        $mform->setDefault('expiredays',$config->expiredays);
+        utils::add_mform_elements($mform,$this->context);
 
         // Grade.
         $this->standard_grading_coursemodule_elements();
@@ -137,25 +85,19 @@ class mod_pchat_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'gradeoptions',constants::M_GRADELATEST);
         $mform->setType('gradeoptions', PARAM_INT);
 
-        //-------------------------------------------------------------------------------
         // add standard elements, common to all modules
         $this->standard_coursemodule_elements();
-        //-------------------------------------------------------------------------------
         // add standard buttons, common to all modules
         $this->add_action_buttons();
+
     }
 
 
 	public function data_preprocessing(&$form_data) {
-		//$edfileoptions = pchat_editor_with_files_options($this->context);
-		$ednofileoptions = pchat_editor_no_files_options($this->context);
-		$editors  = pchat_get_editornames();
-		 if ($this->current->instance) {
-			$itemid = 0;
-			foreach($editors as $editor){
-				$form_data = file_prepare_standard_editor((object)$form_data,$editor, $ednofileoptions, $this->context,constants::M_COMPONENT,$editor, $itemid);
-			}
-		}
+        if ($this->current->instance) {
+            $form_data = (array) utils::prepare_file_and_json_stuff((object) $form_data, $this->context);
+        }
+
 	}
 
     /**

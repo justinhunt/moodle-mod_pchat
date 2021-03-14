@@ -56,7 +56,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect(constants::M_COMPONENT .  '/expiredays', get_string('expiredays', constants::M_COMPONENT), '', '365', $expiredays));
 
 	 $langoptions = \mod_pchat\utils::get_lang_options();
-	 $settings->add(new admin_setting_configselect(constants::M_COMPONENT .  '/ttslanguage', get_string('ttslanguage', constants::M_COMPONENT), '', 'en', $langoptions));
+	 $settings->add(new admin_setting_configselect(constants::M_COMPONENT .  '/ttslanguage', get_string('ttslanguage', constants::M_COMPONENT), '', constants::M_LANG_ENUS, $langoptions));
 
 
     // Transcriber options
@@ -74,5 +74,10 @@ if ($ADMIN->fulltree) {
 
 	 $settings->add(new admin_setting_configtext(constants::M_COMPONENT .  '/attemptsperpage',
         get_string('attemptsperpage', constants::M_COMPONENT), get_string('attemptsperpage_details', constants::M_COMPONENT), 10, PARAM_INT));
+
+    $settings->add(new admin_setting_configcheckbox(constants::M_COMPONENT .  '/enablesetuptab',
+            get_string('enablesetuptab', constants::M_COMPONENT), get_string('enablesetuptab_details',constants::M_COMPONENT), 0));
+
+
 
 }

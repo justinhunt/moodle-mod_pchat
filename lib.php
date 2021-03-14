@@ -705,7 +705,7 @@ function mod_pchat_output_fragment_new_grade_form($args) {
     $gradingdisabled = false;
     $gradinginstance = utils::get_grading_instance($attempt->attemptid, $gradingdisabled, $moduleinstance, $modulecontext);
 
-    $mform = new grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
+    $mform = new rubric_grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $formdata);
 
     if ($mform->is_cancelled()) {
         // Window closes.

@@ -47,11 +47,17 @@ if (!isset($course)) {
 $attempt = optional_param('attempt', 0, PARAM_INT);
 
 $tabs = $row = $inactive = $activated = array();
+$config = get_config(constants::M_COMPONENT);
 
 $row[] = new tabobject('attempts', "$CFG->wwwroot/mod/pchat/view.php?id=$cm->id", get_string('attempts', constants::M_COMPONENT), get_string('manageattempts', constants::M_COMPONENT));
 if(has_capability('mod/pchat:managetopics',$context) || has_capability('mod/pchat:selecttopics',$context)) {
     $row[] = new tabobject('topics', "$CFG->wwwroot/mod/pchat/topic/topics.php?id=$cm->id",
             get_string('topics', constants::M_COMPONENT), get_string('managetopics', constants::M_COMPONENT));
+}
+
+if(has_capability('mod/pchat:manage',$context) && $config->enablesetuptab) {
+    $row[] = new tabobject('setup', "$CFG->wwwroot/mod/pchat/setup.php?id=$cm->id",
+            get_string('setup', constants::M_COMPONENT), get_string('setup', constants::M_COMPONENT));
 }
 
 if(has_capability('mod/pchat:grades',$context)) {

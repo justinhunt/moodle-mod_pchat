@@ -56,7 +56,7 @@ require_login($course, true, $cm);
 
 
 // Get student grade data.
-$studentAndInterlocutors = $gradesubmissions->getStudentsToGrade($attempt);
+$studentAndInterlocutors = $gradesubmissions->getStudentsToGrade($attempt,$moduleinstance);
 $studentAndInterlocutors = explode(',', current($studentAndInterlocutors)->students);
 $studentsToGrade = new ArrayIterator(array_pad($studentAndInterlocutors, MAX_GRADE_DISPLAY, ''));
 $submissionCandidates = get_enrolled_users($modulecontext, 'mod/pchat:submit');
