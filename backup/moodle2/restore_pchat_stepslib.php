@@ -142,7 +142,7 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
         $data = (object)$data;
         $oldid = $data->id;
         $data->courseid = $this->get_courseid();
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->moduleid = $this->get_new_parentid(constants::M_MODNAME);
         $existingtopic =false;
         if($data->topiclevel==constants::M_TOPICLEVEL_COURSE) {
