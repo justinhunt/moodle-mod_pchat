@@ -169,7 +169,7 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
+        $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->moduleid = $this->get_new_parentid(constants::M_MODNAME);
 
         $topics = $DB->get_records(constants::M_TOPIC_TABLE,array('name'=>$data->name, 'courseid'=>$this->get_courseid()));
