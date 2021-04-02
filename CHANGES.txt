@@ -1,3 +1,5 @@
+- fixed issue in restore of attempts
+
 Version 1.0.17 (Build 2021030100)
 - Changed default language to English
 - Improved differencing
