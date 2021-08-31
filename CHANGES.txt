@@ -1,4 +1,5 @@
 - fixed issue in restore of attempts
+- fixed issue of array_key_exists on php 8
 
 Version 1.0.17 (Build 2021030100)
 - Changed default language to English

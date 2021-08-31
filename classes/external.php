@@ -158,14 +158,10 @@ class external extends external_api {
         $data = array();
         parse_str($serialiseddata, $data);
 
-        $sql = "select  pa.pchat, pa.feedback, pa.id as attemptid
-        from {" . constants::M_ATTEMPTSTABLE . "} pa
-        inner join {" . constants::M_TABLE . "} pc on pa.pchat = pc.id
-        inner join {course_modules} cm on cm.instance = pc.id and pc.course = cm.course and pa.userid = ?
-        where cm.id = ?";
-
         $modulecontext = context_module::instance($cmid);
-        $attempt = $DB->get_record_sql($sql, array($studentid, $cmid));
+        $cm = get_coursemodule_from_id(constants::M_MODNAME, $cmid, 0, false, MUST_EXIST);
+        $attempthelper = new \mod_pchat\attempthelper($cm);
+        $attempt= $attempthelper->fetch_latest_complete_attempt($studentid);
 
         if (!$attempt) { return 0; }
 
@@ -189,7 +185,7 @@ class external extends external_api {
                 }
             }
             $feedbackobject = new \stdClass();
-            $feedbackobject->id = $attempt->attemptid;
+            $feedbackobject->id = $attempt->id;
             $feedbackobject->feedback = $validateddata->feedback;
             $feedbackobject->grade = $thegrade;
             $DB->update_record('pchat_attempts', $feedbackobject);

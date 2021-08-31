@@ -58,6 +58,16 @@ $PAGE->set_context($modulecontext);
 $PAGE->set_pagelayout('course');
 $PAGE->requires->jquery();
 
+// fetch groupmode/menu/id for this activity
+$groupmenu = '';
+if ($groupmode = groups_get_activity_groupmode($cm)) {
+    $groupmenu = groups_print_activity_menu($cm, $PAGE->url, true);
+    $groupmenu .= ' ';
+    $groupid = groups_get_activity_group($cm);
+}else{
+    $groupid  = 0;
+}
+
 if($method !='rubric'){
     $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
     $data=array('data'=>[]);
@@ -73,7 +83,7 @@ if($method !='rubric'){
 }
 
 // Get grades list data by course module and course.
-$studentgrades = $grades->getGrades($course->id, $id, $moduleinstance->id);
+$studentgrades = $grades->getGrades($course->id, $id, $moduleinstance->id, $groupid);
 foreach($studentgrades as $studentgrade){
     if($studentgrade->grade===null){
         $studentgrade->grade ='';
@@ -87,5 +97,6 @@ $gradesrenderer =
     $OUTPUT->render_from_template(constants::M_COMPONENT . '/grades', array('cmid' => $id, 'data' => $data, 'totalgradeables'=>count($studentgrades)));
 
 echo $renderer->header($moduleinstance, $cm, "grades");
+echo $groupmenu;
 echo $gradesrenderer;
 echo $renderer->footer();

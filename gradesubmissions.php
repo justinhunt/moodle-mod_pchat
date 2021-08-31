@@ -54,12 +54,30 @@ require_capability('mod/pchat:grades', $modulecontext);
 $PAGE->set_url(constants::M_URL . '/gradesubmissions.php');
 require_login($course, true, $cm);
 
+// fetch groupmode/menu/id for this activity
+$groupmenu = '';
+if ($groupmode = groups_get_activity_groupmode($cm)) {
+    $groupmenu = groups_print_activity_menu($cm, $PAGE->url, true);
+    $groupmenu .= ' ';
+    $groupid = groups_get_activity_group($cm);
+}else{
+    $groupid  = 0;
+}
 
 // Get student grade data.
-$studentAndInterlocutors = $gradesubmissions->getStudentsToGrade($attempt,$moduleinstance);
+$studentAndInterlocutors = $gradesubmissions->getStudentsToGrade($attempt,$moduleinstance, $groupid);
 $studentAndInterlocutors = explode(',', current($studentAndInterlocutors)->students);
 $studentsToGrade = new ArrayIterator(array_pad($studentAndInterlocutors, MAX_GRADE_DISPLAY, ''));
-$submissionCandidates = get_enrolled_users($modulecontext, 'mod/pchat:submit');
+
+
+
+//get all enroled students for the course
+if($groupid>0) {
+    $submissionCandidates =  groups_get_members($groupid);
+}else{
+    $submissionCandidates = get_enrolled_users($modulecontext, 'mod/pchat:submit');
+}
+
 // Ensure selected items.
 array_walk($submissionCandidates, function ($candidate) use ($studentAndInterlocutors) {
     if (in_array($candidate->id, $studentAndInterlocutors, true)) {
@@ -92,5 +110,6 @@ $gradesrenderer =
     );
 
 echo $renderer->header($moduleinstance, $cm, "gradesubmissions");
+echo $groupmenu;
 echo $gradesrenderer;
 echo $renderer->footer();

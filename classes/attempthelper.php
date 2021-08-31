@@ -42,6 +42,42 @@ class attempthelper
        // return "$this->context->id pp $filearea pp $attempt->id";
     }
 
+
+
+    public function fetch_latest_complete_attempt($userid=false){
+        global $DB, $USER;
+
+        if(!$userid){
+            $userid = $USER->id;
+        }
+
+        $attempts = $DB->get_records(constants::M_ATTEMPTSTABLE,
+                array(constants::M_MODNAME => $this->mod->id,'userid'=>$userid, 'completedsteps'=>constants::STEP_SELFTRANSCRIBE),
+                'id DESC');
+        if($attempts){
+            $attempt = array_shift($attempts);
+            return $attempt;
+        }else{
+            return false;
+        }
+    }
+
+    public function fetch_latest_attempt($userid=false){
+        global $DB, $USER;
+
+        if(!$userid){
+            $userid= $USER->id;
+        }
+
+        $attempts = $DB->get_records(constants::M_ATTEMPTSTABLE,array(constants::M_MODNAME => $this->mod->id,'userid'=>$userid),'id DESC');
+        if($attempts){
+            $attempt = array_shift($attempts);
+            return $attempt;
+        }else{
+            return false;
+        }
+    }
+
     public function fetch_attempts($userid=false)
     {
         global $DB,$USER;
@@ -58,17 +94,7 @@ class attempthelper
         }
     }
 
-    public function fetch_latest_attempt($userid){
-        global $DB;
 
-        $attempts = $DB->get_records(constants::M_ATTEMPTSTABLE,array(constants::M_MODNAME => $this->mod->id,'userid'=>$userid),'id DESC');
-        if($attempts){
-            $attempt = array_shift($attempts);
-            return $attempt;
-        }else{
-            return false;
-        }
-    }
 
 
     public function fetch_attempts_for_js(){

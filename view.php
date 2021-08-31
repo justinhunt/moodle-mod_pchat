@@ -79,7 +79,7 @@ if(count($attempts)==0){
     $nextstep = constants::STEP_USERSELECTIONS;
     $attemptid = 0;
 }else{
-    $latestattempt = utils::fetch_latest_attempt($moduleinstance);
+    $latestattempt = $attempthelper->fetch_latest_attempt();
     if ($latestattempt && $latestattempt->completedsteps < constants::STEP_SELFREVIEW){
         $start_or_continue=true;
         $nextstep=$latestattempt->completedsteps+1;
@@ -105,7 +105,7 @@ if($start_or_continue) {
     echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('attempts', constants::M_COMPONENT));
 
 
-    $attempt = utils::fetch_latest_finishedattempt($moduleinstance);
+    $attempt = $attempthelper->fetch_latest_complete_attempt();
     if($attempt) {
         $stats=utils::fetch_stats($attempt);
         $aidata = $DB->get_record(constants::M_AITABLE,array('attemptid'=>$attempt->id));
