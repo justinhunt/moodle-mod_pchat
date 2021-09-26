@@ -979,3 +979,6 @@ div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
 	z-index: 100;
 	background-color: white;
 }
+.mod_pchat_partnertag {
+	margin-right: 3px;
+}

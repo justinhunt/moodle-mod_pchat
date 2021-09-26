@@ -36,9 +36,10 @@ class grades {
                     par.accuracy,
                     pa.pchat,
                     pat.aiaccuracy,
-                    pa.grade
+                    pa.grade,
+                    pa.userid
                 from {pchat} as p
-                    inner join {pchat_attempts} pa on p.id = pa.solo
+                    inner join {pchat_attempts} pa on p.id = pa.pchat
                     inner join {course_modules} as cm on cm.course = p.course and cm.id = ?
                     inner join {groups_members} gm ON pa.userid=gm.userid
                     inner join {user} as u on pa.userid = u.id
@@ -63,9 +64,10 @@ class grades {
                     par.accuracy,
                     pa.pchat,
                     pat.aiaccuracy,
-                    pa.grade
+                    pa.grade,
+                    pa.userid
                 from {pchat} as p
-                    inner join {pchat_attempts} pa on p.id = pa.solo
+                    inner join {pchat_attempts} pa on p.id = pa.pchat
                     inner join {course_modules} as cm on cm.course = p.course and cm.id = ?
                     inner join {user} as u on pa.userid = u.id
                     inner join {pchat_attemptstats} as pat on pat.attemptid = pa.id and pat.userid = u.id

@@ -471,3 +471,11 @@ $string['enablesetuptab']="Enable setup tab";
 $string['enablesetuptab_details']="Show a tab containing the activity instance settings to admins. Not super useful in most cases.";
 $string['setup']="Setup";
 
+$string['mediaoptions']="Media Options";
+$string['addmedia']="Add Media";
+$string['addiframe']="Add iFrame";
+$string['topicmedia'] ='Image, audio or video for topic';
+$string['topiciframe'] ='Embed iframe code for topic';
+$string['topiciframe_help']='Paste iframe embed code (html only) for any media that should be shown to students as part of the speaking topic.';
+$string['topicmedia_help']='Upload an audio/video or image file that will be shown to students as part of the speaking topic on the prepare page.';
+

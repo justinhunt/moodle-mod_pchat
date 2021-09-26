@@ -67,8 +67,8 @@ class attempts extends basereport
                 }
                 //this is bad. We use the targetwords tags for users. It just seemed like a good idea
                 if ($withlinks) {
-                    $tdata = array('targetwords' => $users);
-                    $ret =$targetwordcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/targetwords', $tdata);
+                    $tdata = array('partners' => $users);
+                    $ret =$targetwordcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/partnerlist', $tdata);
                 }else{
                     $ret =implode(',' , $users);
                 }

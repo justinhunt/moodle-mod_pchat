@@ -56,6 +56,8 @@ function pchat_supports($feature) {
         case FEATURE_ADVANCED_GRADING:        return true;
         case FEATURE_GRADE_OUTCOMES:          return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
+        case FEATURE_GROUPS:
+            return true;
         default:                        return null;
     }
 }
@@ -199,6 +201,11 @@ function pchat_process_editors(stdClass $moduleinstance, mod_pchat_mod_form $mfo
 	}
 
 	return $moduleinstance;
+}
+
+function pchat_filemanager_options($context){
+    return array('maxfiles' => EDITOR_UNLIMITED_FILES,
+        'noclean' => true, 'context' => $context, 'subdirs' => true, 'accepted_types' => array('image','audio','video'));
 }
 
 /**
@@ -673,10 +680,10 @@ function mod_pchat_grading_areas_list() {
  * @return string
  * @throws dml_exception
  */
-function mod_pchat_output_fragment_new_grade_form($args) {
+function mod_pchat_output_fragment_rubric_grade_form($args) {
     global $DB;
 
-    require_once('grade_form.php');
+    require_once('rubric_grade_form.php');
 
     $args = (object)$args;
     $o = '';
@@ -688,11 +695,11 @@ function mod_pchat_output_fragment_new_grade_form($args) {
         parse_str($serialiseddata, $formdata);
     }
 
-    $sql = "select  pa.pchat, pa.feedback, pa.id as attemptid
-        from {" . constants::M_ATTEMPTSTABLE . "} pa
-        inner join {" . constants::M_TABLE . "} pc on pa.pchat = pc.id
-        inner join {course_modules} cm on cm.instance = pc.id and pc.course = cm.course and pa.userid = ?
-        where cm.id = ?";
+    $sql = "SELECT  pa.pchat, pa.feedback, pa.id AS attemptid 
+        FROM {" . constants::M_ATTEMPTSTABLE . "} pa 
+        INNER JOIN {" . constants::M_TABLE . "} pc ON pa.pchat = pc.id 
+        INNER JOIN {course_modules} cm ON cm.instance = pc.id AND pc.course = cm.course AND pa.userid = ? 
+        WHERE cm.id = ?";
 
     $modulecontext = context_module::instance($args->cmid);
     $attempt = $DB->get_record_sql($sql, array($args->studentid, $args->cmid));
@@ -728,6 +735,67 @@ function mod_pchat_output_fragment_new_grade_form($args) {
 
     return $o;
 }
+
+/**
+ * Displays the pchat popup window for simple grading.
+ *
+ * @param array $args List of named arguments for the fragment loader.
+ * @return string
+ * @throws dml_exception
+ */
+function mod_pchat_output_fragment_simple_grade_form($args) {
+    global $DB;
+
+    require_once('simple_grade_form.php');
+
+    $args = (object)$args;
+    $o = '';
+
+    // Get form data for the form if parsed to push to mform.
+    $formdata = [];
+    if (!empty($args->jsonformdata)) {
+        $serialiseddata = json_decode($args->jsonformdata);
+        parse_str($serialiseddata, $formdata);
+    }
+
+    $sql = "select  pa.pchat, pa.feedback, pa.id as attemptid, pa.grade as grade
+        from {" . constants::M_ATTEMPTSTABLE . "} pa
+        inner join {" . constants::M_TABLE . "} pc on pa.pchat = pc.id
+        inner join {course_modules} cm on cm.instance = pc.id and pc.course = cm.course and pa.userid = ?
+        where cm.id = ?";
+
+    $modulecontext = context_module::instance($args->cmid);
+    $attempt = $DB->get_record_sql($sql, array($args->studentid, $args->cmid));
+
+    if (!$attempt) {
+        return "";
+    }
+
+    $mform = new simple_grade_form(null, array(), 'post', '', null, true, $formdata);
+
+    if ($mform->is_cancelled()) {
+        // Window closes.
+    }
+
+    $formdata = [];
+    $formdata['grade'] = $attempt->grade;
+    $formdata['feedback'] = $attempt->feedback;
+    $mform->set_data($formdata);
+
+    if (!empty($args->jsonformdata)) {
+        // If we were passed non-empty form data we want the mform to call validation functions and show errors.
+        $mform->is_validated();
+    }
+
+    // Display the form. Ob* functions used since this is called in an ajax call.
+    ob_start();
+    $mform->display();
+    $o .= ob_get_contents();
+    ob_end_clean();
+
+    return $o;
+}
+
 
 /**
  * Obtains the completion state for this instance based on completed step count

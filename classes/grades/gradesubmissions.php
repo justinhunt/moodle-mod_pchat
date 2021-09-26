@@ -29,7 +29,7 @@ class gradesubmissions {
         $cm = get_coursemodule_from_id(constants::M_MODNAME, $cmid, 0, false, MUST_EXIST);
         $moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $cm->instance), '*', MUST_EXIST);
 
-        $sql = "select pa.id as attemptid,
+        $sql = "SELECT pa.id as attemptid,
                     u.lastname,
                     u.firstname,
                     p.name,
@@ -42,24 +42,21 @@ class gradesubmissions {
                     pat.turns,
                     pat.words,
                     pat.avturn,
-                    pat.uniquewords,
-                    pat.longwords,
                     pat.longestturn,
                     pat.targetwords,
                     pat.totaltargetwords,
                     pat.questions,
                     pat.aiaccuracy,
                     pa.grade as rubricscore,
-                    pa.feedback,
-                from {" . constants::M_TABLE . "} as p
-                    inner join {" . constants::M_ATTEMPTSTABLE . "} pa on p.id = pa.solo
-                    inner join {course_modules} as cm on cm.course = p.course and cm.id = ?
-                    inner join {user} as u on pa.userid = u.id
-                    inner join {" . constants::M_STATSTABLE . "} as pat on pat.attemptid = pa.id and pat.userid = u.id
-                    left outer join {" . constants::M_AITABLE . "} as par on par.attemptid = pa.id and par.courseid = p.course
-                where pa.userid = ?
-                    AND pa.pchat = ?
-                order by pa.id DESC";
+                    pa.feedback 
+                FROM {" . constants::M_TABLE . "} p INNER JOIN {" . constants::M_ATTEMPTSTABLE . "} pa ON p.id = pa.pchat 
+                INNER JOIN {course_modules} cm ON cm.course = p.course AND cm.id = ? 
+                INNER JOIN {user} u ON pa.userid = u.id  
+                INNER JOIN {" . constants::M_STATSTABLE . "} pat ON pat.attemptid = pa.id AND pat.userid = u.id 
+                LEFT OUTER JOIN {" . constants::M_AITABLE . "}  par ON par.attemptid = pa.id AND par.courseid = p.course 
+                WHERE pa.userid = ? 
+                    AND pa.pchat = ? 
+                ORDER BY pa.id DESC";
 
         $alldata = $DB->get_records_sql($sql, [$cmid, $userid, $moduleinstance->id]);
         if($alldata){
@@ -67,8 +64,6 @@ class gradesubmissions {
         }else{
             return [];
         }
-
-
     }
 
     /**
@@ -84,7 +79,7 @@ class gradesubmissions {
         $sql = "select concat(userid, ',', interlocutors) as students
                     from {pchat_attempts} pa
                     where pa.id = ?
-                    AND completedsteps = ?";
+                    AND completedsteps >= ?";
 
         return $DB->get_records_sql($sql, [$attempt, constants::STEP_SELFTRANSCRIBE]);
     }

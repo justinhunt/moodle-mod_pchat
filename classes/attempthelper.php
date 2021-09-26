@@ -50,10 +50,14 @@ class attempthelper
         if(!$userid){
             $userid = $USER->id;
         }
-
+/*
         $attempts = $DB->get_records(constants::M_ATTEMPTSTABLE,
                 array(constants::M_MODNAME => $this->mod->id,'userid'=>$userid, 'completedsteps'=>constants::STEP_SELFTRANSCRIBE),
                 'id DESC');
+*/
+        $attempts = $DB->get_records_sql(
+            "SELECT * FROM {" . constants::M_ATTEMPTSTABLE . "} WHERE pchat = :pchatid AND userid = :userid and completedsteps >= :completedsteps ORDER BY id DESC",
+            array("pchatid" => $this->mod->id,'userid'=>$userid, 'completedsteps'=>constants::STEP_SELFTRANSCRIBE));
         if($attempts){
             $attempt = array_shift($attempts);
             return $attempt;

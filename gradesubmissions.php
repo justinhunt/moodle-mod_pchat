@@ -25,7 +25,8 @@
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(dirname(dirname(__FILE__))) . '/grade/grading/lib.php');
-require_once('grade_form.php');
+require_once('rubric_grade_form.php');
+require_once('simple_grade_form.php');
 
 use mod_pchat\constants;
 use mod_pchat\grades\gradesubmissions as gradesubmissions;
@@ -42,7 +43,9 @@ $gradesubmissions = new gradesubmissions();
 
 // Course module ID.
 $id = required_param('id', PARAM_INT);
+$userid = required_param('userid', PARAM_INT);
 $attempt = required_param('attempt', PARAM_INT);
+
 // Course and course module data.
 $cm = get_coursemodule_from_id(constants::M_MODNAME, $id, 0, false, IGNORE_MISSING);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', IGNORE_MISSING);
@@ -51,8 +54,14 @@ $modulecontext = context_module::instance($cm->id);
 require_capability('mod/pchat:grades', $modulecontext);
 
 // Set page login data.
-$PAGE->set_url(constants::M_URL . '/gradesubmissions.php');
+$PAGE->set_url(constants::M_URL . '/gradesubmissions.php',array('id'=>$id,'userid'=>$userid, 'attempt'=>$attempt));
 require_login($course, true, $cm);
+
+$gradingmanager = get_grading_manager($modulecontext, 'mod_pchat', 'pchat');
+$grademethod = $gradingmanager->get_active_method();
+if($grademethod!=='rubric'){
+    $grademethod='simple';
+}
 
 // fetch groupmode/menu/id for this activity
 $groupmenu = '';
@@ -82,8 +91,6 @@ if($groupid>0) {
 array_walk($submissionCandidates, function ($candidate) use ($studentAndInterlocutors) {
     if (in_array($candidate->id, $studentAndInterlocutors, true)) {
         $candidate->selected = "selected='selected'";
-
-
     }
 });
 $submissionCandidates = new ArrayIterator($submissionCandidates);
@@ -105,7 +112,9 @@ $gradesrenderer =
             'studentsToGrade' => $studentsToGrade,
             'submissionCandidates' => $submissionCandidates,
             'contextid' => $context->id,
-            'cmid' => $cm->id
+            'cmid' => $cm->id,
+            'attemptid' => $attempt,
+            'grademethod'=>$grademethod
         )
     );
 

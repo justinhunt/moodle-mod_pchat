@@ -91,7 +91,7 @@
                 selectBox.value = originalStudentId;
                 $("[data-original-student]").first().find('select').attr('disabled','disabled');
                 loadStudentData(element);
-                GradeForm.init($(element).find('input[type=button]'), {{contextid}});
+                GradeForm.init($(element).find('input[type=button]'), {{contextid}},'{{grademethod}}');
             }
         );
 

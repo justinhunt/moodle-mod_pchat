@@ -1024,12 +1024,47 @@ class utils{
     } //end of add_mform_elements
 
     public static function prepare_file_and_json_stuff($moduleinstance, $modulecontext){
+
         $ednofileoptions = pchat_editor_no_files_options($modulecontext);
         $editors  = pchat_get_editornames();
 
         $itemid = 0;
         foreach($editors as $editor){
             $moduleinstance = file_prepare_standard_editor((object)$moduleinstance,$editor, $ednofileoptions, $modulecontext,constants::M_COMPONENT,$editor, $itemid);
+        }
+
+        return $moduleinstance;
+
+    }//end of prepare_file_and_json_stuff
+
+    public static function prepare_topicfile_manager($topicinstance, $modulecontext){
+
+        $filemanageroptions = pchat_filemanager_options($modulecontext);
+        $filemanagers  = pchat_get_filemanagernames();
+        $itemid = 0;
+        foreach($filemanagers as $fm){
+            $draftitemid = file_get_submitted_draft_itemid($fm);
+            file_prepare_draft_area($draftitemid, $modulecontext->id, constants::M_COMPONENT,
+                $fm, $itemid,
+                $filemanageroptions);
+            $topicinstance->{$fm} = $draftitemid;
+        }
+
+        //make sure the media upload fields are in the correct state
+        $fs = get_file_storage();
+        $itemid=0;
+        $files = $fs->get_area_files($modulecontext->id, constants::M_COMPONENT,
+            'topicmedia', $itemid);
+        if ($files) {
+            $moduleinstance->addmedia = 1;
+        } else {
+            $moduleinstance->addmedia = 0;
+        }
+
+        if (!empty($moduleinstance->topiciframe)) {
+            $moduleinstance->addiframe = 1;
+        } else {
+            $moduleinstance->addiframe = 0;
         }
 
         return $moduleinstance;

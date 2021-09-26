@@ -90,6 +90,9 @@ class topicform extends \moodleform {
      * and then calls custom_definition();
      */
     public final function definition() {
+        global $CFG;
+        $context = \context_system::instance();
+
         $mform = $this->_form;
 	
         $mform->addElement('header', 'topicheading', get_string('editingtopic', constants::M_COMPONENT, get_string('topicformtitle', constants::M_COMPONENT)));
@@ -127,6 +130,43 @@ class topicform extends \moodleform {
         $mform->addElement('select', 'topiclevel', get_string('topiclevel', constants::M_COMPONENT),$topiclevels,array());
         $mform->setType('topiclevel', PARAM_INT);
         $mform->addRule('topiclevel', get_string('required'), 'required', null, 'client');
+
+
+        //display media options for speaking prompt
+        $m35 = $CFG->version >= 2018051700;
+        $togglearray=array();
+        $togglearray[] =& $mform->createElement('advcheckbox','addmedia',get_string('addmedia',constants::M_COMPONENT),'');
+        $togglearray[] =& $mform->createElement('advcheckbox','addiframe',get_string('addiframe',constants::M_COMPONENT),'');
+        $mform->addGroup($togglearray, 'togglearray', get_string('mediaoptions', constants::M_COMPONENT), array(' '), false);
+
+        //We assume they want to use some media
+        $mform->setDefault('addmedia', 1);
+
+
+        //Speaking topic upload
+        $filemanageroptions = pchat_filemanager_options($context);
+        $mform->addElement('filemanager',
+            'topicmedia',
+            get_string('topicmedia',constants::M_COMPONENT),
+            null,
+            $filemanageroptions
+        );
+        $mform->addHelpButton('topicmedia', 'topicmedia', constants::M_MODNAME);
+        if($m35){
+            $mform->hideIf('topicmedia', 'addmedia', 'neq', 1);
+        }else {
+            $mform->disabledIf('topicmedia', 'addmedia', 'neq', 1);
+        }
+
+        //Speaking topic iframe
+        $mform->addElement('text', 'topiciframe', get_string('topiciframe', constants::M_COMPONENT), array('size'=>100));
+        $mform->setType('topiciframe', PARAM_RAW);
+        $mform->addHelpButton('topiciframe', 'topiciframe', constants::M_MODNAME);
+        if($m35){
+            $mform->hideIf('topiciframe','addiframe','neq', 1);
+        }else {
+            $mform->disabledIf( 'topiciframe','addiframe','neq', 1);
+        }
 
 
         $this->custom_definition();

@@ -614,6 +614,12 @@ class aitranscriptutils{
                     continue;
                 }
 
+                //if the word is emptuy (happens .. how?)
+                $trimmedword = trim($word);
+                if (empty($trimmedword)) {
+                    continue;
+                }
+
                 $wordcount++;
             }
             $node->nodeValue = "";

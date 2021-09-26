@@ -24,10 +24,18 @@ $functions = array(
             'type'        => 'write',
             'ajax' => true,
         ),
-        'mod_pchat_submit_create_grade_form' => array(
+        'mod_pchat_submit_rubric_grade_form' => array(
             'classname' => '\mod_pchat\external',
-            'methodname' => 'submit_create_grade_form',
+            'methodname' => 'submit_rubric_grade_form',
             'description' => 'Creates a grade from submitted form data',
+            'ajax' => true,
+            'type' => 'write',
+            'capabilities' => 'mod/pchat:managegrades',
+        ),
+        'mod_pchat_submit_simple_grade_form' => array(
+            'classname' => '\mod_pchat\external',
+            'methodname' => 'submit_simple_grade_form',
+            'description' => 'Creates a grade from submitted simple form',
             'ajax' => true,
             'type' => 'write',
             'capabilities' => 'mod/pchat:managegrades',
