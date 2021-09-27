@@ -86,7 +86,8 @@ $string['username'] = 'User';
 $string['audiofile'] = 'Audio';
 $string['timecreated'] = 'Time Created';
 $string['nodataavailable'] = 'No Data Available Yet';
-$string['saveandnext'] = 'Save .... and next';
+$string['saveandnext'] = 'Save and Continue';
+$string['saveandfinish'] = 'Save and Finish';
 $string['next'] = 'Next';
 $string['finish'] = 'Finish';
 $string['reattempt'] = 'Try Again';
@@ -480,7 +481,7 @@ $string['topiciframe_help']='Paste iframe embed code (html only) for any media t
 $string['topicmedia_help']='Upload an audio/video or image file that will be shown to students as part of the speaking topic on the prepare page.';
 
 $string['speakingtopic'] = 'Topic Resources';
-$string['']=" ";
+$string['nogradeavailable']="No grade available";
 
 $string['short_words'] = 'Words:';
 $string['short_turns'] = 'Turns:';
@@ -490,3 +491,7 @@ $string['short_questions'] = 'Questions:';
 $string['short_totaltargetwords'] = 'Total:';
 $string['short_targetwords'] = 'Target:';
 $string['short_aiaccuracy'] = 'AI Score:';
+
+$string['revq1']='revq1';
+$string['revq2']='revq2';
+$string['revq3']='revq3';

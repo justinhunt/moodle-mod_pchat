@@ -16,6 +16,7 @@ class classprogress extends basereport
 
     protected $report="classprogress";
     protected $fields = array('pchatname','avturns','avatl','avltl','avw','avtw','avq','avacc');
+    protected $exportfields = array('pchatname','avturns','avatl','avltl','avw','avtw','avq','avacc');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();

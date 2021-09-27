@@ -44,6 +44,6 @@ class audiorecordingform extends baseform
 
     }
     public function get_savebutton_text(){
-        return get_string('next', constants::M_COMPONENT);
+        return get_string('saveandnext', constants::M_COMPONENT);
     }
 }

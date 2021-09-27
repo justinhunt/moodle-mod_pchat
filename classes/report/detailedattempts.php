@@ -15,7 +15,9 @@ class detailedattempts extends basereport
 {
 
     protected $report="detailedattempts";
-    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','words','ATL','LTL','TW','QS','ACC','grade','selftranscript','transcript','timemodified','view','deletenow');
+    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','words','ATL','LTL','TW','QS','ACC','grade','selftranscript','transcript','revq1','revq2','revq3','timemodified','view','deletenow');
+    protected $exportfields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','words','ATL','LTL','TW','QS','ACC','grade','selftranscript','transcript','revq1','revq2','revq3','timemodified');
+
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -82,6 +84,19 @@ class detailedattempts extends basereport
                 }
                 break;
 
+            case 'revq1':
+            case 'revq2':
+            case 'revq3':
+                if(!empty($record->{$field})){
+                    $ret = $record->{$field};
+                    if ($withlinks) {
+                        $ret="[$field]";
+                    }
+                }else{
+                    $ret="";
+                }
+                break;
+
             case 'topicname':
                 $ret = $record->topicname;
                 break;
@@ -100,8 +115,8 @@ class detailedattempts extends basereport
                 }
                 //this is bad. We use the targetwords tags for users. It just seemed like a good idea
                 if ($withlinks) {
-                    $tdata = array('targetwords' => $users);
-                    $ret =$targetwordcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/targetwords', $tdata);
+                    $tdata = array('partners' => $users);
+                    $ret = $OUTPUT->render_from_template(constants::M_COMPONENT . '/partnerlist', $tdata);
                 }else{
                     $ret =implode(',' , $users);
                 }
@@ -221,7 +236,7 @@ class detailedattempts extends basereport
             list($groupswhere, $allparams) = $DB->get_in_or_equal($formdata->groupid);
 
             $sql = 'SELECT at.id, at.grade, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.words,
-        st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy,at.selftranscript,at.transcript, at.timemodified ';
+        st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy,at.selftranscript,at.transcript,at.revq1,at.revq2,at.revq3, at.timemodified ';
             $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
             $sql .= ' INNER JOIN {groups_members} gm ON at.userid=gm.userid';
             $sql .= ' WHERE gm.groupid ' . $groupswhere . ' AND at.pchat = ?';
@@ -234,7 +249,7 @@ class detailedattempts extends basereport
         }else{
 
             $sql = 'SELECT at.id, at.grade, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.words,
-        st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy,at.selftranscript,at.transcript, at.timemodified ';
+        st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy,at.selftranscript,at.transcript,at.revq1, at.revq2,at.revq3,at.timemodified ';
             $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
             $sql .= ' WHERE at.pchat = :pchatid';
             $sql .= ' ORDER BY at.userid ASC';

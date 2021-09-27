@@ -858,17 +858,23 @@ class utils{
         $gradingmanager = \get_grading_manager($modulecontext, 'mod_pchat', 'pchat');
         $gradingdisabled = false;
         $gradeid =$attempt->id;
+        $menu = make_grades_menu($moduleinstance->grade);
 
         if ($controller = $gradingmanager->get_active_controller()) {
-            $menu = make_grades_menu($moduleinstance->grade);
             $controller->set_grade_range($menu, $moduleinstance->grade > 0);
             $gradefordisplay = $controller->render_grade($PAGE,
                     $gradeid,
                     $gradingitem,
                     $gradebookgrade->str_long_grade,
                     $gradingdisabled);
-        } else {
-            $gradefordisplay = 'no grade available';
+        } elseif($attempt->grade!==null) {
+            if(array_key_exists($attempt->grade,$menu)){
+                $gradefordisplay =$menu[$attempt->grade];
+            }else{
+                $gradefordisplay =get_string('nogradeavailable',constants::M_COMPONENT);
+            }
+        }else{
+            $gradefordisplay = get_string('nogradeavailable',constants::M_COMPONENT);
         }
         return $gradefordisplay;
     }

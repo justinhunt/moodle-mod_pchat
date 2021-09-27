@@ -16,6 +16,7 @@ class attempts extends basereport
 
     protected $report="attempts";
     protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','stats_words','turns','ATL','LTL','TW','QS','ACC','grade','timemodified','view','deletenow');
+    protected $exportfields = array('id','idnumber', 'username','audiofile','topicname','partners','stats_words','turns','ATL','LTL','TW','QS','ACC','grade','timemodified');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -68,7 +69,7 @@ class attempts extends basereport
                 //this is bad. We use the targetwords tags for users. It just seemed like a good idea
                 if ($withlinks) {
                     $tdata = array('partners' => $users);
-                    $ret =$targetwordcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/partnerlist', $tdata);
+                    $ret =$OUTPUT->render_from_template(constants::M_COMPONENT . '/partnerlist', $tdata);
                 }else{
                     $ret =implode(',' , $users);
                 }

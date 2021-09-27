@@ -256,11 +256,13 @@ switch($format){
         exit;
 
 	case 'csv':
-		$reportrows = $report->fetch_formatted_rows(false);
+	    $withlinks=false;
+		$reportrows = $report->fetch_formatted_rows($withlinks);
         //first check if we actually have some data, if not we just show an "empty" message
         if(count($reportrows)>0) {
-            $reportrenderer->render_section_csv($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows,
-                    $report->fetch_fields());
+            $exportfields=true;
+            $reportrenderer->render_section_csv($reportheading, $report->fetch_name(), $report->fetch_head($withlinks), $reportrows,
+                    $report->fetch_export_fields());
         }else{
             echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
             echo $extraheader;

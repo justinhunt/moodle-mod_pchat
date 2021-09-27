@@ -15,6 +15,7 @@ class basic extends basereport
 
     protected $report="basic";
     protected $fields = array('id','name','timecreated');
+    protected $exportfields = array('id','name','timecreated');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();

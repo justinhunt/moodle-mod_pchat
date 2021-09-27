@@ -71,7 +71,7 @@
         </div>
         <div class="card-footer">
             <small class="text-muted">
-                <strong>{{# str }} gradesgrade, mod_pchat {{/ str }} </strong>: <span class="chatrubricscore">0</span><br >
+                <strong>{{# str }} gradesgrade, mod_pchat {{/ str }} </strong>: <span class="chatrubricscore"></span><br >
                 <strong>{{# str }} gradesfeedback, mod_pchat {{/ str }} </strong>: <span class="chatfeedback"></span>
             </small>
         </div>
@@ -110,7 +110,7 @@
             $(element).find('.chattargetwords').html(0);
             $(element).find('.chattotaltargetwords').html(0);
             $(element).find('.chatquestions').html(0);
-            $(element).find('.chatrubricscore').html(0);
+            $(element).find('.chatrubricscore').html("");
             $(element).find('.chatfeedback').html("");
             $(element).find('.chataiscore').html("");
             if (studentId) {

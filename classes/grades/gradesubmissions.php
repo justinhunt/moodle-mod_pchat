@@ -60,7 +60,17 @@ class gradesubmissions {
 
         $alldata = $DB->get_records_sql($sql, [$cmid, $userid, $moduleinstance->id]);
         if($alldata){
-            return [reset($alldata)];
+            $onedata = reset($alldata);
+            //display grades gives us x/50 type display or for "scale" grades "has demonstrated competence"
+            $displaygrades = make_grades_menu($moduleinstance->grade);
+            if($onedata->rubricscore===null){
+                $onedata->rubricscore ='';
+            }else{
+                if(array_key_exists($onedata->rubricscore,$displaygrades)){
+                    $onedata->rubricscore =$displaygrades[$onedata->rubricscore];
+                }
+            }
+            return [$onedata];
         }else{
             return [];
         }

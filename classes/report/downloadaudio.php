@@ -16,6 +16,7 @@ class downloadaudio extends basereport
 
     protected $report="downloadaudio";
     protected $fields = array('id','idnumber', 'username','file');
+    protected $exportfields = array('id','idnumber', 'username','file');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();

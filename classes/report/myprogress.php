@@ -16,6 +16,7 @@ class myprogress extends basereport
 
     protected $report="myprogress";
     protected $fields = array('pchatname','stats_words','stats_turns','stats_avturn','stats_longestturn','stats_questions','stats_aiaccuracy');
+    protected $exportfields = array('pchatname','stats_words','stats_turns','stats_avturn','stats_longestturn','stats_questions','stats_aiaccuracy');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();

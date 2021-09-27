@@ -64,9 +64,19 @@ abstract class basereport {
     public function fetch_fields(){
         return $this->fields;
     }
-    public function fetch_head(){
+
+    public function fetch_export_fields(){
+        return $this->exportfields;
+    }
+
+    public function fetch_head($withlinks=true){
         $head=array();
-        foreach($this->fields as $field){
+        if($withlinks){
+            $fields=$this->fields;
+        }else{
+            $fields=$this->exportfields;
+        }
+        foreach($fields as $field){
             $head[]=get_string($field,constants::M_COMPONENT);
         }
         return $head;
@@ -123,7 +133,11 @@ abstract class basereport {
 
     public function fetch_formatted_rows($withlinks=true,$paging=false){
         $records = $this->rawdata;
-        $fields = $this->fields;
+        if($withlinks) {
+            $fields = $this->fields;
+        }else{
+            $fields = $this->exportfields;
+        }
         $returndata = array();
         if($paging){
             $startrecord = ($paging->perpage * $paging->pageno) + 1;

@@ -69,10 +69,16 @@ if ($groupmode = groups_get_activity_groupmode($cm)) {
 }
 
 // Get grades list data by course module and course.
+//display grades gives us x/50 type display or for "scale" grades "has demonstrated competence"
+$displaygrades = make_grades_menu($moduleinstance->grade);
 $studentgrades = $grades->getGrades($course->id, $id, $moduleinstance->id, $groupid);
 foreach($studentgrades as $studentgrade){
     if($studentgrade->grade===null){
         $studentgrade->grade ='';
+    }else{
+        if(array_key_exists($studentgrade->grade,$displaygrades)){
+            $studentgrade->grade =$displaygrades[$studentgrade->grade];
+        }
     }
 }
 $data = new ArrayIterator($studentgrades);
