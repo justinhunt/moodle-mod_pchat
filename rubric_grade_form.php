@@ -13,6 +13,7 @@ class rubric_grade_form extends moodleform {
 
         $mform->addElement('grading', 'advancedgrading' , 'Rubric', array('gradinginstance' => $this->_customdata['gradinginstance']));
         $mform->addElement('textarea', 'feedback', 'Feedback', 'wrap="virtual" style="width:100%;" rows="10" ');
+        $mform->setDefault('feedback',' ');
     }
 
     //Custom validation should be added here

@@ -101,6 +101,9 @@ if($action == 'confirmdelete'){
 $siteconfig = get_config(constants::M_COMPONENT);
 $token= utils::fetch_token($siteconfig->apiuser,$siteconfig->apisecret);
 
+if(!$topichelper) {
+    $topichelper = new \mod_pchat\topichelper($cm);
+}
 
 //get the mform for our attempt
 switch($type){
@@ -110,22 +113,27 @@ switch($type){
         if($attempt && !empty(trim($attempt->mywords))){
             $targetwords .= $attempt ? PHP_EOL . trim($attempt->mywords) : '';
         }
+        $topic=false;
+        if($attempt) {
+            $topic = $topichelper->fetch_topic($attempt->topicid);
+        }
         $mform = new \mod_pchat\attempt\audiorecordingform(null,
                 array('moduleinstance'=>$moduleinstance,
+                        'cm'=>$cm,
+                        'topic'=>$topic,
                         'token'=>$token,
                         'targetwords'=>$targetwords,
                         'attempt'=>$attempt));
         break;
 
     case constants::STEP_USERSELECTIONS:
-        if(!$topichelper) {
-            $topichelper = new \mod_pchat\topichelper($cm);
-        }
+
         $topics = $topichelper->fetch_selected_topics();
         $users = get_enrolled_users($context);
         $targetwords = $attempt ? $attempt->topictargetwords : '';
         $mform = new \mod_pchat\attempt\userselectionsform(null,
                 array('moduleinstance'=>$moduleinstance,
+                        'cm'=>$cm,
                         'topics'=>$topics,
                         'users'=>$users,
                         'targetwords'=>$targetwords));
@@ -137,7 +145,7 @@ switch($type){
             $audiofilename =$attempt->filename;
         }
         $mform = new \mod_pchat\attempt\selftranscribeform(null,
-                array('moduleinstance'=>$moduleinstance,'filename'=>$audiofilename));
+                array('moduleinstance'=>$moduleinstance, 'cm'=>$cm,'filename'=>$audiofilename));
         break;
 
     case constants::STEP_SELFREVIEW:
@@ -176,6 +184,7 @@ switch($type){
 
         $mform = new \mod_pchat\attempt\selfreviewform(null,
                 array('moduleinstance'=>$moduleinstance,
+                        'cm'=>$cm,
                         'selftranscript'=>$selftranscript,
                         'autotranscript'=>$autotranscript,
                         'attempt'=>$attempt_with_transcripts ? $attempt_with_transcripts : $attempt,

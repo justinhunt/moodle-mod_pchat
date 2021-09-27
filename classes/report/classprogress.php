@@ -129,12 +129,34 @@ class classprogress extends basereport
         $this->headingdata->klassname=$formdata->klassname;
 
         $emptydata = array();
-        $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.targetwords)avtw, AVG(st.questions)avq ,AVG(st.aiaccuracy) avacc';
-        $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
-        $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
-        $sql .= ' WHERE p.course = :courseid';
-        $sql .= ' GROUP BY p.id, p.name';
-        $alldata = $DB->get_records_sql($sql,array('courseid'=>$this->cm->course));
+
+
+        //if we need to show just one group
+        if($formdata->groupid > 0){
+
+            list($groupswhere, $allparams) = $DB->get_in_or_equal($formdata->groupid);
+
+            $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.targetwords)avtw, AVG(st.questions)avq ,AVG(st.aiaccuracy) avacc';
+            $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
+            $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
+            $sql .= ' INNER JOIN {groups_members} gm ON at.userid=gm.userid';
+            $sql .= ' WHERE gm.groupid ' . $groupswhere;
+            $sql .= ' AND p.course = ?';
+            $sql .= ' GROUP BY p.id, p.name';
+            $allparams[]=$this->cm->course;
+            $alldata = $DB->get_records_sql($sql,$allparams);
+
+            //if no groups, or can see all groups then the SQL is simple
+        }else{
+
+            $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.targetwords)avtw, AVG(st.questions)avq ,AVG(st.aiaccuracy) avacc';
+            $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
+            $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
+            $sql .= ' WHERE p.course = :courseid';
+            $sql .= ' GROUP BY p.id, p.name';
+            $alldata = $DB->get_records_sql($sql,array('courseid'=>$this->cm->course));
+
+        }
 
         if($alldata){
             foreach($alldata as $thedata){

@@ -82,7 +82,7 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
         //topics
         $topics = new backup_nested_element('topics');
         $topic = new backup_nested_element('topic', array('id'),array(
-                'topiclevel', 'courseid', 'moduleid','name','fonticon','targetwords', 'timemodified'));
+                'topiclevel', 'courseid', 'moduleid','name','fonticon','topiciframe','targetwords', 'timemodified'));
 
 
         //selected topics
@@ -149,6 +149,7 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
         // Define file annotations.
         // intro file area has 0 itemid.
         $oneactivity->annotate_files(constants::M_COMPONENT, 'intro', null);
+        $topic->annotate_files(constants::M_COMPONENT, constants::M_TOPICMEDIA, 'id');
 		
 		//file annotation if including user info
         if ($userinfo) {

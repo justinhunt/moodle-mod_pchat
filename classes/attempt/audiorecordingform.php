@@ -20,6 +20,7 @@ class audiorecordingform extends baseform
         $this->token = $this->_customdata['token'];
         $this->attempt = $this->_customdata['attempt'];
         $targetwords = $this->_customdata['targetwords'];
+        $this->topic = $this->_customdata['topic'];
 
         //we set the title and instructions
         $this->add_title(get_string('attempt_parttwo', constants::M_COMPONENT));
@@ -30,6 +31,9 @@ class audiorecordingform extends baseform
 
         //show our target words
         $this->add_targetwords_display($targetwords) ;
+
+        //add topic media content
+        $this->add_topicmediacontent();
 
         //we add the recording hidden and visible fields
         $this->add_recordingurl_field();
@@ -42,5 +46,4 @@ class audiorecordingform extends baseform
     public function get_savebutton_text(){
         return get_string('next', constants::M_COMPONENT);
     }
-
 }

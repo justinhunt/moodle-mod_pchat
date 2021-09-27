@@ -48,6 +48,11 @@ use \mod_pchat\utils;
  */
 class topicform extends \moodleform {
 
+    /**
+     * An array of options used in the filemanager
+     * @var array
+     */
+    protected $filemanageroptions = array();
 
     /**
      * The module instance
@@ -91,7 +96,8 @@ class topicform extends \moodleform {
      */
     public final function definition() {
         global $CFG;
-        $context = \context_system::instance();
+
+        $this->filemanageroptions = $this->_customdata['filemanageroptions'];
 
         $mform = $this->_form;
 	
@@ -144,12 +150,11 @@ class topicform extends \moodleform {
 
 
         //Speaking topic upload
-        $filemanageroptions = pchat_filemanager_options($context);
         $mform->addElement('filemanager',
             'topicmedia',
             get_string('topicmedia',constants::M_COMPONENT),
             null,
-            $filemanageroptions
+            $this->filemanageroptions
         );
         $mform->addHelpButton('topicmedia', 'topicmedia', constants::M_MODNAME);
         if($m35){

@@ -227,6 +227,7 @@ class restore_pchat_activity_structure_step extends restore_activity_structure_s
 
     protected function after_execute() {
         // Add module related files, no need to match by itemname (just internally handled context)
+        $this->add_related_files(constants::M_COMPONENT, constants::M_TOPICMEDIA, constants::M_TOPIC_TABLE);
 
 		//question stuff
 		 $userinfo = $this->get_setting_value('userinfo'); // are we including userinfo?

@@ -27,7 +27,7 @@ const M_CLASS_ITEMTABLE='mod_pchat_attempttable';
 const M_CLASS_TOPICSCONTAINER ='topicscontainer';
 const M_CLASS_TOPICSCHECKBOX = 'topicscheckbox';
 const M_PLUGINSETTINGS ='/admin/settings.php?section=modsettingpchat';
-
+const M_TOPICMEDIA = 'topicmedia';
 const M_USE_DATATABLES=true;
 
 //AI Transcript constants

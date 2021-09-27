@@ -68,6 +68,18 @@ abstract class baseform extends \moodleform {
     protected $moduleinstance = null;
 
     /**
+     * The course module instance
+     * @var array
+     */
+    protected $cm = null;
+
+    /**
+     * The topic
+     * @var array
+     */
+    protected $topic = null;
+
+    /**
      * The cloudppoodll token
      * @var array
      */
@@ -111,8 +123,7 @@ abstract class baseform extends \moodleform {
         $mform = $this->_form;
 
         $this->moduleinstance = $this->_customdata['moduleinstance'];
-        $this->cm = $this->_customdata['moduleinstance'];
-
+        $this->cm = $this->_customdata['cm'];
 
         // $mform->addElement('header', 'typeheading', get_string('createattempt', constants::M_COMPONENT, get_string($this->typestring, constants::M_COMPONENT)));
 
@@ -480,6 +491,61 @@ abstract class baseform extends \moodleform {
         $recordingorplayerfield->setValue($player_html . $recorder_html);
 
     }
+
+    protected final function add_topicmediacontent() {
+        global $OUTPUT;
+        //if we have no topic we might as well move on
+        if(!isset($this->topic) || !$this->topic){
+            return;
+        }
+
+        //contentitem
+        $contentitem = [];
+        $context = \context_module::instance($this->cm->id);
+
+        //Prepare IFrame
+        if(!empty(trim($this->topic->topiciframe))){
+            $contentitem['itemiframe']=$this->topic->topiciframe;
+        }
+
+        //media items
+        $mediaurls = utils::fetch_topicmedia_urls($this->topic, $context);
+        if($mediaurls && count($mediaurls)>0){
+            foreach($mediaurls as $mediaurl){
+                $file_parts = pathinfo(strtolower($mediaurl));
+                switch($file_parts['extension'])
+                {
+                    case "jpg":
+                    case "png":
+                    case "gif":
+                    case "bmp":
+                    case "svg":
+                        $contentitem['itemimage'] = $mediaurl;
+                        break;
+
+                    case "mp4":
+                    case "mov":
+                    case "webm":
+                    case "ogv":
+                        $contentitem['itemvideo'] = $mediaurl;
+                        break;
+
+                    case "mp3":
+                    case "ogg":
+                    case "wav":
+                        $contentitem['itemaudio'] = $mediaurl;
+                        break;
+
+                    default:
+                        //do nothing
+                }//end of extension switch
+            }//end of for each
+        }//end of if mediaurls
+        $staticcontent = $OUTPUT->render_from_template(constants::M_COMPONENT . '/topicmediacontent', $contentitem);
+        $contentdiv = \html_writer::div($staticcontent,'mod_pchat_mediaheader');
+        $this->_form->addElement('static','title',get_string('speakingtopic', constants::M_COMPONENT), $contentdiv);
+    }
+
 
     /**
      * The html part of the recorder (js is in the fetch_activity_amd)

@@ -68,6 +68,9 @@ if ($id) {
 //we always head back to the pchat topics page
 $redirecturl = new moodle_url('/mod/pchat/topic/topics.php', array('id'=>$cm->id));
 
+//prepare filemanager options
+$filemanageroptions = pchat_filemanager_options($context);
+
 //handle delete actions
 if($action == 'confirmdelete'){
     $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
@@ -89,7 +92,8 @@ if($action == 'confirmdelete'){
 $siteconfig = get_config(constants::M_COMPONENT);
 
 //get the mform for our topic
-$mform = new \mod_pchat\topic\topicform(null, array());
+$mform = new \mod_pchat\topic\topicform(null, array('filemanageroptions'=>$filemanageroptions,
+    'moduleinstance'=>$moduleinstance));
 
 //if the cancel button was pressed, we are out of here
 if ($mform->is_cancelled()) {
@@ -131,6 +135,14 @@ if ($data = $mform->get_data()) {
         }
     }
 
+    //Media file
+    if (property_exists($data, constants::M_TOPICMEDIA)) {
+        file_save_draft_area_files($data->{constants::M_TOPICMEDIA},
+            $context->id, constants::M_COMPONENT,
+            constants::M_TOPICMEDIA, $thetopic->id,
+            $filemanageroptions);
+    }
+
     //if we got here we did achieve some update
     redirect($redirecturl);
 
@@ -141,6 +153,13 @@ if ($data = $mform->get_data()) {
 //if edit mode load up the topic into a data object
 if ($edit) {
     $data = $topic;
+    //init our itemmedia upload file field
+    $draftitemid = file_get_submitted_draft_itemid(constants::M_TOPICMEDIA);
+    file_prepare_draft_area($draftitemid, $context->id, constants::M_COMPONENT,
+        constants::M_TOPICMEDIA, $data->id,
+        $filemanageroptions);
+    $data->{constants::M_TOPICMEDIA} = $draftitemid;
+
 }else{
     $data=new stdClass;
     $data->id = null;

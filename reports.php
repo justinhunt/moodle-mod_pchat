@@ -147,6 +147,7 @@ switch ($showreport){
     case 'classprogress':
         $report = new \mod_pchat\report\classprogress($cm);
         $formdata = new stdClass();
+        $formdata->groupmenu = true;
         $formdata->klassname = "The Class";
         //$formdata->modulecontextid = $modulecontext->id;
         break;

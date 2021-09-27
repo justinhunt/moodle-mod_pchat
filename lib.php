@@ -204,7 +204,7 @@ function pchat_process_editors(stdClass $moduleinstance, mod_pchat_mod_form $mfo
 }
 
 function pchat_filemanager_options($context){
-    return array('maxfiles' => EDITOR_UNLIMITED_FILES,
+    return array('maxfiles' => 3,
         'noclean' => true, 'context' => $context, 'subdirs' => true, 'accepted_types' => array('image','audio','video'));
 }
 

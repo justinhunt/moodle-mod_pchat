@@ -167,7 +167,7 @@ class external extends external_api {
 
         $moduleinstance = $DB->get_record(constants::M_TABLE, array('id'=>$attempt->pchat));
         $gradingdisabled=false;
-        $gradinginstance = utils::get_grading_instance($attempt->attemptid, $gradingdisabled,$moduleinstance, $modulecontext);
+        $gradinginstance = utils::get_grading_instance($attempt->id, $gradingdisabled,$moduleinstance, $modulecontext);
 
         $mform = new \rubric_grade_form(null, array('gradinginstance' => $gradinginstance), 'post', '', null, true, $data);
 
@@ -184,6 +184,12 @@ class external extends external_api {
                     }
                 }
             }
+
+            //if no grading was done, eg just a comment, then we should null not zero
+            if($thegrade && $thegrade < 0){
+                $thegrade=null;
+            }
+
             $feedbackobject = new \stdClass();
             $feedbackobject->id = $attempt->id;
             $feedbackobject->feedback = $validateddata->feedback;
