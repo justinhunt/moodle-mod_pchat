@@ -501,7 +501,9 @@ abstract class baseform extends \moodleform {
 
         //contentitem
         $contentitem = [];
-        $context = \context_module::instance($this->cm->id);
+
+        $topic_cm = get_coursemodule_from_instance(constants::M_MODNAME,$this->topic->moduleid);
+        $context = \context_module::instance($topic_cm->id);
 
         //Prepare IFrame
         if(!empty(trim($this->topic->topiciframe))){

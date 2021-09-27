@@ -479,4 +479,4 @@ $string['topiciframe'] ='Embed iframe code for topic';
 $string['topiciframe_help']='Paste iframe embed code (html only) for any media that should be shown to students as part of the speaking topic.';
 $string['topicmedia_help']='Upload an audio/video or image file that will be shown to students as part of the speaking topic on the prepare page.';
 
-$string['speakingtopic'] = 'Speaking Topic';
+$string['speakingtopic'] = 'Topic Resources';
