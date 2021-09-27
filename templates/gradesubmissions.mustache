@@ -32,34 +32,34 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <span class="badge badge-light">Turns: <span class="chatturns">0</span></span>
+                    <span class="badge badge-light">{{# str }} short_turns, mod_pchat {{/ str }} <span class="chatturns">0</span></span>
                 </div>
                 <div class="col">
-                    <span class="badge badge-light">Words: <span class="chatwords">0</span></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <span class="badge badge-light">AV Turn: <span class="chatavturns">0</span></span>
-                </div>
-                <div class="col">
-                    <span class="badge badge-light">Longest: <span class="chatlongesturns">0</span></span>
+                    <span class="badge badge-light">{{# str }} short_words, mod_pchat {{/ str }} <span class="chatwords">0</span></span>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <span class="badge badge-light">Target: <span class="chattargetwords">0</span></span>
+                    <span class="badge badge-light">{{# str }} short_avturn, mod_pchat {{/ str }} <span class="chatavturns">0</span></span>
                 </div>
                 <div class="col">
-                    <span class="badge badge-light">Total target: <span class="chattotaltargetwords">0</span></span>
+                    <span class="badge badge-light">{{# str }} short_longestturn, mod_pchat {{/ str }} <span class="chatlongesturns">0</span></span>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <span class="badge badge-light">Questions: <span class="chatquestions">0</span></span>
+                    <span class="badge badge-light">{{# str }} short_targetwords, mod_pchat {{/ str }} <span class="chattargetwords">0</span></span>
                 </div>
                 <div class="col">
-                    <span class="badge badge-light">AI Score: <span class="chataiscore">0</span></span>
+                    <span class="badge badge-light">{{# str }} short_totaltargetwords, mod_pchat {{/ str }} <span class="chattotaltargetwords">0</span></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <span class="badge badge-light">{{# str }} short_questions, mod_pchat {{/ str }} <span class="chatquestions">0</span></span>
+                </div>
+                <div class="col">
+                    <span class="badge badge-light">{{# str }} short_aiaccuracy, mod_pchat {{/ str }} <span class="chataiscore">0</span></span>
                 </div>
             </div>
         </div>
@@ -71,8 +71,8 @@
         </div>
         <div class="card-footer">
             <small class="text-muted">
-                <strong>Rubric Score</strong>: <span class="chatrubricscore">0</span><br >
-                <strong>Feedback</strong>: <span class="chatfeedback"></span>
+                <strong>{{# str }} gradesgrade, mod_pchat {{/ str }} </strong>: <span class="chatrubricscore">0</span><br >
+                <strong>{{# str }} gradesfeedback, mod_pchat {{/ str }} </strong>: <span class="chatfeedback"></span>
             </small>
         </div>
     </div>

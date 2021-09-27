@@ -758,7 +758,7 @@ function mod_pchat_output_fragment_simple_grade_form($args) {
         parse_str($serialiseddata, $formdata);
     }
 
-    $sql = "select  pa.pchat, pa.feedback, pa.id as attemptid, pa.grade as grade
+    $sql = "select  pa.pchat, pa.feedback, pa.id as attemptid, pa.grade as grade, pc.grade as scaleid
         from {" . constants::M_ATTEMPTSTABLE . "} pa
         inner join {" . constants::M_TABLE . "} pc on pa.pchat = pc.id
         inner join {course_modules} cm on cm.instance = pc.id and pc.course = cm.course and pa.userid = ?
@@ -771,7 +771,7 @@ function mod_pchat_output_fragment_simple_grade_form($args) {
         return "";
     }
 
-    $mform = new simple_grade_form(null, array(), 'post', '', null, true, $formdata);
+    $mform = new simple_grade_form(null, array('scaleid'=>$attempt->scaleid), 'post', '', null, true, $formdata);
 
     if ($mform->is_cancelled()) {
         // Window closes.

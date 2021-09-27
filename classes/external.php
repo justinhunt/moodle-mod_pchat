@@ -277,7 +277,7 @@ class external extends external_api {
 
         $moduleinstance = $DB->get_record(constants::M_TABLE, array('id'=>$attempt->pchat));
 
-        $mform = new \simple_grade_form(null, array(), 'post', '', null, true, $data);
+        $mform = new \simple_grade_form(null, array('scaleid'=>$moduleinstance->grade), 'post', '', null, true, $data);
 
         $validateddata = $mform->get_data();
 

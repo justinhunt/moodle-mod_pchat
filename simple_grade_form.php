@@ -14,8 +14,10 @@ class simple_grade_form extends moodleform {
         global $CFG;
 
         $mform = $this->_form;
+        $scaleid = $this->_customdata['scaleid'];
 
-        $options = utils::get_grade_element_options();
+       // $options = utils::get_grade_element_options();
+        $options = make_grades_menu($scaleid);
         $mform->addElement('select','grade',get_string('grade', constants::M_COMPONENT), $options,array("size"=>"5"));
         $mform->setDefault('grade',0);
 

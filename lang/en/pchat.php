@@ -419,7 +419,7 @@ $string['gradesubmissions'] = 'Grade submissions';
 
 $string['gradeitem:pchat'] = 'P-CHAT';
 $string['developer'] = 'Developer';
-$string['dorubricgrade'] = 'Do Rubric Grade';
+$string['dorubricgrade'] = 'Grade Attempt';
 
 $string['detailedattemptsreport'] = 'Researcher Report';
 $string['detailedattemptsheading']= 'Researcher Report';
@@ -480,3 +480,13 @@ $string['topiciframe_help']='Paste iframe embed code (html only) for any media t
 $string['topicmedia_help']='Upload an audio/video or image file that will be shown to students as part of the speaking topic on the prepare page.';
 
 $string['speakingtopic'] = 'Topic Resources';
+$string['']=" ";
+
+$string['short_words'] = 'Words:';
+$string['short_turns'] = 'Turns:';
+$string['short_avturn'] = 'Av. Turn:';
+$string['short_longestturn'] = 'Longest:';
+$string['short_questions'] = 'Questions:';
+$string['short_totaltargetwords'] = 'Total:';
+$string['short_targetwords'] = 'Target:';
+$string['short_aiaccuracy'] = 'AI Score:';
