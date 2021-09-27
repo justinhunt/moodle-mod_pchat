@@ -43,7 +43,7 @@ $modulecontext = context_module::instance($cm->id);
 require_capability('mod/pchat:grades', $modulecontext);
 
 // Set page login data.
-$PAGE->set_url(constants::M_URL . '/grades.php');
+$PAGE->set_url(constants::M_URL . '/grades.php',array('id'=>$id));
 require_login($course, true, $cm);
 
 require_once($CFG->dirroot.'/grade/grading/lib.php');

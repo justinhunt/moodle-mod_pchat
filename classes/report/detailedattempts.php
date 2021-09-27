@@ -214,12 +214,37 @@ class detailedattempts extends basereport
         $this->headingdata->activityname = $formdata->activityname;
 
         $emptydata = array();
-        $sql = 'SELECT at.id, at.grade, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.words,
+
+        //if we need to show just one group
+        if($formdata->groupid > 0){
+
+            list($groupswhere, $allparams) = $DB->get_in_or_equal($formdata->groupid);
+
+            $sql = 'SELECT at.id, at.grade, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.words,
         st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy,at.selftranscript,at.transcript, at.timemodified ';
-        $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
-        $sql .= ' WHERE at.pchat = :pchatid';
-        $sql .= ' ORDER BY at.userid ASC';
-        $alldata = $DB->get_records_sql($sql,array('pchatid'=>$formdata->pchatid));
+            $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
+            $sql .= ' INNER JOIN {groups_members} gm ON at.userid=gm.userid';
+            $sql .= ' WHERE gm.groupid ' . $groupswhere . ' AND at.pchat = ?';
+            $sql .= ' ORDER BY at.userid ASC';
+            $allparams[]=$formdata->pchatid;
+            $alldata = $DB->get_records_sql($sql,$allparams);
+
+
+            //if no groups, or can see all groups then the SQL is simple
+        }else{
+
+            $sql = 'SELECT at.id, at.grade, at.userid, at.topicname, at.interlocutors,at.filename, st.turns, st.words,
+        st.avturn, st.longestturn, st.targetwords, st.totaltargetwords,st.questions,st.aiaccuracy,at.selftranscript,at.transcript, at.timemodified ';
+            $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
+            $sql .= ' WHERE at.pchat = :pchatid';
+            $sql .= ' ORDER BY at.userid ASC';
+            $alldata = $DB->get_records_sql($sql,array('pchatid'=>$formdata->pchatid));
+
+        }
+
+
+
+
 
         if($alldata){
             foreach($alldata as $thedata){
