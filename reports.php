@@ -36,6 +36,8 @@ $format = optional_param('format', 'tabular', PARAM_TEXT); //export format csv o
 $showreport = optional_param('report', 'menu', PARAM_TEXT); // report type
 $userid = optional_param('userid', 0, PARAM_INT); // report type
 $attemptid = optional_param('attemptid', 0, PARAM_INT); // report type
+$selectedactivities = optional_param('selectedactivities', '*', PARAM_TEXT); // selected activities for class progress
+$selected = optional_param_array('selected', [], PARAM_TEXT);
 
 //paging details
 $paging = new stdClass();
@@ -56,8 +58,16 @@ if ($id) {
     error('You must specify a course_module ID or an instance ID');
 }
 
+if(is_array($selected)){
+    if(count($selected)==1 && $selected[0]=='' ){
+        //do nothing, we will use whatever is in selected activities
+    }else {
+        $selectedactivities = implode(',', $selected);
+    }
+}
+
 $PAGE->set_url(constants::M_URL . '/reports.php',
-	array('id' => $cm->id,'report'=>$showreport,'format'=>$format,'userid'=>$userid,'attemptid'=>$attemptid));
+	array('id' => $cm->id,'report'=>$showreport,'format'=>$format,'userid'=>$userid,'attemptid'=>$attemptid,'selectedactivities'=>$selectedactivities));
 require_login($course, true, $cm);
 $modulecontext = context_module::instance($cm->id);
 
@@ -148,8 +158,16 @@ switch ($showreport){
         $report = new \mod_pchat\report\classprogress($cm);
         $formdata = new stdClass();
         $formdata->groupmenu = true;
+        $formdata->selectedactivities =$selectedactivities ;
+        // this is also possible, but painful on group selection
+    /*
+        $cp_form = new \mod_pchat\report\classprogress_form(null,
+            array('cm'=>$cm,'moduleinstance'=>$moduleinstance));
+        if($cp_form_data=$cp_form->get_data()) {
+            $formdata->selectedactivities = implode(',',$cp_form_data->selectedactivities);
+        }
+    */
         $formdata->klassname = "The Class";
-        //$formdata->modulecontextid = $modulecontext->id;
         break;
 
     case 'userattempts':
@@ -198,7 +216,7 @@ switch ($showreport){
                 }
 
                 $link = new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'menu', 'id' => $cm->id, 'n' => $moduleinstance->id));
-                echo  \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT));
+                echo  \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT),array('class'=>"btn btn-secondary"));
                 echo $renderer->footer();
                 return;
             }

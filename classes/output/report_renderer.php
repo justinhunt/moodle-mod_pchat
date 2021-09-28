@@ -16,44 +16,52 @@ class report_renderer extends \plugin_renderer_base
     public function render_reportmenu($moduleinstance, $cm)
     {
 
-        $basic = new \single_button(
-            new \moodle_url(constants::M_URL . '/reports.php',
-                    array('report' => 'basic', 'id' => $cm->id, 'n' => $moduleinstance->id)),
-            get_string('basicreport', constants::M_COMPONENT), 'get');
+        $items =[];
 
-        $buttons =[];
+        //ATTEMPTS
         $attempts = new \single_button(
             new \moodle_url(constants::M_URL . '/reports.php',
                     array('report' => 'attempts', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'tabular')),
             get_string('attemptsreport', constants::M_COMPONENT), 'get');
-        $buttons[] = $this->render($attempts);
+        $items[] = ['title'=>get_string('attemptsreport', constants::M_COMPONENT),
+            'description'=>get_string('attemptsreport_desc', constants::M_COMPONENT),
+            'content'=>$this->render($attempts)];
 
+        //DETAILED ATTEMPTS
         $detailedattempts = new \single_button(
                 new \moodle_url(constants::M_URL . '/reports.php',
                         array('report' => 'detailedattempts', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'tabular')),
                 get_string('detailedattemptsreport', constants::M_COMPONENT), 'get');
-        $buttons[] = $this->render($detailedattempts);
+        $items[] = ['title'=>get_string('detailedattemptsreport', constants::M_COMPONENT),
+            'description'=>get_string('detailedattemptsreport_desc', constants::M_COMPONENT),
+            'content'=>$this->render($detailedattempts)];
 
-        $classprogress = new \single_button(
-                new \moodle_url(constants::M_URL . '/reports.php',
-                        array('report' => 'classprogress', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'linechart')),
-                get_string('classprogressreport', constants::M_COMPONENT), 'get');
-        $buttons[] = $this->render($classprogress);
+        //Class Progress
+        $classprogress_form  = new \mod_pchat\report\classprogress_form(null,
+            array('cm'=>$cm,'moduleinstance'=>$moduleinstance));
+        // Display the form. Ob* functions used since this is called in an ajax call.
+        $o = '';
+        ob_start();
+        $classprogress_form->display();
+        $o .= ob_get_contents();
+        ob_end_clean();
+        $items[] = ['title'=>get_string('classprogressreport', constants::M_COMPONENT)
+            ,'description'=>get_string('classprogressreport_desc', constants::M_COMPONENT),
+            'content'=>$o];
 
+        //Download Audio
         $downloadaudio = new \single_button(
                 new \moodle_url(constants::M_URL . '/reports.php',
                         array('report' => 'downloadaudio', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'filedownload')),
                 get_string('downloadaudioreport', constants::M_COMPONENT), 'get');
-        $buttons[] = $this->render($downloadaudio);
-/*
-        $downloadaudio = new \single_button(
-                new \moodle_url(constants::M_URL . '/reports.php',
-                        array('report' => 'downloadaudio', 'id' => $cm->id, 'n' => $moduleinstance->id,'format'=>'tabular')),
-                get_string('downloadaudio', constants::M_COMPONENT), 'get');
-        $buttons[] = $this->render($downloadaudio);
-*/
 
-        $ret = \html_writer::div(  implode("&nbsp;&nbsp;",$buttons),  constants::M_CLASS . '_listbuttons');
+        $items[] = ['title'=>get_string('downloadaudioreport', constants::M_COMPONENT),
+            'description'=>get_string('downloadaudioreport_desc', constants::M_COMPONENT),
+            'content'=>$this->render($downloadaudio)];
+
+        //Generate and return menu
+        $ret = $this->output->render_from_template( constants::M_COMPONENT . '/reportsmenu', ['items'=>$items]);
+
 
         return $ret;
     }
@@ -316,7 +324,7 @@ class report_renderer extends \plugin_renderer_base
     {
         // print's a popup link to your custom page
         $link = new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'menu', 'id' => $cm->id, 'n' => $moduleinstance->id));
-        $ret = \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT));
+        $ret = \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT),array("class"=>"btn btn-secondary"));
         if($showexport) {
             $ret .= $this->render_exportbuttons_html($cm, $formdata, $showreport, $currentformat);
         }

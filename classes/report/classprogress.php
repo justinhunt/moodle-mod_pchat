@@ -131,6 +131,12 @@ class classprogress extends basereport
 
         $emptydata = array();
 
+        $selectedactivities = $formdata->selectedactivities;
+        if(!empty($selectedactivities) && $selectedactivities !='*'){
+            $selectedactivities_where = ' AND p.id IN ('  . $selectedactivities . ') ';
+        }else{
+            $selectedactivities_where = '';
+        }
 
         //if we need to show just one group
         if($formdata->groupid > 0){
@@ -142,8 +148,10 @@ class classprogress extends basereport
             $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
             $sql .= ' INNER JOIN {groups_members} gm ON at.userid=gm.userid';
             $sql .= ' WHERE gm.groupid ' . $groupswhere;
+            $sql .= $selectedactivities_where;
             $sql .= ' AND p.course = ?';
             $sql .= ' GROUP BY p.id, p.name';
+            $sql .= ' ORDER BY p.name, p.id';
             $allparams[]=$this->cm->course;
             $alldata = $DB->get_records_sql($sql,$allparams);
 
@@ -154,7 +162,9 @@ class classprogress extends basereport
             $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
             $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
             $sql .= ' WHERE p.course = :courseid';
+            $sql .= $selectedactivities_where;
             $sql .= ' GROUP BY p.id, p.name';
+            $sql .= ' ORDER BY p.name, p.id';
             $alldata = $DB->get_records_sql($sql,array('courseid'=>$this->cm->course));
 
         }

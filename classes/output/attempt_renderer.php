@@ -136,11 +136,38 @@ class attempt_renderer extends \plugin_renderer_base {
         return $this->output->render_from_template( constants::M_COMPONENT . '/summaryteachereval', $data);
     }
 
+    function add_stats_help($stats){
+        $tt_helpicon = new \help_icon('TT', constants::M_MODNAME);
+        $tw_helpicon = new \help_icon('TW', constants::M_MODNAME);
+        $atl_helpicon = new \help_icon('ATL', constants::M_MODNAME);
+        $ltl_helpicon = new \help_icon('LTL', constants::M_MODNAME);
+        $tv_helpicon = new \help_icon('TV', constants::M_MODNAME);
+        $ttv_helpicon = new \help_icon('TTV', constants::M_MODNAME);
+        $qa_helpicon = new \help_icon('QA', constants::M_MODNAME);
+        $aia_helpicon = new \help_icon('AIA', constants::M_MODNAME);
+
+        $stats->tt_helpicon = $tt_helpicon->export_for_template($this->output);
+        $stats->tw_helpicon = $tw_helpicon->export_for_template($this->output);
+        $stats->atl_helpicon = $atl_helpicon->export_for_template($this->output);
+        $stats->ltl_helpicon = $ltl_helpicon->export_for_template($this->output);
+        $stats->tv_helpicon = $tv_helpicon->export_for_template($this->output);
+        $stats->ttv_helpicon = $ttv_helpicon->export_for_template($this->output);
+        $stats->qa_helpicon = $qa_helpicon->export_for_template($this->output);
+        $stats->aia_helpicon = $aia_helpicon->export_for_template($this->output);
+        return $stats;
+    }
+
+
     function show_summary($moduleinstance,$attempt,$aidata, $stats,$userheader=false){
         $attempt->targetwords = utils::fetch_targetwords($attempt);
         $attempt->interlocutornames = utils::fetch_interlocutor_names($attempt);
         $attempt->selftranscriptparts = utils::fetch_selftranscript_parts($attempt);
+        $stats = $this->add_stats_help($stats);
+
         if($userheader){
+            //we cheated here and did a DB fetch for the username: bad bad bad
+            global $DB;
+            $attempt->username = fullname($DB->get_record('user',array('id'=>$attempt->userid)));
             $ret = $this->output->render_from_template( constants::M_COMPONENT . '/summaryuserattemptheader', $attempt);
         }else{
             $ret = $this->output->render_from_template( constants::M_COMPONENT . '/summaryheader', $attempt);

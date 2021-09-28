@@ -350,8 +350,8 @@ $string['cancel'] = 'Cancel';
 $string['selftranscript'] = 'Self Transcript';
 $string['autotranscript'] = 'Auto Transcript';
 $string['stats'] = 'Stats';
-$string['stats_words'] = 'Words';
-$string['stats_turns'] = 'Turns';
+$string['stats_words'] = 'Total Words';
+$string['stats_turns'] = 'Total Turns';
 $string['stats_avturn'] = 'Av. Turn Length';
 $string['stats_longestturn'] = 'Longest Turn Length';
 $string['stats_questions'] = 'Questions Asked';
@@ -364,9 +364,6 @@ $string['multiattempts_details'] = 'If checked a student can choose to overwrite
 $string['attemptsheading']= 'Attempts';
 $string['partners']= 'Partners';
 $string['turns']= 'Turns';
-$string['ATL']= 'ATL';
-$string['LTL']= 'LTL';
-$string['TW']= 'TW';
 $string['idnumber']= 'ID-number';
 
 
@@ -387,8 +384,8 @@ $string['userconvlength']= 'Conv. length override';
 $string['userconvlength_details']= 'Allow users to override suggested conversation length';
 $string['revq']= 'Reflection question {$a}';
 $string['heard']= 'Heard';
-$string['QS']= 'Qs';
-$string['ACC']= 'Acc';
+$string['QS']= 'QA';
+$string['ACC']= 'AIA';
 
 $string['notopicsavailable'] = "No topics have been added by your teacher.";
 
@@ -401,9 +398,10 @@ $string['audiofilename'] = 'Audio';
 $string['gradesid'] = 'ID';
 $string['gradesfirst'] = 'First';
 $string['gradeslast'] = 'Last';
-$string['gradesaiscore'] = 'AI Score';
-$string['gradesturns'] = 'Turns';
-$string['gradesavturnlength'] = 'AV Turn Length';
+$string['gradesaiscore'] = 'AIA';
+$string['gradeswords'] = 'TW';
+$string['gradesturns'] = 'TT';
+$string['gradesavturnlength'] = 'ATL';
 $string['gradesactions'] = 'Actions';
 $string['gradesgraded'] = 'Graded';
 $string['gradesgradedno'] = 'Ungraded';
@@ -453,13 +451,13 @@ $string['completionallsteps_help']='Complete when all steps completed';
 $string['yes']='Yes';
 $string['no']='No';
 
-$string['avturns']='Avg Turns';
-$string['avatl']='Avg ATL';
-$string['avltl']='Avg LTL';
-$string['avw']='Avg Words';
-$string['avtw']='Avg Target Words';
-$string['avq']='Avg Questions';
-$string['avacc']='Avg Acc';
+$string['avturns']='Av. TT';
+$string['avatl']='Av. ATL';
+$string['avltl']='Av. LTL';
+$string['avw']='Av. TW';
+$string['avtw']='Av. TV';
+$string['avq']='Av. QA';
+$string['avacc']='Av. AIA';
 $string['tabular']='Table View';
 
 $string['grade']='Grade';
@@ -483,15 +481,52 @@ $string['topicmedia_help']='Upload an audio/video or image file that will be sho
 $string['speakingtopic'] = 'Topic Resources';
 $string['nogradeavailable']="No grade available";
 
-$string['short_words'] = 'Words:';
-$string['short_turns'] = 'Turns:';
-$string['short_avturn'] = 'Av. Turn:';
-$string['short_longestturn'] = 'Longest:';
-$string['short_questions'] = 'Questions:';
-$string['short_totaltargetwords'] = 'Total:';
-$string['short_targetwords'] = 'Target:';
-$string['short_aiaccuracy'] = 'AI Score:';
+$string['short_TW'] = 'TW';//'Words:';
+$string['short_TT'] = 'TT';//'Turns:';
+$string['short_ATL'] = 'ATL';//'Av. Turn:';
+$string['short_LTL'] = 'LTL';//'Longest:';
+$string['short_QA'] = 'QA';//'Questions:';
+$string['short_TTV'] = 'TTV';//'Total:';
+$string['short_TV'] = 'TV';//'Target:';
+$string['short_AIA'] = 'AIA';//'AI Score:';
+
+$string['long_TW'] = 'Total Words';
+$string['long_TT'] = 'Total Turns';
+$string['long_ATL'] = 'Average Turn Length';
+$string['long_LTL'] = 'Longest Turn Length';
+$string['long_QA'] = 'Questions Asked';
+$string['long_TTV'] = 'Total Target Vocabulary';
+$string['long_TV'] = 'Target Vocabulary';
+$string['long_AIA'] = 'AI Accuracy';
+
+$string['TW_help'] = 'Total Words ..';
+$string['TT_help'] = 'Total Turns ..';
+$string['ATL_help'] = 'Average Turn Length ..';
+$string['LTL_help'] = 'Longest Turn Length ..';
+$string['QA_help'] = 'Questions Asked ..';
+$string['TTV_help'] = 'Total Target Vocabulary ..';
+$string['TV_help'] = 'Target Vocabulary ..';
+$string['AIA_help'] = 'AI Accuracy ..';
+
+$string['TW'] = 'Total Words';
+$string['TT'] = 'Total Turns';
+$string['ATL'] = 'Average Turn Length';
+$string['LTL'] = 'Longest Turn Length';
+$string['QA'] = 'Questions Asked';
+$string['TTV'] = 'Total Target Vocabulary';
+$string['TV'] = 'Target Vocabulary';
+$string['AIA'] = 'AI Accuracy';
 
 $string['revq1']='revq1';
 $string['revq2']='revq2';
 $string['revq3']='revq3';
+
+
+$string['showreport']='Show Report';
+$string['selectactivities']='Select Activities';
+$string['selectedactivities']='Selected Activities';
+$string['attemptsreport_desc']='See details on user\'s most recent attempts and click to drill down and see more';
+$string['detailedattemptsreport_desc']='Full data on user attempts, designed to be exported to CSV and downloaded for analysis.';
+$string['classprogressreport_desc']='See aggregate data on user attempts across different P-Chat activities. Report is displayed as a series of charts. It is also possible to toggle to tabular view. Select the activities to display from the select box below.';
+$string['downloadaudioreport_desc']='Download user attempt audio in a zip file.';
+$string['mustchoosetopic']='You must choose a topic.';

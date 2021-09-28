@@ -181,6 +181,9 @@ abstract class baseform extends \moodleform {
         }else{
             $staticcontent = get_string('notopicsavailable',constants::M_COMPONENT);
         }
+        //sadly can not require a hidden field
+       // $this->_form->addRule($name, get_string('mustchoosetopic',constants::M_COMPONENT), 'required', null, 'client');
+
 
         $this->_form->addElement('static', 'combo_' . $name, $label, $staticcontent);
 
@@ -321,13 +324,16 @@ abstract class baseform extends \moodleform {
     }
 
     protected final function add_userselector_field($name,$label){
+        global $USER;
         $options = [
                 'multiple'=>true
         ];
 
         $selectusers=array();
         foreach ($this->users as $user){
-            $selectusers[$user->id] =  fullname($user);
+            if($USER->id != $user->id) {
+                $selectusers[$user->id] = fullname($user);
+            }
         }
         $this->_form->addElement('autocomplete', $name, $label,$selectusers, $options);
         $this->_form->addRule($name, null, 'required', null, 'client');

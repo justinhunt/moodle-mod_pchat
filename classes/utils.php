@@ -820,7 +820,12 @@ class utils{
                 '7'=>get_string('xminutes',constants::M_COMPONENT,7),
                 '8'=>get_string('xminutes',constants::M_COMPONENT,8),
                 '9'=>get_string('xminutes',constants::M_COMPONENT,9),
-                '10'=>get_string('xminutes',constants::M_COMPONENT,10)
+                '10'=>get_string('xminutes',constants::M_COMPONENT,10),
+                '12'=>get_string('xminutes',constants::M_COMPONENT,12),
+                '15'=>get_string('xminutes',constants::M_COMPONENT,15),
+                '20'=>get_string('xminutes',constants::M_COMPONENT,20),
+                '25'=>get_string('xminutes',constants::M_COMPONENT,25),
+                '30'=>get_string('xminutes',constants::M_COMPONENT,30)
         );
 
     }
@@ -928,6 +933,12 @@ class utils{
             $gradinginstance->get_controller()->set_grade_range($grademenu, $allowgradedecimals);
         }
         return $gradinginstance;
+    }
+
+    public static function fetch_course_instance_menu($course) {
+        global $DB;
+        $result = $DB->get_records_menu(constants::M_TABLE,array('course'=>$course),'name ASC', 'id,name');
+        return $result;
     }
 
     public static function add_mform_elements($mform, $context,$setuptab=false) {

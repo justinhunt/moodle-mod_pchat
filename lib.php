@@ -185,6 +185,11 @@ function pchat_add_instance(stdClass $moduleinstance, mod_pchat_mod_form $mform 
 	$moduleinstance = pchat_process_editors($moduleinstance,$mform);
     $moduleinstance->id = $DB->insert_record(constants::M_TABLE, $moduleinstance);
     pchat_grade_item_update($moduleinstance);
+
+    $cm         = get_coursemodule_from_instance(constants::M_MODNAME, $moduleinstance->id);
+    $completiontimeexpected = !empty($moduleinstance->completionexpected) ? $moduleinstance->completionexpected : null;
+    \core_completion\api::update_completion_date_event($cm->id, constants::M_MODNAME, $moduleinstance->id, $completiontimeexpected);
+
 	return $moduleinstance->id;
 }
 
@@ -224,7 +229,7 @@ function pchat_update_instance(stdClass $moduleinstance, mod_pchat_mod_form $mfo
 
 
     $params = array('id' => $moduleinstance->instance);
-    $oldgradefield = $DB->get_field(constants::M_TABLE, 'grade', $params);
+    $oldmoduleinstance = $DB->get_record(constants::M_TABLE, $params);
 
     $moduleinstance->timemodified = time();
     $moduleinstance->id = $moduleinstance->instance;
@@ -233,12 +238,16 @@ function pchat_update_instance(stdClass $moduleinstance, mod_pchat_mod_form $mfo
 	$success = $DB->update_record(constants::M_TABLE, $moduleinstance);
     pchat_grade_item_update($moduleinstance);
 
-    $update_grades = ($moduleinstance->grade === $oldgradefield ? false : true);
+    $update_grades = ($moduleinstance->grade === $oldmoduleinstance->grade ? false : true);
     if ($update_grades) {
         pchat_update_grades($moduleinstance, 0, false);
     }
 
-	return $success;
+    $cm         = get_coursemodule_from_instance(constants::M_MODNAME, $moduleinstance->id);
+    $completiontimeexpected = !empty($moduleinstance->completionexpected) ? $moduleinstance->completionexpected : null;
+    \core_completion\api::update_completion_date_event($cm->id, constants::M_MODNAME, $moduleinstance->id, $completiontimeexpected);
+
+    return $success;
 }
 
 /**
@@ -257,6 +266,9 @@ function pchat_delete_instance($id) {
     if (! $moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $id))) {
         return false;
     }
+    if (!$cm = get_coursemodule_from_instance(constants::M_MODNAME, $id)) {
+        return false;
+    }
 
     # Delete any dependent records here #
 
@@ -269,6 +281,8 @@ function pchat_delete_instance($id) {
             "topicid IN (SELECT id FROM {".constants::M_TOPIC_TABLE."} t WHERE t.moduleid = ?)",
             array('moduleid' => $moduleinstance->id));
     $DB->delete_records(constants::M_TOPIC_TABLE, array('moduleid' => $moduleinstance->id));
+
+    \core_completion\api::update_completion_date_event($cm->id, constants::M_MODNAME, $id, null);
 
     return true;
 }
@@ -815,7 +829,7 @@ function pchat_get_completion_state($course,$cm,$userid,$type) {
 
     // If completion option is enabled, evaluate it and return true/false
     if($moduleinstance->completionallsteps) {
-        $latestattempt = $attempthelper->fetch_latest_attempt();
+        $latestattempt = $attempthelper->fetch_latest_attempt($userid);
         if ($latestattempt && $latestattempt->completedsteps == constants::STEP_SELFREVIEW){
             return true;
         }else{

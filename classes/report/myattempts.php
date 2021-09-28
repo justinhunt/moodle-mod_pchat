@@ -58,7 +58,11 @@ class myattempts extends basereport
 
             case 'grade':
 
-                $ret = $record->grade==null ? '' : $record->grade . '%';
+                if ($withlinks) {
+                    $ret = $record->grade == null ? '' : $this->fetch_gradelabel_cache($record->grade);
+                }else{
+                    $ret = $record->grade == null ? '' : $record->grade;
+                }
                 break;
 
 

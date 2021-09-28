@@ -28,6 +28,7 @@
     <tr>
         <th>{{# str }} gradeslast, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesfirst, mod_pchat {{/ str }}</th>
+        <th>{{# str }} gradeswords, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesaiscore, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesturns, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesavturnlength, mod_pchat {{/ str }}</th>
@@ -39,9 +40,10 @@
     <tr>
         <th>{{# str }} gradeslast, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesfirst, mod_pchat {{/ str }}</th>
-        <th>{{# str }} gradesaiscore, mod_pchat {{/ str }}</th>
-        <th>{{# str }} gradesturns, mod_pchat {{/ str }}</th>
-        <th>{{# str }} gradesavturnlength, mod_pchat {{/ str }}</th>
+        <th aria-label="{{# str }} long_TW, mod_pchat {{/ str }}">{{# str }} gradeswords, mod_pchat {{/ str }}</th>
+        <th aria-label="{{# str }} long_TT, mod_pchat {{/ str }}">{{# str }} gradesturns, mod_pchat {{/ str }}</th>
+        <th aria-label="{{# str }} long_AIA, mod_pchat {{/ str }}">{{# str }} gradesaiscore, mod_pchat {{/ str }}</th>
+        <th aria-label="{{# str }} long_ATL, mod_pchat {{/ str }}">{{# str }} gradesavturnlength, mod_pchat {{/ str }}</th>
         <th>{{# str }} gradesactions, mod_pchat {{/ str }}&nbsp;</th>
         <th>{{# str }} gradesgrade, mod_pchat {{/ str }}</th>
     </tr>
@@ -51,14 +53,15 @@
         <tr data-history-id="{{id}}" class="history-row">
             <td>{{lastname}}</td>
             <td>{{firstname}}</td>
-            <td class="text-center">{{aiaccuracy}}</td>
-            <td class="text-center">{{turns}}</td>
-            <td class="text-center">{{avturn}}</td>
+            <td>{{words}}</td>
+            <td>{{turns}}</td>
+            <td>{{aiaccuracy}}</td>
+            <td>{{avturn}}</td>
             <td><a href="gradesubmissions.php?id={{cmid}}&attempt={{attemptid}}&userid={{userid}}">
                 <button type="button" class="btn btn-primary">
                     {{# str }} gradesgrade, mod_pchat {{/ str }}
                 </button>&nbsp;</a></td>
-            <td class="m-0 text-center">{{grade}}</td>
+            <td>{{grade}}</td>
 
         </tr>
     {{/data}}

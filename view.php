@@ -89,6 +89,11 @@ if(count($attempts)==0){
 
 //either redirect to a form handler for the attempt step, or show our attempt summary
 if($start_or_continue) {
+
+    // Set this modyle as viewed for Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+
     $redirecturl = new moodle_url(constants::M_URL . '/attempt/manageattempts.php',
             array('id'=>$cm->id, 'attemptid' => $attemptid, 'type' => $nextstep));
     redirect($redirecturl);

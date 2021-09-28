@@ -15,8 +15,8 @@ class detailedattempts extends basereport
 {
 
     protected $report="detailedattempts";
-    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','words','ATL','LTL','TW','QS','ACC','grade','selftranscript','transcript','revq1','revq2','revq3','timemodified','view','deletenow');
-    protected $exportfields = array('id','idnumber', 'username','audiofile','topicname','partners','turns','words','ATL','LTL','TW','QS','ACC','grade','selftranscript','transcript','revq1','revq2','revq3','timemodified');
+    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','short_TW','short_TT','short_ATL','short_LTL','short_QA','short_TV','short_AIA','grade','selftranscript','transcript','revq1','revq2','revq3','timemodified','view','deletenow');
+    protected $exportfields = array('id','idnumber', 'username','audiofile','topicname','partners','short_TW','short_TT','short_ATL','short_LTL','short_QA','short_TV','short_AIA','grade','selftranscript','transcript','revq1','revq2','revq3','timemodified');
 
     protected $headingdata = null;
     protected $qcache=array();
@@ -42,8 +42,11 @@ class detailedattempts extends basereport
                 break;
 
             case 'grade':
-
-                $ret = $record->grade==null ? '' : $record->grade;
+                if ($withlinks) {
+                    $ret = $record->grade == null ? '' : $this->fetch_gradelabel_cache($record->grade);
+                }else{
+                    $ret = $record->grade == null ? '' : $record->grade;
+                }
                 break;
 
             case 'username':
@@ -123,34 +126,34 @@ class detailedattempts extends basereport
 
                 break;
 
-            case 'words':
+            case 'short_TW':
                 $ret = $record->words;
                 break;
 
-            case 'turns':
+            case 'short_TT':
                 $ret = $record->turns;
                 break;
 
-            case 'ATL':
+            case 'short_ATL':
                 $ret = $record->avturn;
                 break;
 
-            case 'LTL':
+            case 'short_LTL':
                 $ret = $record->longestturn;
                 break;
 
-            case 'TW':
+            case 'short_TV':
 
                 // $ret = $record->targetwords . '/' . $record->totaltargetwords;
                 $ret = $record->targetwords;
 
                 break;
 
-            case 'QS':
+            case 'short_QA':
                 $ret = $record->questions ;
                 break;
 
-            case 'ACC':
+            case 'short_AIA':
                 if($record->aiaccuracy<0) {
                     $ret = '';
                 }else{

@@ -2,13 +2,62 @@
     <table class="table">
       <tbody>
 
-      <tr> <td>{{#str}}stats_words, mod_pchat{{/str}}</td><td>{{s.words}}</td> </tr>
-      <tr><td>{{#str}}stats_turns, mod_pchat{{/str}}</td><td>{{s.turns}}</td></tr>
-      <tr><td>{{#str}}stats_avturn, mod_pchat{{/str}}</td><td>{{s.avturn}}</td></tr>
-      <tr><td>{{#str}}stats_longestturn, mod_pchat{{/str}}</td><td>{{s.longestturn}}</td></tr>
-      <tr><td>{{#str}}stats_questions, mod_pchat{{/str}}</td><td>{{s.questions}}</td></tr>
-      <tr> <td>{{#str}}stats_targetwords, mod_pchat{{/str}}</td><td>{{s.targetwords}}/{{s.totaltargetwords}}</td></tr>
-      <tr><td>{{#str}}stats_aiaccuracy, mod_pchat{{/str}}</td><td>{{s.aiaccuracy}}%</td></tr>
+      <tr>
+          <td>{{#str}}stats_words, mod_pchat{{/str}}
+          {{#s.tw_helpicon}}
+              {{>core/help_icon}}
+          {{/s.tw_helpicon}}
+            </td>
+          <td>{{s.words}}</td>
+      </tr>
+      <tr>
+          <td>{{#str}}stats_turns, mod_pchat{{/str}}
+          {{#s.tt_helpicon}}
+              {{>core/help_icon}}
+          {{/s.tt_helpicon}}
+          </td>
+          <td>{{s.turns}}</td>
+      </tr>
+      <tr>
+          <td>{{#str}}stats_avturn, mod_pchat{{/str}}
+              {{#s.atl_helpicon}}
+                  {{>core/help_icon}}
+              {{/s.atl_helpicon}}
+          </td>
+          <td>{{s.avturn}}</td>
+      </tr>
+      <tr>
+          <td>{{#str}}stats_longestturn, mod_pchat{{/str}}
+              {{#s.ltl_helpicon}}
+                  {{>core/help_icon}}
+              {{/s.ltl_helpicon}}
+          </td>
+          <td>{{s.longestturn}}</td>
+      </tr>
+      <tr>
+          <td>{{#str}}stats_questions, mod_pchat{{/str}}
+              {{#s.qa_helpicon}}
+                  {{>core/help_icon}}
+              {{/s.qa_helpicon}}
+          </td>
+          <td>{{s.questions}}</td>
+      </tr>
+      <tr>
+          <td>{{#str}}stats_targetwords, mod_pchat{{/str}}
+              {{#s.tw_helpicon}}
+                  {{>core/help_icon}}
+              {{/s.tw_helpicon}}
+          </td>
+          <td>{{s.targetwords}}/{{s.totaltargetwords}}</td>
+      </tr>
+      <tr>
+          <td>{{#str}}stats_aiaccuracy, mod_pchat{{/str}}
+              {{#s.aia_helpicon}}
+                  {{>core/help_icon}}
+              {{/s.aia_helpicon}}
+          </td>
+          <td>{{s.aiaccuracy}}%</td>
+      </tr>
       </tbody>
     </table>
 </div>

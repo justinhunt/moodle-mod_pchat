@@ -177,6 +177,9 @@ switch($type){
             if(!$hastranscripts ){$autotranscript=get_string('transcriptnotready',constants::M_COMPONENT);}
 
             $stats =utils::fetch_stats($attempt);
+            $attemptrenderer = $PAGE->get_renderer(constants::M_COMPONENT,'attempt');
+            $stats = $attemptrenderer->add_stats_help($stats);
+
             if(!$aidata){
                 $aidata= $DB->get_record(constants::M_AITABLE,array('attemptid'=>$attempt->id));
             }

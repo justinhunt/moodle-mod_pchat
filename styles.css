@@ -915,14 +915,7 @@ button#poodllconvedit_edcancel:hover,
 
 
 .mod_pchat_grading_badword {
-    /*
-    color: red;
-    background-color: #ffcaca;
-    padding: 5px;
-    border-radius: 5px 5px 5px;
-    border: 1px solid red;
-    position: relative;
-    */
+
     text-decoration: underline #0000FF;
     font-weight: bold;
 }
@@ -1051,4 +1044,10 @@ div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
 	position: absolute;
 	max-width: 400px;
 	max-height: 225px;
+}
+.mod_pchat_reportmenu_item {
+	max-width: 800px;
+}
+.mod_pchat_actionbuttons {
+	text-align: right;
 }

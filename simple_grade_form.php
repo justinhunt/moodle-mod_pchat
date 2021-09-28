@@ -1,8 +1,8 @@
 <?php
 global $CFG;
 
-use \mod_solo\constants;
-use \mod_solo\utils;
+use \mod_pchat\constants;
+use \mod_pchat\utils;
 
 require_once("$CFG->libdir/formslib.php");
 require_once($CFG->libdir . '/pear/HTML/QuickForm/input.php');

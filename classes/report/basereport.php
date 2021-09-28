@@ -49,6 +49,7 @@ abstract class basereport {
     protected $rawdata=null;
     protected $fields = array();
     protected $dbcache=array();
+    protected $gradelabelcache = array();
 
 
     abstract function process_raw_data($formdata);
@@ -57,6 +58,7 @@ abstract class basereport {
     public function __construct($cm) {
         global $DB;
         $this->cm = $cm;
+        $this->moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $cm->instance), '*', MUST_EXIST);
         //$this->mod = $DB->get_record(constants::M_TABLE, ['id' => $cm->instance], '*', MUST_EXIST);
         $this->context = \context_module::instance($cm->id);
     }
@@ -94,6 +96,17 @@ abstract class basereport {
             $string=substr($string,0,$maxlength - 2) . '..';
         }
         return $string;
+    }
+
+    public function fetch_gradelabel_cache($grade){
+        if(count($this->gradelabelcache)==0) {
+            $this->gradelabelcache = make_grades_menu($this->moduleinstance->grade);
+        }
+        if(array_key_exists($grade,$this->gradelabelcache)){
+            return $this->gradelabelcache[$grade];
+        }else{
+            return $grade;
+        }
     }
 
     public function fetch_cache($table,$rowid){
