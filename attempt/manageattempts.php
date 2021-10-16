@@ -327,7 +327,7 @@ if ($data = $mform->get_data()) {
     //if we have finished and are editing an existing sub then it will send us to self review
     // however if editing then the next place for us should really be just the next step
     //lets set that
-     if($attempt->completedsteps > $type){
+     if($attempt && $attempt->completedsteps > $type){
          switch($type){
              case constants::STEP_USERSELECTIONS: $redirecturl->param('requeststep',constants::STEP_AUDIORECORDING);break;
              case constants::STEP_AUDIORECORDING: $redirecturl->param('requeststep',constants::STEP_SELFTRANSCRIBE);break;
