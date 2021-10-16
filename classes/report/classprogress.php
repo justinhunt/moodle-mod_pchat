@@ -133,6 +133,8 @@ class classprogress extends basereport
 
         $selectedactivities = $formdata->selectedactivities;
         if(!empty($selectedactivities) && $selectedactivities !='*'){
+            //sometimes commas do not get through
+            $selectedactivities = urldecode($selectedactivities);
             $selectedactivities_where = ' AND p.id IN ('  . $selectedactivities . ') ';
         }else{
             $selectedactivities_where = '';

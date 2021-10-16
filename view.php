@@ -32,6 +32,7 @@ use mod_pchat\utils;
 $id = optional_param('id',0, PARAM_INT); // course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // pchat instance ID
 $reattempt = optional_param('reattempt',0, PARAM_INT);
+$requeststep = optional_param('requeststep', constants::STEP_NONE, PARAM_INT);
 
 if ($id) {
     $cm = get_coursemodule_from_id(constants::M_MODNAME, $id, 0, false, MUST_EXIST);
@@ -80,7 +81,16 @@ if(count($attempts)==0){
     $attemptid = 0;
 }else{
     $latestattempt = $attempthelper->fetch_latest_attempt();
-    if ($latestattempt && $latestattempt->completedsteps < constants::STEP_SELFREVIEW){
+    if($latestattempt
+        && $latestattempt->completedsteps >= $requeststep
+        && $requeststep>constants::STEP_NONE
+        && $requeststep <  constants::STEP_SELFREVIEW){
+
+        $start_or_continue=true;
+        $nextstep=$requeststep;
+        $attemptid=$latestattempt->id;
+
+    } else if ($latestattempt && $latestattempt->completedsteps < constants::STEP_SELFREVIEW){
         $start_or_continue=true;
         $nextstep=$latestattempt->completedsteps+1;
         $attemptid=$latestattempt->id;
@@ -124,7 +134,12 @@ if($start_or_continue) {
     if(!empty($gradinginfo ) && $attempt->grade !=null) {
         $rubricresults= utils::display_rubricgrade($context,$moduleinstance,$attempt,$gradinginfo );
         $feedback=$attempt->feedback;
-        echo $attempt_renderer->show_teachereval( $rubricresults,$feedback);
+        $displaygrade='';
+        $displaygrades = make_grades_menu($moduleinstance->grade);
+        if(array_key_exists($attempt->grade,$displaygrades)){
+            $displaygrade =$displaygrades[$attempt->grade];
+        }
+        echo $attempt_renderer->show_teachereval( $rubricresults,$feedback, $displaygrade);
 
     }
     //myreports

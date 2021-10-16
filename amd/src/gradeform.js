@@ -196,8 +196,8 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
                 if(response && response.response[0]) {
                     log.debug(response.response[0]);
                     log.debug(element);
-                    $(element).find('.chatrubricscore').html(response.response[0].rubricscore);
-                    $(element).find('.chatfeedback').html(response.response[0].feedback);
+                    $(element).find('.chat_rubricscore').html(response.response[0].rubricscore);
+                    $(element).find('.chat_feedback').html(response.response[0].feedback);
                 }
             }).fail(function(ex) {
                 // @todo do something with the exception
@@ -215,7 +215,7 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
             // Oh noes! Epic fail :(
             // Ah wait - this is normal. We need to re-display the form with errors!
             this.modal.setBody(this.getBody(data));
-            $("[data-original-student]").trigger('change');
+
         };
 
         /**
@@ -273,7 +273,12 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
                 fail: this.handleFormSubmissionFailure.bind(this, formData)
             }]);
 
-            this.modal.hide();
+            // We choose NOT to hide the form in the event of fail
+            //The user must choose none or something for each of the options
+            //otherwise the page reloads and the audio playback gets reset
+            //and the user is unaware that the form submission failed
+
+           // this.modal.hide();
         };
 
         /**

@@ -139,7 +139,12 @@ switch ($showreport){
                 if(!empty($gradinginfo ) && $attempt->grade !=null) {
                     $rubricresults= utils::display_rubricgrade($modulecontext,$moduleinstance,$attempt,$gradinginfo );
                     $feedback=$attempt->feedback;
-                    echo $attempt_renderer->show_teachereval( $rubricresults,$feedback);
+                    $displaygrade='';
+                    $displaygrades = make_grades_menu($moduleinstance->grade);
+                    if(array_key_exists($attempt->grade,$displaygrades)){
+                        $displaygrade =$displaygrades[$attempt->grade];
+                    }
+                    echo $attempt_renderer->show_teachereval( $rubricresults,$feedback, $displaygrade);
 
                 }
 

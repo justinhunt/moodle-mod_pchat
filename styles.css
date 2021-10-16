@@ -113,8 +113,15 @@ div.mod_pchat_mbuttons {
 }
 .mod_pchat_summaryresults {
 	display: flex;
-	margin-bottom: 15px
+	flex-direction: row;
+	margin-bottom: 15px;
 }
+@media screen and (max-width: 800px) {
+	.mod_pchat_summaryresults {
+		flex-direction: column;
+	}
+}
+
 .mod_pchat_sr_title{
 	margin: auto;
 	text-align: center;
@@ -130,6 +137,19 @@ div.mod_pchat_mbuttons {
 .mod_pchat_sr_right, .mod_pchat_sr_left {
 	flex-grow: 1;
 	width: 50%;
+}
+
+.mod_pchat_sr_wide {
+	flex-grow: 1;
+}
+
+.mod_pchat_centerwidebox {
+	max-width: 800px;
+	width: 100%;
+	margin: auto;
+}
+.mod_pchat_listbuttons {
+	text-align: center;
 }
 
 .mod_pchat_grading_passagecont {
@@ -1050,4 +1070,10 @@ div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
 }
 .mod_pchat_actionbuttons {
 	text-align: right;
+}
+.mod_pchat_nativeaudioplayer_cont audio {
+	width: 100%;
+}
+.mod_pchat_textcenter {
+	text-align: center;
 }

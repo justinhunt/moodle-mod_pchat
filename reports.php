@@ -59,7 +59,7 @@ if ($id) {
 }
 
 if(is_array($selected)){
-    if(count($selected)==1 && $selected[0]=='' ){
+    if(count($selected)== 0 || (count($selected)==1 && $selected[0]=='' )){
         //do nothing, we will use whatever is in selected activities
     }else {
         $selectedactivities = implode(',', $selected);
@@ -208,15 +208,22 @@ switch ($showreport){
                 //necessary for M3.3
                 require_once($CFG->libdir.'/gradelib.php');
                 $gradinginfo = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $attempt->userid);
+
                 if(!empty($gradinginfo ) && $attempt->grade !=null) {
                     $rubricresults= utils::display_rubricgrade($modulecontext,$moduleinstance,$attempt,$gradinginfo );
+                    $displaygrade='';
+                    $displaygrades = make_grades_menu($moduleinstance->grade);
+                    if(array_key_exists($attempt->grade,$displaygrades)){
+                        $displaygrade =$displaygrades[$attempt->grade];
+                    }
                     $feedback=$attempt->feedback;
-                    echo $attempt_renderer->show_teachereval( $rubricresults,$feedback);
+                    echo $attempt_renderer->show_teachereval( $rubricresults,$feedback, $displaygrade);
 
                 }
 
                 $link = new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'menu', 'id' => $cm->id, 'n' => $moduleinstance->id));
-                echo  \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT),array('class'=>"btn btn-secondary"));
+                $returnbutton =   \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT),array('class'=>"btn btn-secondary"));
+                echo \html_writer::div($returnbutton,"mod_pchat_textcenter");
                 echo $renderer->footer();
                 return;
             }
@@ -300,9 +307,12 @@ switch($format){
         echo $groupmenu;
         echo $reportrenderer->heading($reportheading, 4);
 
+
         //first check if we actually have some data, if not we just show an "empty" message
         $fields = array('pchatname');
         if($report->fetch_chart_data($fields)!==false) {
+            $showexport = true;
+            echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format,$showexport);
 
             switch ($showreport) {
                 case 'myprogress':
@@ -322,10 +332,10 @@ switch($format){
                     echo $reportrenderer->render_linechart($report->fetch_chart_data($fields));
                     break;
             }
-            $showexport = true;
+
         }else{
-            echo $reportrenderer->render_empty_section_html($reportheading, 4);
             $showexport = false;
+            echo $reportrenderer->render_empty_section_html($reportheading, 4);
         }
         echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format,$showexport);
         echo $renderer->footer();
@@ -336,6 +346,7 @@ switch($format){
 		
 		$reportrows = $report->fetch_formatted_rows(true,$paging);
 		$allrowscount = $report->fetch_all_rows_count();
+		$showexport=true;
 
 		if(constants::M_USE_DATATABLES){
 
@@ -343,7 +354,9 @@ switch($format){
             $PAGE->requires->css( new \moodle_url('https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css'));
             echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
             echo $extraheader;
+            echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format,$showexport);
             echo $groupmenu;
+
             echo $reportrenderer->render_hiddenaudioplayer();
             echo $reportrenderer->render_section_html($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows,
                     $report->fetch_fields());
@@ -353,6 +366,7 @@ switch($format){
             $pagingbar = $reportrenderer->show_paging_bar($allrowscount, $paging, $PAGE->url);
             echo $renderer->header($moduleinstance, $cm, $mode, null, get_string('reports', constants::M_COMPONENT));
             echo $extraheader;
+            echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format,$showexport);
             echo $groupmenu;
             echo $reportrenderer->render_hiddenaudioplayer();
             echo $pagingbar;

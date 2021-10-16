@@ -372,7 +372,7 @@ $string['audiorecording']= 'Audio Recording';
 $string['summaryuserattemptheadertitle']= '(Attempt: {$a}) Conversation Details';
 $string['summaryuserattemptheaderintro']= '';
 $string['summaryheadertitle']= 'Your Conversation Details';
-$string['summaryheaderintro']= 'Check the details and the results of your conversation below. How do you think? You should be getting better each time.';
+$string['summaryheaderintro']= 'On this page you can review the details of your contribution to the conversation.';
 $string['leaveedittopic']= 'Edit (diff. activity)';
 $string['fonticonexplanation']= 'Add an icon graphic to represent the topic. Use FontAwesome for this. The pattern is fa-xxx where xxx is the icon name. Search for icons at: <a href="https://fontawesome.com/v4.7.0/icons">https://fontawesome.com/v4.7.0/icons</a>';
 
@@ -402,6 +402,9 @@ $string['gradesaiscore'] = 'AIA';
 $string['gradeswords'] = 'TW';
 $string['gradesturns'] = 'TT';
 $string['gradesavturnlength'] = 'ATL';
+$string['gradeslongestturnlength'] = 'LTL';
+$string['gradestargetwords'] = 'TV';
+$string['gradesquestionsasked'] = 'QA';
 $string['gradesactions'] = 'Actions';
 $string['gradesgraded'] = 'Graded';
 $string['gradesgradedno'] = 'Ungraded';

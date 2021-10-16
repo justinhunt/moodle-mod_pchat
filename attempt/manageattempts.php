@@ -323,6 +323,20 @@ if ($data = $mform->get_data()) {
         }
     }
 
+    //redirect url will take us to the view page which will determine the next place for us to go
+    //if we have finished and are editing an existing sub then it will send us to self review
+    // however if editing then the next place for us should really be just the next step
+    //lets set that
+     if($attempt->completedsteps > $type){
+         switch($type){
+             case constants::STEP_USERSELECTIONS: $redirecturl->param('requeststep',constants::STEP_AUDIORECORDING);break;
+             case constants::STEP_AUDIORECORDING: $redirecturl->param('requeststep',constants::STEP_SELFTRANSCRIBE);break;
+             case constants::STEP_SELFTRANSCRIBE: $redirecturl->param('requeststep',constants::STEP_SELFREVIEW);break;
+             case constants::STEP_SELFREVIEW:
+             default:
+         }
+     }
+
     //go back to top page
     redirect($redirecturl);
 }

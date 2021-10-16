@@ -93,33 +93,6 @@ class report_renderer extends \plugin_renderer_base
         return $this->output->heading(get_string('nodataavailable', constants::M_COMPONENT), 3);
     }
 
-    public function render_exportbuttons_html($cm, $formdata, $showreport, $currentformat)
-    {
-        $buttons = [];
-        //convert formdata to array
-        $formdata = (array)$formdata;
-        $formdata['id'] = $cm->id;
-        $formdata['report'] = $showreport;
-
-        //CSV Button
-        $formdata['format'] = 'csv';
-        $excel = new \single_button(
-                new \moodle_url(constants::M_URL . '/reports.php', $formdata),
-                get_string('exportexcel', constants::M_COMPONENT), 'get');
-        $buttons[]=$this->render($excel);
-
-        //tabular if linechart
-        if($currentformat=='linechart'){
-            $formdata['format'] = 'tabular';
-            $tabular = new \single_button(
-                    new \moodle_url(constants::M_URL . '/reports.php', $formdata),
-                    get_string('tabular', constants::M_COMPONENT), 'get');
-            $buttons[]=$this->render($tabular);
-
-        }
-
-        return \html_writer::div(implode("&nbsp;&nbsp;",$buttons), constants::M_CLASS . '_actionbuttons');
-    }
 
     public function make_name_safe($name){
         $dangerousCharacters = array(" ", '"', "'", "&", "/", "\\", "?", "#");
@@ -324,11 +297,36 @@ class report_renderer extends \plugin_renderer_base
     {
         // print's a popup link to your custom page
         $link = new \moodle_url(constants::M_URL . '/reports.php', array('report' => 'menu', 'id' => $cm->id, 'n' => $moduleinstance->id));
-        $ret = \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT),array("class"=>"btn btn-secondary"));
+        $buttons=[];
+        //return to to top button
+        $buttons[] = \html_writer::link($link, get_string('returntoreports', constants::M_COMPONENT),array("class"=>"btn btn-secondary"));
+        //add export buttons
         if($showexport) {
-            $ret .= $this->render_exportbuttons_html($cm, $formdata, $showreport, $currentformat);
+
+            //convert formdata to array
+            $formdata = (array)$formdata;
+            $formdata['id'] = $cm->id;
+            $formdata['report'] = $showreport;
+
+
+            //CSV Button
+            $formdata['format'] = 'csv';
+            $excel = new \single_button(
+                new \moodle_url(constants::M_URL . '/reports.php', $formdata),
+                get_string('exportexcel', constants::M_COMPONENT), 'get');
+            $buttons[]=$this->render($excel);
+
+            //tabular if linechart
+            if($currentformat=='linechart'){
+                $formdata['format'] = 'tabular';
+                $tabular = new \single_button(
+                    new \moodle_url(constants::M_URL . '/reports.php', $formdata),
+                    get_string('tabular', constants::M_COMPONENT), 'get');
+                $buttons[]=$this->render($tabular);
+
+            }
         }
-        return $ret;
+        return \html_writer::div(implode("&nbsp;&nbsp;",$buttons), constants::M_CLASS . '_actionbuttons');
     }
 
     function show_perpage_selector($url, $paging)

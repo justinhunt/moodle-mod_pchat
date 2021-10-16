@@ -416,7 +416,7 @@ abstract class baseform extends \moodleform {
         //add visible review question fields, when there is a question
         foreach($names as $name){
             if(!empty($this->moduleinstance->{$name})) {
-                $this->_form->addElement('static', $name . 'text' ,'',$this->moduleinstance->{$name});
+                $this->_form->addElement('static', $name . 'text' ,'',nl2br($this->moduleinstance->{$name}));
                 $this->_form->addElement('textarea', $name, '', $opts);
                 $this->_form->setType($name, PARAM_TEXT);
             }else{

@@ -129,10 +129,11 @@ class attempt_renderer extends \plugin_renderer_base {
         return $this->show_summary($moduleinstance,$attempt,$aidata, $stats,$userheader);
     }
 
-    function show_teachereval($rubricresults, $feedback){
+    function show_teachereval($rubricresults, $feedback,$displaygrade){
         $data = new \stdClass();
         $data->rubricresults = $rubricresults;
         $data->feedback=$feedback;
+        $data->displaygrade=$displaygrade;
         return $this->output->render_from_template( constants::M_COMPONENT . '/summaryteachereval', $data);
     }
 
@@ -194,9 +195,9 @@ class attempt_renderer extends \plugin_renderer_base {
         $ret .= $this->output->render_from_template( constants::M_COMPONENT . '/summaryresults', $tdata);
 
         $revqs=array();
-        if($moduleinstance->revq1){$revqs[] = array('q'=>$moduleinstance->revq1,'a'=>$attempt->revq1);}
-        if($moduleinstance->revq2){$revqs[] = array('q'=>$moduleinstance->revq2,'a'=>$attempt->revq2);}
-        if($moduleinstance->revq3){$revqs[] = array('q'=>$moduleinstance->revq3,'a'=>$attempt->revq3);}
+        if($moduleinstance->revq1){$revqs[] = array('q'=>nl2br($moduleinstance->revq1),'a'=>$attempt->revq1);}
+        if($moduleinstance->revq2){$revqs[] = array('q'=>nl2br($moduleinstance->revq2),'a'=>$attempt->revq2);}
+        if($moduleinstance->revq3){$revqs[] = array('q'=>nl2br($moduleinstance->revq3),'a'=>$attempt->revq3);}
         if(count($revqs)>0) {
             $ret .= $this->output->render_from_template(constants::M_COMPONENT . '/summaryselfreview', array('revqs' => $revqs));
         }
