@@ -54,7 +54,7 @@ class userselectionsform extends baseform
     function validation($data, $files) {
         $errors= array();
         if (empty($data['topicid'])){
-                $errors['topicid'] = get_string('mustchoosetopic');
+                $errors['topicid'] = get_string('mustchoosetopic', constants::M_COMPONENT);
         }
         return $errors;
     }
