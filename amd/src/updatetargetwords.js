@@ -18,7 +18,7 @@ This file contains class and ID definitions.
                 $(theid).remove();
             } else {
                 //if there is no config we might as well give up
-                log.debug('Read Seed Test Controller: No config found on page. Giving up.');
+                log.debug(' Controller: No config found on page. Giving up.');
                 return;
             }
 
@@ -45,6 +45,8 @@ This file contains class and ID definitions.
                             d.html(html);
                         }
                     );
+                    //lets also hide the red warning message
+                    $('.mod_pchat_topiccombo_explainer').hide();
                 }
             });
         }

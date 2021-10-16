@@ -533,3 +533,5 @@ $string['detailedattemptsreport_desc']='Full data on user attempts, designed to 
 $string['classprogressreport_desc']='See aggregate data on user attempts across different P-Chat activities. Report is displayed as a series of charts. It is also possible to toggle to tabular view. Select the activities to display from the select box below.';
 $string['downloadaudioreport_desc']='Download user attempt audio in a zip file.';
 $string['mustchoosetopic']='You must choose a topic.';
+$string['topiccomboexplainer']='You must choose a conversation topic.';
+

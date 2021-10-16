@@ -1077,3 +1077,6 @@ div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
 .mod_pchat_textcenter {
 	text-align: center;
 }
+.mod_pchat_topiccombo_explainer {
+	color: red;
+}
