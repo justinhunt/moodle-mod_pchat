@@ -50,4 +50,13 @@ class userselectionsform extends baseform
         return get_string('saveandnext', constants::M_COMPONENT);
     }
 
+    // Perform some extra moodle validation
+    function validation($data, $files) {
+        $errors= array();
+        if (empty($data['topicid'])){
+                $errors['topicid'] = get_string('mustchoosetopic');
+        }
+        return $errors;
+    }
+
 }
