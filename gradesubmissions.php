@@ -45,6 +45,7 @@ $gradesubmissions = new gradesubmissions();
 $id = required_param('id', PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
 $attempt = required_param('attempt', PARAM_INT);
+$pagestyle = optional_param('pagestyle',constants::M_CONVGROUP,PARAM_INT);
 
 // Course and course module data.
 $cm = get_coursemodule_from_id(constants::M_MODNAME, $id, 0, false, IGNORE_MISSING);
@@ -54,7 +55,7 @@ $modulecontext = context_module::instance($cm->id);
 require_capability('mod/pchat:grades', $modulecontext);
 
 // Set page login data.
-$PAGE->set_url(constants::M_URL . '/gradesubmissions.php',array('id'=>$id,'userid'=>$userid, 'attempt'=>$attempt));
+$PAGE->set_url(constants::M_URL . '/gradesubmissions.php',array('id'=>$id,'userid'=>$userid, 'attempt'=>$attempt, 'pagestyle'=>$pagestyle));
 require_login($course, true, $cm);
 
 $gradingmanager = get_grading_manager($modulecontext, 'mod_pchat', 'pchat');
@@ -78,9 +79,9 @@ $studentAndInterlocutors = $gradesubmissions->getStudentsToGrade($moduleinstance
 $thestudents=[];
 $convgroups = [];
 $processedstudents = [];
-$currentpage = 0;
+$currentgrouppage = 0;
 
-//get the students for the current group
+//make conversation groups for navaigating through
 foreach($studentAndInterlocutors as $convgroup){
     if(in_array($convgroup->userid, $processedstudents)){continue;}
     $thestudents = explode(',', $convgroup->students);
@@ -88,9 +89,15 @@ foreach($studentAndInterlocutors as $convgroup){
     $convgroups[] = $thestudents;//new ArrayIterator(array_pad($thestudents, MAX_GRADE_DISPLAY, ''));
     if(in_array($userid, $thestudents)) {
         $currentconvgroup = $thestudents;
-        $currentpage=count($convgroups)-1;
+        $currentgrouppage=count($convgroups)-1;
     }
 }
+
+//make pages of a single user for navigating through
+$perpage=1;
+list($pagesofstudents,$currentstudentpage) = $gradesubmissions->getPageOfStudents($studentAndInterlocutors,$userid,$perpage);
+
+
 
 //get all eligible students for the course, and then create a conv group if they exist
 if($groupid>0) {
@@ -106,24 +113,6 @@ array_walk($submissionCandidates, function ($candidate) use ($currentconvgroup) 
     }
 });
 
-//-------------------------------------------------
-//get pages of 3 students (array of 3 userids) and the current students page number
-/*
-$perpage=1;
-list($pagesofstudents,$currentstudentpage) = $gradesubmissions->getPageOfStudents($studentlist,$userid,$perpage);
-
-//get the page of students (array od f 3 student ids) for current student
-$students=[];
-if(count($pagesofstudents)>0){
-    if(array_key_exists($currentstudentpage,$pagesofstudents)) {
-        $students = $pagesofstudents[$currentstudentpage];
-    }else{
-        $students = $pagesofstudents[0];
-    }
-}
-*/
-//-------------------------------------------------
-
 
 $submissionCandidates = new ArrayIterator($submissionCandidates);
 
@@ -137,19 +126,27 @@ $PAGE->requires->jquery();
 $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
 $context = context_course::instance($course->id);
 
+$templatedata =  array(
+    'studentsToGrade' => $pagestyle== constants::M_SINGLES? $pagesofstudents[$currentstudentpage] : $convgroups[$currentgrouppage],
+    'submissionCandidates' => $submissionCandidates,
+    'contextid' => $context->id,
+    'cmid' => $cm->id,
+    'attemptid' => $attempt,
+    'grademethod'=>$grademethod,
+    'currentpage'=>$pagestyle== constants::M_SINGLES?  $currentstudentpage : $currentgrouppage,
+    'pages'=>$pagestyle== constants::M_SINGLES?  json_encode($pagesofstudents) : json_encode( $convgroups)
+);
+if($pagestyle== constants::M_SINGLES){
+    $templatedata['showrevquestions']=true;
+    $templatedata['revq1']=nl2br($moduleinstance->revq1);
+    $templatedata['revq2']=nl2br($moduleinstance->revq2);
+    $templatedata['revq3']=nl2br($moduleinstance->revq3);
+}
+
 $gradesrenderer =
     $OUTPUT->render_from_template(
         constants::M_COMPONENT . '/gradesubmissions',
-        array(
-            'studentsToGrade' => $convgroups[$currentpage],
-            'submissionCandidates' => $submissionCandidates,
-            'contextid' => $context->id,
-            'cmid' => $cm->id,
-            'attemptid' => $attempt,
-            'grademethod'=>$grademethod,
-            'currentpage'=>$currentpage, //$currentstudentpage,
-            'pages'=> json_encode( $convgroups) //$pages
-        )
+       $templatedata
     );
 
 echo $renderer->header($moduleinstance, $cm, "gradesubmissions");

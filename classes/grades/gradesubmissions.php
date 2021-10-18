@@ -48,7 +48,10 @@ class gradesubmissions {
                     pat.questions as qa,
                     pat.aiaccuracy as aia,
                     pa.grade as rubricscore,
-                    pa.feedback 
+                    pa.feedback,
+                    pa.revq1,
+                    pa.revq2,
+                    pa.revq3
                 FROM {" . constants::M_TABLE . "} p INNER JOIN {" . constants::M_ATTEMPTSTABLE . "} pa ON p.id = pa.pchat 
                 INNER JOIN {course_modules} cm ON cm.course = p.course AND cm.id = ? 
                 INNER JOIN {user} u ON pa.userid = u.id  

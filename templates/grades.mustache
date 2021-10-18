@@ -68,10 +68,16 @@
             <td>{{tv}}</td>
             <td>{{aia}}</td>
 
-            <td><a href="gradesubmissions.php?id={{cmid}}&attempt={{attemptid}}&userid={{userid}}">
+            <td>
+                <a href="gradesubmissions.php?id={{cmid}}&attempt={{attemptid}}&userid={{userid}}&pagestyle=0">
                 <button type="button" class="btn btn-primary">
-                    {{# str }} gradesgrade, mod_pchat {{/ str }}
-                </button>&nbsp;</a></td>
+                    {{# str }} gradesgroupgrade, mod_pchat {{/ str }}
+                </button>&nbsp;</a>
+                <a href="gradesubmissions.php?id={{cmid}}&attempt={{attemptid}}&userid={{userid}}&pagestyle=1">
+                <button type="button" class="btn btn-primary">
+                    {{# str }} gradessinglegrade, mod_pchat {{/ str }}
+                </button>&nbsp;</a>
+            </td>
             <td>{{grade}}</td>
 
         </tr>

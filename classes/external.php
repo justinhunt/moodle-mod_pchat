@@ -101,6 +101,9 @@ class external extends external_api {
                     'rubricscore' => new external_value(PARAM_TEXT, 'Rubrics score', VALUE_OPTIONAL),
                     'remark' => new external_value(PARAM_TEXT, 'Remark', VALUE_OPTIONAL),
                     'feedback' => new external_value(PARAM_TEXT, 'Feedback', VALUE_OPTIONAL),
+                    'revq1' => new external_value(PARAM_TEXT, 'revq1', VALUE_OPTIONAL),
+                    'revq2' => new external_value(PARAM_TEXT, 'revq2', VALUE_OPTIONAL),
+                    'revq3' => new external_value(PARAM_TEXT, 'revq3', VALUE_OPTIONAL)
                 ])
             )
         ]);
