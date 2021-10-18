@@ -534,4 +534,5 @@ $string['classprogressreport_desc']='See aggregate data on user attempts across 
 $string['downloadaudioreport_desc']='Download user attempt audio in a zip file.';
 $string['mustchoosetopic']='You must choose a topic.';
 $string['topiccomboexplainer']='You must choose a conversation topic.';
+$string['uploading']=' ... uploading ... ';
 

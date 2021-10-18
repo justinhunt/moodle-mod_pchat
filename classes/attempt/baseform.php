@@ -435,6 +435,16 @@ abstract class baseform extends \moodleform {
 
     }
 
+    //add a field to display the  upload warning
+    protected final function add_upload_warning() {
+
+        $this->_form->addElement('static','uploadwarning',
+            '',
+            '<div class="mod_pchat_uploadwarning" style="display: none">' .
+            get_string('uploading', constants::M_COMPONENT) . '<br>' .
+            '<i class="fa fa-spinner fa-spin fa-3x"></i></div>');
+    }
+
     protected final function add_audio_upload($name, $label = null, $required = false)
     {
         $recordingurlfield =& $this->_form->getElement(constants::RECORDINGURLFIELD);

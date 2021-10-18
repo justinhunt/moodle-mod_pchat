@@ -1088,3 +1088,8 @@ div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
 	margin-bottom: 5px;
 	margin-top: 5px;
 }
+
+/* hide save button because users can try to leave too soon */
+.mod_pchat_step2 .btn.btn-primary {
+	display: none;
+}
