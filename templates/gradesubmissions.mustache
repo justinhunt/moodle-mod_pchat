@@ -7,7 +7,7 @@
 
 <div class="card-group">
     {{#studentsToGrade}}
-    <div class="card" data-original-student="{{.}}">
+        <div class="card" data-original-student="{{.}}">
         <div class="card-header">
             <div class="input-group mb-3">
                 {{selected}}
@@ -22,7 +22,7 @@
                 </select>
             </div>
         </div>
-        {{#showrevquestions}}
+        {{#singlemode}}
         <div class="card-body">
             <h5 class="card-title">{{# str }} selfreview, mod_pchat {{/ str }}</h5>
             <div class="mod_pchat_summaryselfreview">
@@ -40,7 +40,7 @@
                     </div>
             </div>
         </div>
-        {{/showrevquestions}}
+        {{/singlemode}}
         <div class="card-body">
             <h5 class="card-title">{{# str }} gradestranscript, mod_pchat {{/ str }}</h5>
             <div class="mod_pchat_overflow_auto">
@@ -56,6 +56,10 @@
         </div>
 
         <div class="container">
+        {{#singlemode}}
+            {{>mod_pchat/selfreviewstats}}
+        {{/singlemode}}
+        {{^singlemode}}
             <div class="row">
                 <div class="col">
                     <span class="badge badge-light">{{# str }} short_TW, mod_pchat {{/ str }} <span class="chat_tw">0</span></span>
@@ -89,6 +93,7 @@
                 </div>
             </div>
         </div>
+    {{/singlemode}}
         <div class="alert alert-secondary justify-content-center align-middle" style="text-align: center;" role="alert">
             <input type="button" data-action="creategrademodal" disabled="disabled"
                    data-cm-id="{{cmid}}"

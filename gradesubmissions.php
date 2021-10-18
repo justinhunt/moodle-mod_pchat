@@ -137,7 +137,7 @@ $templatedata =  array(
     'pages'=>$pagestyle== constants::M_SINGLES?  json_encode($pagesofstudents) : json_encode( $convgroups)
 );
 if($pagestyle== constants::M_SINGLES){
-    $templatedata['showrevquestions']=true;
+    $templatedata['singlemode']=true;
     $templatedata['revq1']=nl2br($moduleinstance->revq1);
     $templatedata['revq2']=nl2br($moduleinstance->revq2);
     $templatedata['revq3']=nl2br($moduleinstance->revq3);
