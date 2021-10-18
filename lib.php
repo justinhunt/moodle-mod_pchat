@@ -616,8 +616,6 @@ function pchat_get_user_grades($moduleinstance, $userid=0) {
 
     global $CFG, $DB;
 
-
-
     $params = array("moduleid" => $moduleinstance->id);
 
     if (!empty($userid)) {

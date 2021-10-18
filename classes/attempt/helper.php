@@ -41,12 +41,15 @@ class helper
         global $DB;
         $ret = false;
 
+        //get the old attempt
+        $attempt = $DB->get_record(constants::M_ATTEMPTSTABLE, array('id' => $attemptid));
+
+
         //remove records
         if (!$DB->delete_records(constants::M_ATTEMPTSTABLE, array('id' => $attemptid))) {
             print_error("Could not delete attempt");
             return $ret;
         }
-
 
         //remove files
         $fs = get_file_storage();
@@ -69,6 +72,39 @@ class helper
         foreach ($fileareas as $filearea) {
             $fs->delete_area_files($context->id, 'mod_pchat', $filearea, $attemptid);
         }
+
+        //remove the gradebook entry ... maybe
+        if($attempt) {
+            $previousattempt = false;
+            //if we have graded newer attempts with a higher id
+            $otherattempts = $DB->get_records(constants::M_ATTEMPTSTABLE, array('userid' => $attempt->userid, 'pchat'=>$attempt->pchat));
+            if($otherattempts){
+                foreach($otherattempts as $otherattempt){
+                    if(($otherattempt->id > $attempt->id) && $otherattempt->grade!==null){
+                        //we have a newer graded attempt that should be in the gradebook we dont want to delete the grade
+                        $ret = true;
+                        return $ret;
+                    }elseif($otherattempt->grade!==null){
+                        if(!$previousattempt){
+                            $previousattempt = $otherattempt;
+                        }elseif($previousattempt->id < $otherattempt->id){
+                            $previousattempt = $otherattempt;
+                        }
+                    }
+                }
+            }
+            //newgrade as previous attempt grade or as null (to be cleared)
+            if($previousattempt){
+                $newgrade = $previousattempt->grade;
+            }else{
+                $newgrade=null;
+            }
+            $grade = new \stdClass();
+            $grade->userid = $attempt->userid;
+            $grade->rawgrade = $newgrade;
+            \pchat_grade_item_update($pchat, $grade);
+        }
+
         $ret = true;
         return $ret;
     }

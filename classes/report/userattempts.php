@@ -46,7 +46,7 @@ class userattempts extends basereport
                 foreach ($partners as $partner){
                     $users[] = fullname($this->fetch_cache('user', $partner));
                 }
-                //this is bad. We use the targetwords tags for users. It just seemed like a good idea
+
                 if ($withlinks) {
                     $tdata = array('partners' => $users);
                     $ret = $OUTPUT->render_from_template(constants::M_COMPONENT . '/partnerlist', $tdata);

@@ -84,7 +84,7 @@ class grades {
                     left outer join {pchat_ai_result} as par on par.attemptid = pa.id and par.courseid = p.course
                 where p.course = ?
                     AND pa.pchat = ?
-                order by u.lastname";
+                order by u.lastname, pa.id DESC";
             $alldata = $DB->get_records_sql($sql, [$coursemoduleid, $courseid, $moduleinstance]);
         }
 
