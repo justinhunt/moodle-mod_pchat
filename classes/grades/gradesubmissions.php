@@ -77,20 +77,65 @@ class gradesubmissions {
     }
 
     /**
-     * Returns a listing of students who should be graded based on the user clicked.
+     * Returns a listing of students who should be graded
      *
      * @param int $attempt
      * @return array
      * @throws dml_exception
      */
-    public function getStudentsToGrade($attempt,$groupid) {
+    public function getStudentsToGrade($moduleinstance,$groupid) {
         global $DB;
 
-        $sql = "select concat(userid, ',', interlocutors) as students
-                    from {pchat_attempts} pa
-                    where pa.id = ?
-                    AND completedsteps >= ?";
+        //fetch all finished attempts
+        if($groupid>0) {
+            list($groupswhere, $groupparams) = $DB->get_in_or_equal($groupid);
+            $sql = "SELECT pa.id, pa.userid as userid, concat(pa.userid, ',', pa.interlocutors) as students
+                    FROM {pchat_attempts} pa                    
+                     INNER JOIN {groups_members} gm ON pa.userid=gm.userid
+                     WHERE pa.pchat = ? AND pa.completedsteps >= " . constants::STEP_SELFTRANSCRIBE .
+                " AND gm.groupid $groupswhere 
+                      ORDER BY pa.id DESC";
+            $results = $DB->get_records_sql($sql, array_merge([$moduleinstance->id],$groupparams));
+        }else{
+            $sql = "SELECT pa.id, pa.userid as userid, concat(pa.userid, ',', pa.interlocutors) as students
+                    FROM {pchat_attempts} pa
+                    WHERE pa.pchat = ? AND pa.completedsteps >= " . constants::STEP_SELFTRANSCRIBE .
+                " ORDER BY pa.id DESC";
+            $results = $DB->get_records_sql($sql, [$moduleinstance->id]);
+        }
 
-        return $DB->get_records_sql($sql, [$attempt, constants::STEP_SELFTRANSCRIBE]);
+        return $results;
+
+    }//end of function
+
+
+    /**
+     * Returns a pages of students who should be graded.
+     *
+     * @param int $attempt
+     * @return array
+     * @throws dml_exception
+     */
+    public function getPageOfStudents($students, $studentid=0,$perpage=1) {
+        $currentpagemembers=[];
+        $pages=[];
+        $studentpage=-1;
+        //build array of 3 student pages
+        foreach($students as $student){
+            if(count($currentpagemembers)>=$perpage){
+                $pages[]=$currentpagemembers;
+                $currentpagemembers=[];
+            }
+            $currentpagemembers[]=$student->userid;
+            if($studentid>0 && $student->userid ==$studentid ){
+                $studentpage=count($pages);
+            }
+        }
+        if(count($currentpagemembers)>0){
+            $pages[]=$currentpagemembers;
+        }
+        //return page details
+        $ret = [$pages,$studentpage];
+        return $ret;
     }
 }

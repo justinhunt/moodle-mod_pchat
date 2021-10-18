@@ -1,3 +1,10 @@
+<!-- Paged Navigation -->
+<div class="pchat_grading_submissions_container">
+    <div class="pchat_grading_nav">
+        <a class="btn btn-secondary pchat_grading_back_btn" href="#" alt="back"><i class="fa fa-arrow-left"></i></a>
+        <a class="btn btn-secondary pchat_grading_forward_btn" href="#" alt="forward"><i class="fa fa-arrow-right"></i></a>
+    </div>
+
 <div class="card-group">
     {{#studentsToGrade}}
     <div class="card" data-original-student="{{.}}">
@@ -78,25 +85,114 @@
     </div>
     {{/studentsToGrade}}
 </div>
+    <!-- Paged Navigation -->
+    <div class="pchat_grading_nav">
+        <a class="btn btn-secondary pchat_grading_back_btn" href="#" alt="back"><i class="fa fa-arrow-left"></i></a>
+        <a class="btn btn-secondary pchat_grading_forward_btn" href="#" alt="forward"><i class="fa fa-arrow-right"></i></a>
+    </div>
+</div><!-- end of pchatsubmissions grading container-->
 {{^element.frozen}}
 {{#js}}
     $('[data-action=creategrademodal]').attr('disabled', 'disabled');
 
     require(['jquery', 'core/modal_factory', 'core/ajax','core/templates', 'mod_pchat/gradeform'],
     function($, ModalFactory, ajax, templates, GradeForm) {
-        document.querySelectorAll("[data-original-student]").forEach(
-            function(element) {
-                const originalStudentId = $(element).attr("data-original-student");
-                const selectBox = element.querySelector('select[name="gradesUserSelect"]');
-                selectBox.value = originalStudentId;
-                $("[data-original-student]").first().find('select').attr('disabled','disabled');
-                loadStudentData(element);
-                GradeForm.init($(element).find('input[type=button]'), {{contextid}},'{{grademethod}}');
-            }
-        );
+        var currentpage = {{currentpage}};
+        const pages =JSON.parse('{{{pages}}}');
+        var backbutton=$(".pchat_grading_back_btn");
+        var forwardbutton=$(".pchat_grading_forward_btn");
+
+        //kick it off by loading the data into the columns
+        reloadAllElements();
+
+        //also init events on columns (we separate this from reloadAllEvents, because it only needs doing once)
+        initElementEvents();
 
         $("[data-original-student]").change(function () { loadStudentData(this); });
 
+        //set up the nav buttons
+        resetNavButtons();
+
+        //reset nav buttons
+        function resetNavButtons(){
+            if(currentpage==0){
+                backbutton.attr('disabled','disabled');
+            }else{
+                backbutton.removeAttr('disabled');
+            }
+            backbutton.html("<i class='fa fa-arrow-left'></i> (" + (pages.length -1 - currentpage) + ")");
+
+            if(currentpage==pages.length-1){
+                forwardbutton.attr('disabled','disabled');
+            }else{
+                forwardbutton.removeAttr('disabled');
+            }
+            forwardbutton.html("<i class='fa fa-arrow-right'></i> (" + currentpage + ")");
+        }
+
+        //load columns with user attempt ( userids on each column)
+        function initElementEvents(){
+            document.querySelectorAll("[data-original-student]").forEach(
+                function(element) {
+                    GradeForm.init($(element).find('input[type=button]'), {{contextid}}, '{{grademethod}}');
+                 }
+            );
+        }
+
+        //set the userids to the columns (prior to reload)
+        function resetElements(){
+            var i=0;
+            var originalStudentId = '';
+            document.querySelectorAll("[data-original-student]").forEach(
+                function(element) {
+                    if(i> pages[currentpage].length-1){
+                        originalStudentId = '';
+                    }else{
+                        originalStudentId = pages[currentpage][i];
+                    }
+                    $(element).attr("data-original-student",originalStudentId);
+                    i++;
+                }
+            );//end of for each
+        }
+
+        //load columns with user attempt ( userids on each column)
+        function reloadAllElements(){
+            document.querySelectorAll("[data-original-student]").forEach(
+                function(element) {
+                    var originalStudentId = $(element).attr("data-original-student");
+                    var selectBox = element.querySelector('select[name="gradesUserSelect"]');
+                    selectBox.value = originalStudentId;
+    $("[data-original-student]").first().find('select').attr('disabled','disabled');
+                    loadStudentData(element);
+    GradeForm.init($(element).find('input[type=button]'), {{contextid}},'{{grademethod}}');
+                }
+            );
+        }
+
+        //on back button, load a new page
+        $(".pchat_grading_forward_btn").click(function(){
+            if(currentpage>0){
+                currentpage--;
+                resetElements();
+                reloadAllElements();
+            }//end of if current page
+            resetNavButtons();
+            return false;
+        });
+
+        //on forward button, load a new page
+        $(".pchat_grading_back_btn").click(function(){
+            if(currentpage < pages.length -1){
+                currentpage++;
+                resetElements();
+                reloadAllElements();
+            }//end of if current page
+            resetNavButtons();
+            return false;
+        });
+
+        //load one column of student data
         function loadStudentData(element) {
             const selectBox = element.querySelector('select[name="gradesUserSelect"]');
             $(element).find('input[type=button]').attr('disabled', 'disabled');
@@ -128,17 +224,17 @@
                         $(element).find('input[type=button]').removeAttr("disabled");
                         $(element).find('.chat_player').attr('src', response.response[0].filename);
 
-    var a ={};
-    var st = JSON.parse(response.response[0].selftranscript);
-    a.selftranscriptparts=[];
-    $.each(st,function(index,oneturn){
-      a.selftranscriptparts.push(oneturn.part);
-    });
-    templates.render('mod_pchat/summarytranscript',{a: a}).then(
-         function(html,js){
-            $(element).find('.chat_transcript').html(html);
-          }
-    );
+                        var a ={};
+                        var st = JSON.parse(response.response[0].selftranscript);
+                        a.selftranscriptparts=[];
+                        $.each(st,function(index,oneturn){
+                          a.selftranscriptparts.push(oneturn.part);
+                        });
+                        templates.render('mod_pchat/summarytranscript',{a: a}).then(
+                             function(html,js){
+                                $(element).find('.chat_transcript').html(html);
+                              }
+                        );
 
                       // $(element).find('.chat_transcript').html(response.response[0].transcript);
                         $(element).find('.chat_tt').html(response.response[0].tt);

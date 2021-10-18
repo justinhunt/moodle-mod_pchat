@@ -195,6 +195,18 @@ function xmldb_pchat_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2021092500, 'pchat');
     }
+    if ($oldversion < 2021101500) {
+        $table = new xmldb_table('pchat_attempts');
+        $field =  new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $sql="UPDATE {pchat_attempts} SET timecreated = timemodified";
+            $DB->execute($sql, []);
+        }
+
+        upgrade_mod_savepoint(true, 2021101500, 'pchat');
+    }
 
     // Final return of upgrade result (true, all went good) to Moodle.
     return true;

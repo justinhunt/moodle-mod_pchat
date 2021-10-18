@@ -222,6 +222,7 @@ if ($data = $mform->get_data()) {
         $newattempt->id = $data->attemptid;
     }else{
         $newattempt->timecreated=time();
+        $newattempt->timemodified=time();
         $newattempt->createdby=$USER->id;
         //this comes in as an array, but we save as string. That will be processed shortly
         //for now lets avoid the error trying to save an array in text field.

@@ -171,6 +171,7 @@ function copyAttempt($attempt, $stats, $ai, $user, $partners){
     //attempt
     $newatt->id = null;
     $newatt->timemodified = time();
+    $newatt->timecreated = time();
     $newatt->userid=$user->id;
     $newatt->interlocutors=$partners;
     $attemptid = $DB->insert_record(constants::M_ATTEMPTSTABLE,$newatt);

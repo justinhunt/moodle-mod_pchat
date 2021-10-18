@@ -74,25 +74,57 @@ if ($groupmode = groups_get_activity_groupmode($cm)) {
 }
 
 // Get student grade data.
-$studentAndInterlocutors = $gradesubmissions->getStudentsToGrade($attempt,$moduleinstance, $groupid);
-$studentAndInterlocutors = explode(',', current($studentAndInterlocutors)->students);
-$studentsToGrade = new ArrayIterator(array_pad($studentAndInterlocutors, MAX_GRADE_DISPLAY, ''));
+$studentAndInterlocutors = $gradesubmissions->getStudentsToGrade($moduleinstance, $groupid);
+$thestudents=[];
+$convgroups = [];
+$processedstudents = [];
+$currentpage = 0;
 
+//get the students for the current group
+foreach($studentAndInterlocutors as $convgroup){
+    if(in_array($convgroup->userid, $processedstudents)){continue;}
+    $thestudents = explode(',', $convgroup->students);
+    $processedstudents =  array_merge($processedstudents  , $thestudents);
+    $convgroups[] = $thestudents;//new ArrayIterator(array_pad($thestudents, MAX_GRADE_DISPLAY, ''));
+    if(in_array($userid, $thestudents)) {
+        $currentconvgroup = $thestudents;
+        $currentpage=count($convgroups)-1;
+    }
+}
 
-
-//get all enroled students for the course
+//get all eligible students for the course, and then create a conv group if they exist
 if($groupid>0) {
     $submissionCandidates =  groups_get_members($groupid);
 }else{
     $submissionCandidates = get_enrolled_users($modulecontext, 'mod/pchat:submit');
 }
 
-// Ensure selected items.
-array_walk($submissionCandidates, function ($candidate) use ($studentAndInterlocutors) {
-    if (in_array($candidate->id, $studentAndInterlocutors, true)) {
+// Ensure selected items of the current group
+array_walk($submissionCandidates, function ($candidate) use ($currentconvgroup) {
+    if (in_array($candidate->id, $currentconvgroup, true)) {
         $candidate->selected = "selected='selected'";
     }
 });
+
+//-------------------------------------------------
+//get pages of 3 students (array of 3 userids) and the current students page number
+/*
+$perpage=1;
+list($pagesofstudents,$currentstudentpage) = $gradesubmissions->getPageOfStudents($studentlist,$userid,$perpage);
+
+//get the page of students (array od f 3 student ids) for current student
+$students=[];
+if(count($pagesofstudents)>0){
+    if(array_key_exists($currentstudentpage,$pagesofstudents)) {
+        $students = $pagesofstudents[$currentstudentpage];
+    }else{
+        $students = $pagesofstudents[0];
+    }
+}
+*/
+//-------------------------------------------------
+
+
 $submissionCandidates = new ArrayIterator($submissionCandidates);
 
 $PAGE->set_title(format_string($moduleinstance->name));
@@ -109,12 +141,14 @@ $gradesrenderer =
     $OUTPUT->render_from_template(
         constants::M_COMPONENT . '/gradesubmissions',
         array(
-            'studentsToGrade' => $studentsToGrade,
+            'studentsToGrade' => $convgroups[$currentpage],
             'submissionCandidates' => $submissionCandidates,
             'contextid' => $context->id,
             'cmid' => $cm->id,
             'attemptid' => $attempt,
-            'grademethod'=>$grademethod
+            'grademethod'=>$grademethod,
+            'currentpage'=>$currentpage, //$currentstudentpage,
+            'pages'=> json_encode( $convgroups) //$pages
         )
     );
 

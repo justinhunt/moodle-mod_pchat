@@ -63,7 +63,7 @@ class backup_pchat_activity_structure_step extends backup_activity_structure_ste
             'selftranscript','topicid','topicname','topicfonticon','topictargetwords','mywords','convlength',
             'customtext1', 'customtext1format','revq1', 'revq2','revq3','completedsteps',
             'currentint1','currentint2','currentint3','currentint4',
-            'timemodified','createdby','modifiedby'));
+            'timecreated','timemodified','createdby','modifiedby'));
 
         //attemptstats
         $attemptstats = new backup_nested_element('attemptstats');

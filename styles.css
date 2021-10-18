@@ -1080,3 +1080,11 @@ div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
 .mod_pchat_topiccombo_explainer {
 	color: red;
 }
+.pchat_grading_submissions_container {
+	max-width: 1200px;
+}
+.pchat_grading_nav {
+	text-align: center;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
