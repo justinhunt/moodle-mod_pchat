@@ -504,14 +504,35 @@ $string['long_TTV'] = 'Total Target Vocabulary';
 $string['long_TV'] = 'Target Vocabulary';
 $string['long_AIA'] = 'AI Accuracy';
 
-$string['TW_help'] = 'Total Words ..';
-$string['TT_help'] = 'Total Turns ..';
-$string['ATL_help'] = 'Average Turn Length ..';
-$string['LTL_help'] = 'Longest Turn Length ..';
-$string['QA_help'] = 'Questions Asked ..';
-$string['TTV_help'] = 'Total Target Vocabulary ..';
-$string['TV_help'] = 'Target Vocabulary ..';
-$string['AIA_help'] = 'AI Accuracy ..';
+$string['TW_help'] = 'Total Words (TW) <ul><li>How many words did you say?</li>
+<li>This number is a general indicator of how much you were able to say in the activity.</li>
+<li>Use this stat to self-assess and set goals related to your speaking speed and language knowledge, or as motivation to prepare more for future activities.</li></ul>';
+
+$string['TT_help'] = 'Total Turns (TT)  <ul><li>How many times did you speak up?</li>
+<li>This number is a general indicator of how actively you participated in the conversation.</li>
+<li>Use this stat to self-assess and set goals related to your degree of interaction and active participation.</li></ul>';
+
+$string['ATL_help'] = 'Average Turn Length (ATL)  <ul><li>When you spoke, on average, about how much did you say?</li>
+<li>This number is a general indicator of your ability to produce complex sentences, and detailed explanations or stories. </li>
+<li>Use this stat to self-assess and set goals related to your sentence length, provision of details, and general preparation for future activities.</li></ul>';
+
+$string['LTL_help'] = 'Longest Turn Length (LTL)  <ul><li>How many words was your longest turn?</li>
+<li>This number is a general indicator of how much you said in your longest turn.</li>
+<li>Use this stat to self-assess and set goals related to providing more details and extended responses.</li></ul>';
+
+$string['QA_help'] = 'Questions Asked (QA)  <ul><li>How many questions did you ask?</li>
+<li>This number is a general indicator of the degree to which you engaged your partners in conversation.</li>
+<li>Use this stat to self-asses and set goals related to your interaction skills.</li></ul>';
+
+$string['TTV_help'] = 'Total Target Vocabulary ( TTV) The total number of target words for this topic including the ones you prepared.';
+
+$string['TV_help'] = 'Target Vocabulary (TV) <ul><li>How many of your target vocabulary items did you use?</li>
+<li>This number directly indicates how many of your target vocabulary items you were able to use in the activity.</li>
+<li>Use this stat to self-assess and set goals related to vocabulary use. </li></ul>';
+
+$string['AIA_help'] = 'AI Accuracy (AIA)  <ul><li>How closely does your transcript match what a machine heard you say?</li>
+<li>This number is a possible indicator of your transcription accuracy, spelling, and your pronunciation.</li>
+<li>Use this stat to self-assess and set goals related to transcribing, spelling, and pronunciation.</li></ul>';
 
 $string['TW'] = 'Total Words';
 $string['TT'] = 'Total Turns';
