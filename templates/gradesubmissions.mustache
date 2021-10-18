@@ -163,9 +163,11 @@
                     var originalStudentId = $(element).attr("data-original-student");
                     var selectBox = element.querySelector('select[name="gradesUserSelect"]');
                     selectBox.value = originalStudentId;
-    $("[data-original-student]").first().find('select').attr('disabled','disabled');
+                     //we do not disable the first select box anymore
+                    // $("[data-original-student]").first().find('select').attr('disabled','disabled');
                     loadStudentData(element);
-    GradeForm.init($(element).find('input[type=button]'), {{contextid}},'{{grademethod}}');
+                    // No longer necessary
+                    // GradeForm.init($(element).find('input[type=button]'), {{contextid}},'{{grademethod}}');
                 }
             );
         }
