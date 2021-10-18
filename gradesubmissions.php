@@ -107,11 +107,13 @@ if($groupid>0) {
 }
 
 // Ensure selected items of the current group
-array_walk($submissionCandidates, function ($candidate) use ($currentconvgroup) {
-    if (in_array($candidate->id, $currentconvgroup, true)) {
-        $candidate->selected = "selected='selected'";
-    }
-});
+if($currentconvgroup) {
+    array_walk($submissionCandidates, function ($candidate) use ($currentconvgroup) {
+        if (in_array($candidate->id, $currentconvgroup, true)) {
+            $candidate->selected = "selected='selected'";
+        }
+    });
+}
 
 
 $submissionCandidates = new ArrayIterator($submissionCandidates);
