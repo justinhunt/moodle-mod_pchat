@@ -80,6 +80,7 @@ $thestudents=[];
 $convgroups = [];
 $processedstudents = [];
 $currentgrouppage = -1;
+$currentconvgroup=false;
 
 //make conversation groups for navaigating through
 foreach($studentAndInterlocutors as $convgroup){
