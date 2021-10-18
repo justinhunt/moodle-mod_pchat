@@ -1093,3 +1093,9 @@ div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
 .mod_pchat_step2 .btn.btn-primary {
 	display: none;
 }
+.mod_pchat_no_submissions_to_show {
+	text-align: center;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	background-color: #CCCCCC;
+}

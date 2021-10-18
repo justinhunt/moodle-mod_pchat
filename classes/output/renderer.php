@@ -130,4 +130,8 @@ class renderer extends \plugin_renderer_base {
         return $items;
     }
 
+    public function show_nosubmissions_message(){
+        return \html_writer::div(get_string('no_submissions_to_show', constants::M_COMPONENT),'mod_pchat_no_submissions_to_show');
+    }
+
 }

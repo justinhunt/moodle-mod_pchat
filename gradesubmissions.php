@@ -79,7 +79,7 @@ $studentAndInterlocutors = $gradesubmissions->getStudentsToGrade($moduleinstance
 $thestudents=[];
 $convgroups = [];
 $processedstudents = [];
-$currentgrouppage = 0;
+$currentgrouppage = -1;
 
 //make conversation groups for navaigating through
 foreach($studentAndInterlocutors as $convgroup){
@@ -128,15 +128,43 @@ $PAGE->requires->jquery();
 $renderer = $PAGE->get_renderer(constants::M_COMPONENT);
 $context = context_course::instance($course->id);
 
+switch($pagestyle){
+    case constants::M_SINGLES:
+        $currentpage = $currentstudentpage;
+        if($currentpage < 0){
+            echo $renderer->header($moduleinstance, $cm, "gradesubmissions");
+            echo $groupmenu;
+            echo $renderer->show_nosubmissions_message();
+            echo $renderer->footer();
+            return;
+        }
+        $studentsToGrade = $pagesofstudents[$currentstudentpage];
+        $pages = json_encode($pagesofstudents);
+        break;
+    case constants::M_CONVGROUP:
+    default:
+        if($currentgrouppage<0){
+            echo $renderer->header($moduleinstance, $cm, "gradesubmissions");
+            echo $groupmenu;
+            echo $renderer->show_nosubmissions_message();
+            echo $renderer->footer();
+            return;
+        }
+        $studentsToGrade = $convgroups[$currentgrouppage];
+        $currentpage = $currentgrouppage;
+        $pages = json_encode( $convgroups);
+
+}
+
 $templatedata =  array(
-    'studentsToGrade' => $pagestyle== constants::M_SINGLES? $pagesofstudents[$currentstudentpage] : $convgroups[$currentgrouppage],
+    'studentsToGrade' => $studentsToGrade,
     'submissionCandidates' => $submissionCandidates,
     'contextid' => $context->id,
     'cmid' => $cm->id,
     'attemptid' => $attempt,
     'grademethod'=>$grademethod,
-    'currentpage'=>$pagestyle== constants::M_SINGLES?  $currentstudentpage : $currentgrouppage,
-    'pages'=>$pagestyle== constants::M_SINGLES?  json_encode($pagesofstudents) : json_encode( $convgroups)
+    'currentpage'=>$currentpage,
+    'pages'=>$pages
 );
 if($pagestyle== constants::M_SINGLES){
     $templatedata['singlemode']=true;

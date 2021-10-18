@@ -559,3 +559,5 @@ $string['mustchoosetopic']='You must choose a topic.';
 $string['topiccomboexplainer']='You must choose a conversation topic.';
 $string['uploading']=' ... uploading ... ';
 
+$string['no_submissions_to_show']="There are no submissions to show.";
+
