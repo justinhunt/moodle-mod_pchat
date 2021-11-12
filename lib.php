@@ -629,7 +629,7 @@ function pchat_get_user_grades($moduleinstance, $userid=0) {
     //grade_sql
     //the max is just to pass the postgre need for an aggregate function when using group by
     //we probably do not need the group by anyway. the result is still the latest attempt because of the subquery
-    $grade_sql = "SELECT u.id, u.id AS userid, MAX(grade AS rawgrade)
+    $grade_sql = "SELECT u.id, u.id AS userid, MAX(grade) AS rawgrade
                       FROM {user} u, {". constants::M_ATTEMPTSTABLE ."} a
                      WHERE a.id= (SELECT max(id) FROM {". constants::M_ATTEMPTSTABLE ."} ia WHERE ia.userid=u.id AND ia.pchat = a.pchat)  AND u.id = a.userid AND a.pchat = :moduleid
                            $user
