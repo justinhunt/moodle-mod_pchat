@@ -1,3 +1,6 @@
+1.0.19 (Build 2021111100)
+- fixed lots of issues
+
 1.0.18 (Build 2021092500)
 - fixed issue in restore of attempts
 - fixed issue of array_key_exists on php 8

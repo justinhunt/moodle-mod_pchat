@@ -115,7 +115,7 @@ class myprogress extends basereport
         $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
         $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
         $sql .= ' WHERE p.course = :courseid AND at.userid= :userid';
-        $sql .= ' GROUP BY p.id, p.name';
+        $sql .= ' GROUP BY p.id, p.name, at.timecreated';
         $sql .= ' ORDER BY at.timecreated, p.name, p.id';
         $alldata = $DB->get_records_sql($sql,array('courseid'=>$this->cm->course, 'userid'=>$USER->id));
 

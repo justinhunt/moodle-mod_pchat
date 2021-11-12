@@ -1037,6 +1037,12 @@ class utils{
         $mform->addElement('select', 'expiredays', get_string('expiredays', constants::M_COMPONENT), $expiredaysoptions);
         $mform->setDefault('expiredays',$config->expiredays);
 
+        //require self review
+        $reviewoptions = array(constants::M_OPTIONALFIELD=>get_string('optionalfield',constants::M_COMPONENT),
+            constants::M_REQUIREDFIELD=>get_string('requiredfield',constants::M_COMPONENT));
+        $mform->addElement('select', 'requireselfreview', get_string('requireselfreview', constants::M_COMPONENT), $reviewoptions);
+        $mform->setDefault('requireselfreview',constants::M_OPTIONALFIELD);
+
 
     } //end of add_mform_elements
 
