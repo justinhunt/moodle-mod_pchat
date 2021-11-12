@@ -84,7 +84,7 @@ if(count($attempts)==0){
     if($latestattempt
         && $latestattempt->completedsteps >= $requeststep
         && $requeststep>constants::STEP_NONE
-        && $requeststep <  constants::STEP_SELFREVIEW){
+        && $requeststep <=  constants::STEP_SELFREVIEW){
 
         $start_or_continue=true;
         $nextstep=$requeststep;
