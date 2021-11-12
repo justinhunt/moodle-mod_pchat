@@ -76,6 +76,8 @@ define(['jquery', 'core/log','core/str', 'core/modal_factory', 'core/modal_event
 
                     // Forms are big, we want a big modal.
                     that.modal.setLarge();
+                    //sojo wants a massive one
+                    that.modal.getModal().addClass('modal-xl');
 
                     // We want to reset the form every time it is opened.
                     that.modal.getRoot().on(ModalEvents.hidden, function () {
