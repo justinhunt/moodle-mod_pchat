@@ -356,7 +356,6 @@ switch($format){
             echo $extraheader;
             echo $reportrenderer->show_reports_footer($moduleinstance,$cm,$formdata,$showreport, $format,$showexport);
             echo $groupmenu;
-
             echo $reportrenderer->render_hiddenaudioplayer();
             echo $reportrenderer->render_section_html($reportheading, $report->fetch_name(), $report->fetch_head(), $reportrows,
                     $report->fetch_fields());

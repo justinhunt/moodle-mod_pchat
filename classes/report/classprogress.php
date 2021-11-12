@@ -145,7 +145,7 @@ class classprogress extends basereport
 
             list($groupswhere, $allparams) = $DB->get_in_or_equal($formdata->groupid);
 
-            $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.targetwords)avtw, AVG(st.questions)avq ,AVG(st.aiaccuracy) avacc';
+            $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.targetwords)avtw, AVG(st.questions) avq ,AVG(st.aiaccuracy) avacc';
             $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
             $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
             $sql .= ' INNER JOIN {groups_members} gm ON at.userid=gm.userid';
@@ -160,7 +160,7 @@ class classprogress extends basereport
             //if no groups, or can see all groups then the SQL is simple
         }else{
 
-            $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.targetwords)avtw, AVG(st.questions)avq ,AVG(st.aiaccuracy) avacc';
+            $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.targetwords)avtw, AVG(st.questions) avq ,AVG(st.aiaccuracy) avacc';
             $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
             $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
             $sql .= ' WHERE p.course = :courseid';
