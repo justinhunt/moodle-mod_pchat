@@ -159,6 +159,8 @@ if ($edit) {
         constants::M_TOPICMEDIA, $data->id,
         $filemanageroptions);
     $data->{constants::M_TOPICMEDIA} = $draftitemid;
+    $data->addmedia = $draftitemid;
+    $data->addiframe = !empty($topic->topiciframe);
 
 }else{
     $data=new stdClass;
