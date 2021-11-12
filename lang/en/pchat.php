@@ -417,7 +417,7 @@ $string['gradesstudent'] = 'Student';
 $string['gradesdatapoint'] = 'Data point';
 $string['gradesrubric'] = 'Rubric';
 $string['gradestranscript'] = 'Transcript';
-$string['gradesfeedback'] = 'Feedback:';
+$string['gradesfeedback'] = 'Feedback';
 $string['gradessubmit'] = 'Submit';
 $string['gradesubmissions'] = 'Grade submissions';
 
