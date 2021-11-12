@@ -1062,8 +1062,8 @@ div.mod_pchat_postattempt .mod_pchat_grading_unreadspace {
 	height:100%;
 	width:100%;
 	position: absolute;
-	max-width: 400px;
-	max-height: 225px;
+	max-width: 800px;
+	max-height: 450px;
 }
 .mod_pchat_reportmenu_item {
 	max-width: 800px;
