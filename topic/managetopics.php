@@ -161,6 +161,7 @@ if ($edit) {
     $data->{constants::M_TOPICMEDIA} = $draftitemid;
     $data->addmedia = $draftitemid;
     $data->addiframe = !empty($topic->topiciframe);
+    $data->addmedia = !empty($topic->topicmedia);
 
 }else{
     $data=new stdClass;
