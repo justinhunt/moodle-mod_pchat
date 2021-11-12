@@ -129,7 +129,13 @@ switch($type){
     case constants::STEP_USERSELECTIONS:
 
         $topics = $topichelper->fetch_selected_topics();
-        $users = get_enrolled_users($context);
+
+        if ($groupmode = groups_get_activity_groupmode($cm)) {
+            $groupid = groups_get_activity_group($cm);
+        }else{
+            $groupid  = 0;
+        }
+        $users = get_enrolled_users($context,$groupid);
         $targetwords = $attempt ? $attempt->topictargetwords : '';
         $mform = new \mod_pchat\attempt\userselectionsform(null,
                 array('moduleinstance'=>$moduleinstance,
