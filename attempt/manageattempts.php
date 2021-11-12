@@ -135,7 +135,7 @@ switch($type){
         }else{
             $groupid  = 0;
         }
-        $users = get_enrolled_users($context,$groupid);
+        $users = get_enrolled_users($context,'', $groupid);
         $targetwords = $attempt ? $attempt->topictargetwords : '';
         $mform = new \mod_pchat\attempt\userselectionsform(null,
                 array('moduleinstance'=>$moduleinstance,
