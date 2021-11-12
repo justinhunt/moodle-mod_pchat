@@ -80,7 +80,7 @@ class detailedattempts extends basereport
                         $ret='';
                         foreach($parts as $part)
                         {
-                            $ret.=' ' . $part->part;
+                            $ret.=' | ' . $part->part;
                         }                    }
                 }else{
                     $ret="";
