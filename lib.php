@@ -706,7 +706,9 @@ function mod_pchat_output_fragment_rubric_grade_form($args) {
     $formdata = [];
     if (!empty($args->jsonformdata)) {
         $serialiseddata = json_decode($args->jsonformdata);
-        parse_str($serialiseddata, $formdata);
+        if(is_string($serialiseddata)) {
+            parse_str($serialiseddata, $formdata);
+        }
     }
 
     $sql = "SELECT  pa.pchat, pa.feedback, pa.id AS attemptid 
@@ -769,7 +771,9 @@ function mod_pchat_output_fragment_simple_grade_form($args) {
     $formdata = [];
     if (!empty($args->jsonformdata)) {
         $serialiseddata = json_decode($args->jsonformdata);
-        parse_str($serialiseddata, $formdata);
+        if(is_string($serialiseddata)) {
+            parse_str($serialiseddata, $formdata);
+        }
     }
 
     $sql = "select  pa.pchat, pa.feedback, pa.id as attemptid, pa.grade as grade, pc.grade as scaleid
