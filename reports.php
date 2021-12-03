@@ -184,6 +184,9 @@ switch ($showreport){
     case 'myprogress':
         $report = new \mod_pchat\report\myprogress($cm);
         $formdata = new stdClass();
+        if($userid > 0 && has_capability('mod/pchat:grades', $modulecontext)){
+            $formdata->userid=$userid;
+        }
         break;
 
     case 'downloadaudio':

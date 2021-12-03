@@ -102,10 +102,30 @@
                    data-student-id="0" class=" justify-content-center align-middle" name="grade" id="create-modal" value="Grade entry">
         </div>
         <div class="card-footer">
-            <small class="text-muted">
-                <strong>{{# str }} gradesgrade, mod_pchat {{/ str }} </strong>: <span class="chat_rubricscore"></span><br >
-                <strong>{{# str }} gradesfeedback, mod_pchat {{/ str }} </strong>: <span class="chat_feedback"></span>
-            </small>
+             {{#singlemode}}
+             <div class="mod_pchat_singlegradefeedback">
+                 <div class="row">
+                     <table class="table">
+                         <tbody>
+                         <tr>
+                             <td>{{#str}}gradesgrade, mod_pchat{{/str}}</td>
+                             <td>{{#str}}gradesfeedback, mod_pchat{{/str}}</td>
+                         </tr>
+                         <tr>
+                             <td class="chat_rubricscore">{{words}}</td>
+                             <td class="chat_feedback">{{turns}}</td>
+                         </tr>
+                         </tbody>
+                     </table>
+                 </div>
+             </div>
+             {{/singlemode}}
+            {{^singlemode}}
+                    <small class="text-muted">
+                        <strong>{{# str }} gradesgrade, mod_pchat {{/ str }} </strong>: <span class="chat_rubricscore"></span><br >
+                        <strong>{{# str }} gradesfeedback, mod_pchat {{/ str }} </strong>: <span class="chat_feedback"></span>
+                    </small>
+            {{/singlemode}}
         </div>
     </div>
     {{/studentsToGrade}}

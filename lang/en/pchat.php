@@ -564,6 +564,7 @@ $string['no_submissions_to_show']="There are no submissions to show.";
 $string['optionalfield']='Optional';
 $string['requiredfield']='Required';
 $string['requireselfreview']='Student Self Review';
+$string['progress']='Progress';
 
 $string['skinfresh'] = 'Fresh';
 $string['skin123'] = 'One Two Three';

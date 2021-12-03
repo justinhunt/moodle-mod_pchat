@@ -108,7 +108,11 @@ class myprogress extends basereport
 
         //heading data
         $this->headingdata = new \stdClass();
-        $this->headingdata->userid=$USER->id;
+        if(!empty($formdata) && isset($formdata->userid) && $formdata->userid > 0){
+            $this->headingdata->userid = $formdata->userid;
+        }else {
+            $this->headingdata->userid = $USER->id;
+        }
 
         $emptydata = array();
         $sql = 'SELECT p.id, p.name pchatname, MAX(st.words) stats_words, MAX(st.turns) stats_turns, MAX(st.avturn) stats_avturn, MAX(st.longestturn) stats_longestturn,   MAX(st.questions)stats_questions ,MAX(st.aiaccuracy) stats_aiaccuracy';
@@ -117,7 +121,7 @@ class myprogress extends basereport
         $sql .= ' WHERE p.course = :courseid AND at.userid= :userid';
         $sql .= ' GROUP BY p.id, p.name, at.timecreated';
         $sql .= ' ORDER BY at.timecreated, p.name, p.id';
-        $alldata = $DB->get_records_sql($sql,array('courseid'=>$this->cm->course, 'userid'=>$USER->id));
+        $alldata = $DB->get_records_sql($sql,array('courseid'=>$this->cm->course, 'userid'=>$this->headingdata->userid));
 
         if($alldata){
             foreach($alldata as $thedata){
