@@ -444,8 +444,7 @@ abstract class baseform extends \moodleform {
         $this->_form->addElement('static','uploadwarning',
             '',
             '<div class="mod_pchat_uploadwarning" style="display: none">' .
-            get_string('uploading', constants::M_COMPONENT) . '<br>' .
-            '<i class="fa fa-spinner fa-spin fa-3x"></i></div>');
+            get_string('presssaveupload', constants::M_COMPONENT));
     }
 
     protected final function add_audio_upload($name, $label = null, $required = false)
@@ -479,6 +478,7 @@ abstract class baseform extends \moodleform {
 
 
     protected final function add_audio_recording($name, $label = null, $required = false) {
+        $config = get_config(constants::M_COMPONENT);
         $recordingurlfield =& $this->_form->getElement(constants::RECORDINGURLFIELD);
         $recordingorplayerfield =& $this->_form->getElement(constants::RECORDERORPLAYERFIELD);
         if ($recordingurlfield) {
@@ -494,7 +494,7 @@ abstract class baseform extends \moodleform {
         }
 
         $width=450;
-        $height=380;
+        $height=300;
         $timelimit=0;
         if($this->attempt) {
             $timelimit = $this->attempt->convlength * 60;
@@ -503,7 +503,7 @@ abstract class baseform extends \moodleform {
         $error_message = utils::fetch_token_error($this->token);
         if(empty($error_message)) {
             $recorder_html =
-                    $this->fetch_recorder($this->moduleinstance, 'audio', 'fresh', $timelimit, $this->token, $width, $height);
+                    $this->fetch_recorder($this->moduleinstance, 'audio', $config->recorderskin, $timelimit, $this->token, $width, $height);
         }else{
             $recorder_html = $error_message;
         }

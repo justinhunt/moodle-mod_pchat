@@ -106,6 +106,7 @@ define(['jquery', 'core/log','mod_pchat/definitions','mod_pchat/cloudpoodllloade
                 uploadwarning.hide();
                 /* disable cancel button because users can try to leave too soon */
                 $(".mod_solo_step2 .btn").attr('disabled', 'disabled');
+                $(".mod_pchat_step2 .btn.btn-primary").show();
                 theform.submit();
             };
 

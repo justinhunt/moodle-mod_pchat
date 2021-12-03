@@ -1078,4 +1078,12 @@ class utils{
         return $urls;
     }
 
+    public static function fetch_options_skins(){
+        $rec_options = array(
+            constants::SKIN_123 => get_string("skin123", constants::M_COMPONENT),
+            constants::SKIN_FRESH => get_string("skinfresh", constants::M_COMPONENT),
+            constants::SKIN_UPLOAD => get_string("skinupload", constants::M_COMPONENT));
+        return $rec_options;
+    }
+
 }

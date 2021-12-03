@@ -15,8 +15,13 @@ class myattempts extends basereport
 {
 
     protected $report="myattempts";
-    protected $fields = array('id','audiofile','topicname','partners','turns','stats_avturn','stats_longestturn','stats_targetwords','stats_questions','stats_aiaccuracy','grade','timemodified','view');
-    protected $exportfields = array('id','audiofile','topicname','partners','turns','stats_avturn','stats_longestturn','stats_targetwords','stats_questions','stats_aiaccuracy','grade','timemodified');
+
+    protected $fields = array('id','audiofile','topicname','partners','short_TT','short_ATL','short_LTL','short_TW','short_QA','short_AIA','grade','timemodified','view');
+    protected $exportfields = array('id','audiofile','topicname','partners','short_TT','short_ATL','short_LTL','short_TW','short_QA','short_AIA','grade','timemodified');
+
+
+
+
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -66,30 +71,30 @@ class myattempts extends basereport
                 break;
 
 
-            case 'turns':
+            case 'short_TT':
                 $ret = $record->turns;
                 break;
 
-            case 'stats_avturn':
+            case 'short_ATL':
                 $ret = $record->avturn;
                 break;
 
-            case 'stats_longestturn':
+            case 'short_LTL':
                 $ret = $record->longestturn;
                 break;
 
-            case 'stats_targetwords':
+            case 'short_TW':
 
                 // $ret = $record->targetwords . '/' . $record->totaltargetwords;
                 $ret = $record->targetwords;
 
                 break;
 
-            case 'stats_questions':
+            case 'short_QA':
                 $ret = $record->questions ;
                 break;
 
-            case 'stats_aiaccuracy':
+            case 'short_AIA':
                 if($record->aiaccuracy<0) {
                     $ret = '';
                 }else{

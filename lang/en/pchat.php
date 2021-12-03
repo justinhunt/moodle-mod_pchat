@@ -30,7 +30,7 @@ $string['pluginname'] = 'P-CHAT Activity';
 $string['someadminsetting'] = 'Some Admin Setting';
 $string['someadminsetting_details'] = 'More info about Some Admin Setting';
 $string['someinstancesetting'] = 'Some Instance Setting';
-$string['someinstancesetting_details'] = 'More infor about Some Instance Setting';
+$string['someinstancesetting_details'] = 'More info about Some Instance Setting';
 $string['pchatsettings'] = 'pchat settings';
 $string['pchat:addinstance'] = 'Add a new P-CHAT';
 $string['pchat:view'] = 'View P-CHAT';
@@ -558,9 +558,16 @@ $string['downloadaudioreport_desc']='Download user attempt audio in a zip file.'
 $string['mustchoosetopic']='You must choose a topic.';
 $string['topiccomboexplainer']='You must choose a conversation topic.';
 $string['uploading']=' ... uploading ... ';
+$string['presssaveupload'] = "<i> Press the recorder <b>Save</b> or <b>Upload</b> button and wait for recording to upload.</i>";
 
 $string['no_submissions_to_show']="There are no submissions to show.";
 $string['optionalfield']='Optional';
 $string['requiredfield']='Required';
 $string['requireselfreview']='Student Self Review';
 
+$string['skinfresh'] = 'Fresh';
+$string['skin123'] = 'One Two Three';
+$string['skinonce'] = 'Once';
+$string['skinupload'] = 'Upload';
+$string['recorderskin'] = 'Recorder Type';
+$string['recorderskindetails'] = 'Choose the type of recorder to show in P-Chat activities';

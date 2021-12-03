@@ -32,6 +32,10 @@ const M_PLUGINSETTINGS ='/admin/settings.php?section=modsettingpchat';
 const M_TOPICMEDIA = 'topicmedia';
 const M_USE_DATATABLES=true;
 
+const SKIN_FRESH = 'fresh';
+const SKIN_123 = 'onetwothree';
+const SKIN_UPLOAD = 'upload';
+
 //AI Transcript constants
 const M_AI_PARENTFIELDNAME = 'pchat';
 const M_AI_TIMELIMITFIELDNAME = 'convlength';

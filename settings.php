@@ -78,6 +78,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox(constants::M_COMPONENT .  '/enablesetuptab',
             get_string('enablesetuptab', constants::M_COMPONENT), get_string('enablesetuptab_details',constants::M_COMPONENT), 0));
 
-
+    //recorder skin
+    $rec_options = utils::fetch_options_skins();
+    $settings->add(new admin_setting_configselect(constants::M_COMPONENT .'/recorderskin',
+        new lang_string('recorderskin', constants::M_COMPONENT),
+        new lang_string('recorderskindetails', constants::M_COMPONENT), constants::SKIN_FRESH, $rec_options));
 
 }
