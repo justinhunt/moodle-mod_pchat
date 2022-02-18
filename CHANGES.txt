@@ -1,3 +1,6 @@
+1.0.22 (Build 2022021800)
+- fixed an issue with transcripts that come back late
+
 1.0.21 (Build 2021122200)
 - added credential fetching
 

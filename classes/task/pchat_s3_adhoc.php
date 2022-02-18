@@ -83,6 +83,7 @@ class pchat_s3_adhoc extends \core\task\adhoc_task {
                      try {
                          $aitranscript = new \mod_pchat\aitranscript($attempt_with_transcripts->id,
                                  $cd->modulecontextid, $selftranscript,
+                                $attempt_with_transcripts->transcript,
                                  $attempt_with_transcripts->jsontranscript);
                      }catch(\Exception $e){
                          $this->do_forever_fail('transcripts fetched but processing failed: ' .
