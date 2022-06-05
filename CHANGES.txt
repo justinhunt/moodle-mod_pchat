@@ -1,3 +1,7 @@
+1.0.23 (Build 2022060500)
+- Added a better free trial link
+- Rebuild JS for earlier versions of Moodle (<M3.8)
+
 1.0.22 (Build 2022021800)
 - fixed an issue with transcripts that come back late
 
