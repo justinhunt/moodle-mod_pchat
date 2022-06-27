@@ -138,7 +138,7 @@ switch($pagestyle){
             echo $renderer->header($moduleinstance, $cm, "gradesubmissions");
         // not implemented
        //     echo $groupmenu;
-            if(!empty($groupname)){echo $groupname . '<br>';}
+            if(!empty($groupname)){echo '<h4>' . $groupname . '</h4><br>';}
             echo $renderer->show_nosubmissions_message();
             echo $renderer->footer();
             return;
@@ -152,7 +152,7 @@ switch($pagestyle){
             echo $renderer->header($moduleinstance, $cm, "gradesubmissions");
             // not implemented
        //     echo $groupmenu;
-            if(!empty($groupname)){echo $groupname . '<br>';}
+            if(!empty($groupname)){echo '<h4>' . $groupname . '</h4><br>';}
             echo $renderer->show_nosubmissions_message();
             echo $renderer->footer();
             return;
@@ -189,6 +189,6 @@ $gradesrenderer =
 echo $renderer->header($moduleinstance, $cm, "gradesubmissions");
 // not implemented
 //     echo $groupmenu;
-if(!empty($groupname)){echo $groupname . '<br>';}
+if(!empty($groupname)){echo '<h4>' . $groupname . '</h4><br>';}
 echo $gradesrenderer;
 echo $renderer->footer();
