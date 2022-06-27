@@ -187,6 +187,8 @@ $gradesrenderer =
     );
 
 echo $renderer->header($moduleinstance, $cm, "gradesubmissions");
-echo $groupmenu;
+// not implemented
+//     echo $groupmenu;
+if(!empty($groupname)){echo $groupname . '<br>';}
 echo $gradesrenderer;
 echo $renderer->footer();
