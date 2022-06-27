@@ -218,9 +218,9 @@ function xmldb_pchat_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021111100, 'pchat');
     }
 
-    if ($oldversion < 2022062700) {
+    if ($oldversion < 2022062701) {
         $table = new xmldb_table('pchat_attempts');
-        $field =  new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10', XMLDB_UNSIGNED, null, null, 0);
+        $field =  new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10,5', null, null, null, 0);
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -228,7 +228,7 @@ function xmldb_pchat_upgrade($oldversion) {
             $dbman->change_field_type($table, $field);
         }
 
-        upgrade_mod_savepoint(true, 2022062700, 'pchat');
+        upgrade_mod_savepoint(true, 2022062701, 'pchat');
     }
 
 
