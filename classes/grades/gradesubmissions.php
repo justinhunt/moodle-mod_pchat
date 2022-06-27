@@ -74,7 +74,7 @@ class gradesubmissions {
                 //In the case of decimals, they wont appear in the display grades list, so we mess around removing zeros and building our own equivalent
                 }elseif (count($displaygrades)>1 &&
                     (is_numeric($onedata->rubricscore ) && is_string($onedata->rubricscore ))){
-                        $onedata->rubricscore = rtrim($onedata->rubricscore,'0') . '/' . $moduleinstance->grade;
+                        $onedata->rubricscore = floatval($onedata->rubricscore) . '/' . $moduleinstance->grade;
                 }
             }
             return [$onedata];
