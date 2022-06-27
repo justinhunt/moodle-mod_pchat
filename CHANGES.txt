@@ -1,3 +1,7 @@
+1.0.24 (Build 2022062700)
+- Fixed issue with grades with decimals not working
+- removed not working group selector from grade submissions page
+
 1.0.23 (Build 2022060500)
 - Added a better free trial link
 - Rebuild JS for earlier versions of Moodle (<M3.8)

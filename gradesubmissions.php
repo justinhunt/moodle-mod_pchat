@@ -70,8 +70,10 @@ if ($groupmode = groups_get_activity_groupmode($cm)) {
     $groupmenu = groups_print_activity_menu($cm, $PAGE->url, true);
     $groupmenu .= ' ';
     $groupid = groups_get_activity_group($cm);
+    $groupname = groups_get_group_name($groupid);
 }else{
     $groupid  = 0;
+    $groupname ='';
 }
 
 // Get student grade data.
@@ -134,7 +136,9 @@ switch($pagestyle){
         $currentpage = $currentstudentpage;
         if($currentpage < 0){
             echo $renderer->header($moduleinstance, $cm, "gradesubmissions");
-            echo $groupmenu;
+        // not implemented
+       //     echo $groupmenu;
+            if(!empty($groupname)){echo $groupname . '<br>';}
             echo $renderer->show_nosubmissions_message();
             echo $renderer->footer();
             return;
@@ -146,7 +150,9 @@ switch($pagestyle){
     default:
         if($currentgrouppage<0){
             echo $renderer->header($moduleinstance, $cm, "gradesubmissions");
-            echo $groupmenu;
+            // not implemented
+       //     echo $groupmenu;
+            if(!empty($groupname)){echo $groupname . '<br>';}
             echo $renderer->show_nosubmissions_message();
             echo $renderer->footer();
             return;
