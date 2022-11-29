@@ -76,8 +76,10 @@ foreach($studentgrades as $studentgrade){
     if($studentgrade->grade===null){
         $studentgrade->grade ='';
     }else{
-        if(array_key_exists($studentgrade->grade,$displaygrades)){
-            $studentgrade->grade =$displaygrades[$studentgrade->grade];
+        $notrailingzeros_grade = 0 + $studentgrade->grade . "";
+        //$notrailingzeros_grade = 0;//$studentgrade->grade;
+        if(array_key_exists($notrailingzeros_grade,$displaygrades)){
+            $studentgrade->grade =$displaygrades[$notrailingzeros_grade];
         }
     }
 }
