@@ -838,6 +838,36 @@ class utils{
 
     //grading stuff
 
+    /**
+     * Creates an array that represents all the current grades that
+     * can be chosen using the given grading type.
+     *  COPY of same function in moodlelib .. modified to handle decimal numbers
+     *
+     * Negative numbers
+     * are scales, zero is no grade, and positive numbers are maximum
+     * grades.
+     *
+     * @todo Finish documenting this function or better deprecated this completely!
+     *
+     * @param int $gradingtype
+     * @return array
+     */
+    public static function make_grades_menu($gradingtype) {
+        global $DB;
+
+        $grades = array();
+        if ($gradingtype < 0) {
+            if ($scale = $DB->get_record('scale', array('id'=> (-$gradingtype)))) {
+                return make_menu_from_list($scale->scale);
+            }
+        } else if ($gradingtype > 0) {
+            for ($i=$gradingtype; $i>=0; $i=$i-.5) {
+                $grades[$i . ''] = $i .' / '. $gradingtype;
+            }
+            return $grades;
+        }
+        return $grades;
+    }
 
     /**
      * fetch a summary of rubric grade for thje student
