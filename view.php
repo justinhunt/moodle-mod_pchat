@@ -136,9 +136,22 @@ if($start_or_continue) {
         $feedback=$attempt->feedback;
         $displaygrade='';
         $displaygrades = make_grades_menu($moduleinstance->grade);
+        if($attempt->grade===null){
+            $displaygrade ='';
+        }else{
+            if(array_key_exists($attempt->grade,$displaygrades)){
+                $displaygrade =$displaygrades[$attempt->grade];
+                //In the case of decimals, they wont appear in the display grades list, so we mess around removing zeros and building our own equivalent
+            }elseif (count($displaygrades)>1 &&
+                (is_numeric($attempt->grade ) && is_string($attempt->grade))){
+                $displaygrade = floatval($attempt->grade) . '/' . $moduleinstance->grade;
+            }
+        }
+        /*
         if(array_key_exists($attempt->grade,$displaygrades)){
             $displaygrade =$displaygrades[$attempt->grade];
         }
+        */
         echo $attempt_renderer->show_teachereval( $rubricresults,$feedback, $displaygrade);
 
     }
