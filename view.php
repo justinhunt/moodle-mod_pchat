@@ -132,10 +132,12 @@ if($start_or_continue) {
     //rubric grades
     $gradinginfo = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $USER->id);
     if(!empty($gradinginfo ) && $attempt->grade !=null) {
-        $rubricresults= utils::display_rubricgrade($context,$moduleinstance,$attempt,$gradinginfo );
+        //get feedback
         $feedback=$attempt->feedback;
+
+        //get display grade
         $displaygrade='';
-        $displaygrades = make_grades_menu($moduleinstance->grade);
+        $displaygrades = utils::make_grades_menu($moduleinstance->grade);
         if($attempt->grade===null){
             $displaygrade ='';
         }else{
@@ -147,11 +149,10 @@ if($start_or_continue) {
                 $displaygrade = floatval($attempt->grade) . '/' . $moduleinstance->grade;
             }
         }
-        /*
-        if(array_key_exists($attempt->grade,$displaygrades)){
-            $displaygrade =$displaygrades[$attempt->grade];
-        }
-        */
+
+        //get rubric
+        $rubricresults= utils::display_rubricgrade($context,$moduleinstance,$attempt,$gradinginfo );
+
         echo $attempt_renderer->show_teachereval( $rubricresults,$feedback, $displaygrade);
 
     }

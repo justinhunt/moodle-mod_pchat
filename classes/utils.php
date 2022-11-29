@@ -900,7 +900,8 @@ class utils{
             $gradefordisplay = $controller->render_grade($PAGE,
                     $gradeid,
                     $gradingitem,
-                    $gradebookgrade->str_long_grade,
+                    "", //awful hack to clear the rubric long grade, we dont need it, and it threw odd displays when user toggled grade point/scales etc
+                    // $gradebookgrade->str_long_grade,
                     $gradingdisabled);
         } elseif($attempt->grade!==null) {
             if(array_key_exists($attempt->grade,$menu)){
