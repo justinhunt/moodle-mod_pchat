@@ -1,3 +1,6 @@
+1.0.25 (Build xxxxx)
+- Set default page size to 50
+
 1.0.24 (Build 2022062700)
 - Fixed issue with grades with decimals not working
 - removed not working group selector from grade submissions page

@@ -245,7 +245,7 @@ class report_renderer extends \plugin_renderer_base
         if(constants::M_USE_DATATABLES) {
             $tableprops = [];
             $tableprops['paging']=true;
-            $tableprops['pageLength']=10;
+            $tableprops['pageLength']=50;
 /*
             $columns=[];
             $columns[0]=array('orderable'=>false);
