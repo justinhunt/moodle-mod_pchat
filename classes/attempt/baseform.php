@@ -419,7 +419,7 @@ abstract class baseform extends \moodleform {
                 $this->_form->addElement('static', $name . 'text' ,'',nl2br($this->moduleinstance->{$name}));
                 $this->_form->addElement('textarea', $name, '', $opts);
                 $this->_form->setType($name, PARAM_TEXT);
-               if($this->moduleinstance->requireselfreview){
+               if(isset($this->moduleinstance->requireselfreview) && $this->moduleinstance->requireselfreview){
                    $this->_form->addRule($name, null, 'required', null, 'client');
                }
             }else{
