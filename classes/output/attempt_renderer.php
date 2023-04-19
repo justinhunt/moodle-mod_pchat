@@ -37,7 +37,7 @@ class attempt_renderer extends \plugin_renderer_base {
  * @param lesson $lesson
  * @return string
  */
- public function add_edit_page_links($pchat, $latestattempt=false, $thisstep) {
+ public function add_edit_page_links($pchat, $latestattempt=false, $thisstep=1) {
 		global $CFG;
 
 
