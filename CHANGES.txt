@@ -1,3 +1,5 @@
+- fixed calculate stats to not return a boolean
+
 1.0.25 (Build xxxxx)
 - Set default page size to 50
 - Requireselfreview was added to wrong table in install.xml

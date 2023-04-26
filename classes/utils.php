@@ -348,7 +348,7 @@ class utils{
         $stats->aiaccuracy=-1;
 
         if(!$usetranscript || empty($usetranscript)){
-            return false;
+            return $stats;
         }
 
         $transcriptarray=json_decode($usetranscript);
