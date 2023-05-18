@@ -95,6 +95,6 @@
     "jquery",
     'https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js',
     ], function ($, datatable) {
-    let table = $("#mod_pchat_grade_submissions_table").dataTable();
+    let table = $("#mod_pchat_grade_submissions_table").dataTable({pageLength: 50});
     });
 {{/js}}

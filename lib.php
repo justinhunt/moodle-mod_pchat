@@ -188,8 +188,9 @@ function pchat_add_instance(stdClass $moduleinstance, mod_pchat_mod_form $mform 
 
     $cm         = get_coursemodule_from_instance(constants::M_MODNAME, $moduleinstance->id);
     $completiontimeexpected = !empty($moduleinstance->completionexpected) ? $moduleinstance->completionexpected : null;
-    \core_completion\api::update_completion_date_event($cm->id, constants::M_MODNAME, $moduleinstance->id, $completiontimeexpected);
-
+    if($cm) {
+        \core_completion\api::update_completion_date_event($cm->id, constants::M_MODNAME, $moduleinstance->id, $completiontimeexpected);
+    }
 	return $moduleinstance->id;
 }
 

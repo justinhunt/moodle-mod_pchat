@@ -581,6 +581,11 @@ class aitranscriptutils{
      * TODO: remove the redundancy here with a helper function
      */
     public static function count_turn_words($turntext){
+
+        if(empty($turntext) || trim($turntext)==''){
+            return 0;
+        }
+
         // load the HTML document
         $doc = new \DOMDocument;
         // it will assume ISO-8859-1  encoding, so we need to hint it:
