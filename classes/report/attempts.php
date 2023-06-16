@@ -15,8 +15,8 @@ class attempts extends basereport
 {
 
     protected $report="attempts";
-    protected $fields = array('id','idnumber', 'username','audiofile','topicname','partners','short_TW','short_TT','short_ATL','short_LTL','short_QA','short_TV','short_AIA','grade','timemodified','view','deletenow');
-    protected $exportfields = array('id','idnumber', 'username','audiofile','topicname','partners','short_TW','short_TT','short_ATL','short_LTL','short_QA','short_TV','short_AIA','grade','timemodified');
+    protected $fields = array('id','idnumber', 'email','username','audiofile','topicname','partners','short_TW','short_TT','short_ATL','short_LTL','short_QA','short_TV','short_AIA','grade','timemodified','view','deletenow');
+    protected $exportfields = array('id','idnumber','email', 'username','audiofile','topicname','partners','short_TW','short_TT','short_ATL','short_LTL','short_QA','short_TV','short_AIA','grade','timemodified');
     protected $headingdata = null;
     protected $qcache=array();
     protected $ucache=array();
@@ -39,6 +39,11 @@ class attempts extends basereport
             case 'idnumber':
                 $user = $this->fetch_cache('user', $record->userid);
                 $ret = $user->idnumber;
+                break;
+
+            case 'email':
+                $user = $this->fetch_cache('user', $record->userid);
+                $ret = $user->email;
                 break;
 
             case 'username':
