@@ -286,11 +286,21 @@ class utils{
         }
     }
 
-    public static function fetch_targetwords($attempt){
-        $targetwords = explode(PHP_EOL,$attempt->topictargetwords);
-        $mywords = explode(PHP_EOL,$attempt->mywords);
-        $alltargetwords = array_unique(array_merge($targetwords, $mywords));
-        return $alltargetwords;
+    public static function fetch_targetwords($targetwords){
+        $targetwordsarray =array();
+        //if no target words just exit
+        if(empty($targetwords)){
+            return $targetwordsarray;
+        }
+        //split on PHP_EOL or comma
+        $separator = "/(,|" . PHP_EOL . ")/"; // Regular expression to match a comma or PHP_EOL
+        $result = preg_split($separator, $targetwords, -1, PREG_SPLIT_NO_EMPTY);
+        if($result && count($result)>0){
+            //remove duplicates and reindex array so there are no gaps
+            $targetwordsarray = array_values(array_unique($result));
+        }
+
+        return $targetwordsarray;
     }
 
 
