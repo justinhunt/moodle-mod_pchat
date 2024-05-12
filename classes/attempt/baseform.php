@@ -246,7 +246,7 @@ abstract class baseform extends \moodleform {
         global $OUTPUT;
 
         //we have to work quite hard to get target words displayed like tags.
-        if(empty($targetwords) || trim($targetwords)==''){
+        if(empty($targetwords) || \core_text::trim_utf8_bom($targetwords)==''){
             $targetwordcontent = '';
         }else {
             $tdata = array('targetwords' => explode(PHP_EOL, $targetwords));
@@ -525,7 +525,7 @@ abstract class baseform extends \moodleform {
         $context = \context_module::instance($topic_cm->id);
 
         //Prepare IFrame
-        if(!empty(trim($this->topic->topiciframe))){
+        if(!empty(\core_text::trim_utf8_bom($this->topic->topiciframe))){
             $contentitem['itemiframe']=$this->topic->topiciframe;
         }
 

@@ -472,7 +472,7 @@ class aitranscriptutils{
             }
 
             $ret = implode(" ",$retarray);
-            if(trim($ret)==''){
+            if(\core_text::trim_utf8_bom($ret)==''){
                 return false;
             }else{
                 return $ret;
@@ -505,7 +505,7 @@ class aitranscriptutils{
         //init the text count
         $wordcount = 0;
         foreach ($nodes as $node) {
-            $trimmednode = trim($node->nodeValue);
+            $trimmednode = \core_text::trim_utf8_bom($node->nodeValue);
             if (empty($trimmednode)) {
                 continue;
             }
@@ -582,7 +582,7 @@ class aitranscriptutils{
      */
     public static function count_turn_words($turntext){
 
-        if(empty($turntext) || trim($turntext)==''){
+        if(empty($turntext) || \core_text::trim_utf8_bom($turntext)==''){
             return 0;
         }
 
@@ -598,7 +598,7 @@ class aitranscriptutils{
         //init the text count
         $wordcount = 0;
         foreach ($nodes as $node) {
-            $trimmednode = trim($node->nodeValue);
+            $trimmednode = \core_text::trim_utf8_bom($node->nodeValue);
             if (empty($trimmednode)) {
                 continue;
             }
@@ -620,7 +620,7 @@ class aitranscriptutils{
                 }
 
                 //if the word is emptuy (happens .. how?)
-                $trimmedword = trim($word);
+                $trimmedword = \core_text::trim_utf8_bom($word);
                 if (empty($trimmedword)) {
                     continue;
                 }

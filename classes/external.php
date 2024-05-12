@@ -7,17 +7,17 @@
  */
 
 
-namespace mod_pchat;
-
 global $CFG;
-require_once($CFG->libdir . '/externallib.php');
 
-use context_module;
-use external_api;
-use external_function_parameters;
-use external_value;
-use external_single_structure;
-use external_multiple_structure;
+require_once($CFG->libdir . '/externallib.php');
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_value;
+use core_external\external_single_structure;
+use core_external\external_multiple_structure;
+
+use mod_pchat\constants;
+use mod_pchat\utils;
 use mod_pchat\grades\gradesubmissions;
 
 /**
@@ -26,7 +26,7 @@ use mod_pchat\grades\gradesubmissions;
  * @package mod_pchat
  * @author  Justin Hunt - Poodll.com
  */
-class external extends external_api {
+class mod_pchat_external extends external_api {
 
     public static function toggle_topic_selected($topicid, $activityid) {
         global $DB, $USER;
@@ -120,8 +120,8 @@ class external extends external_api {
             array(
                 'contextid' => new external_value(PARAM_INT, 'The context id for the course'),
                 'jsonformdata' => new external_value(PARAM_RAW, 'The data from the create grade form, encoded as a json array'),
-                'studentid' => new external_value(PARAM_INT, 'The id for the student', false),
-                'cmid' => new external_value(PARAM_INT, 'The course module id for the item', false),
+                'studentid' => new external_value(PARAM_INT, 'The id for the student', VALUE_DEFAULT,0),
+                'cmid' => new external_value(PARAM_INT, 'The course module id for the item', VALUE_DEFAULT,0),
             )
         );
     }
@@ -231,8 +231,8 @@ class external extends external_api {
             array(
                 'contextid' => new external_value(PARAM_INT, 'The context id for the course'),
                 'jsonformdata' => new external_value(PARAM_RAW, 'The data from the create grade form, encoded as a json array'),
-                'studentid' => new external_value(PARAM_INT, 'The id for the student', false),
-                'cmid' => new external_value(PARAM_INT, 'The course module id for the item', false),
+                'studentid' => new external_value(PARAM_INT, 'The id for the student', VALUE_DEFAULT, 0),
+                'cmid' => new external_value(PARAM_INT, 'The course module id for the item', VALUE_DEFAULT, 0),
             )
         );
     }

@@ -547,8 +547,8 @@ class utils{
                 get_string('refreshtoken',constants::M_COMPONENT)) . '<br>';
 
         $message = '';
-        $apiuser = trim($apiuser);
-        $apisecret = trim($apisecret);
+        $apiuser = \core_text::trim_utf8_bom($apiuser);
+        $apisecret = \core_text::trim_utf8_bom($apisecret);
         if(empty($apiuser)){
            $message .= get_string('noapiuser',constants::M_COMPONENT) . '<br>';
        }
@@ -601,8 +601,8 @@ class utils{
         $cache = \cache::make_from_params(\cache_store::MODE_APPLICATION, constants::M_COMPONENT, 'token');
         $tokenobject = $cache->get('recentpoodlltoken');
         $tokenuser = $cache->get('recentpoodlluser');
-        $apiuser = trim($apiuser);
-        $apisecret = trim($apisecret);
+        $apiuser = \core_text::trim_utf8_bom($apiuser);
+        $apisecret = \core_text::trim_utf8_bom($apisecret);
         $now = time();
 
         //if we got a token and its less than expiry time
