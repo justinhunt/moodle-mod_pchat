@@ -547,8 +547,8 @@ class utils{
                 get_string('refreshtoken',constants::M_COMPONENT)) . '<br>';
 
         $message = '';
-        $apiuser = \core_text::trim_utf8_bom($apiuser);
-        $apisecret = \core_text::trim_utf8_bom($apisecret);
+        $apiuser = self::super_trim($apiuser);
+        $apisecret = self::super_trim($apisecret);
         if(empty($apiuser)){
            $message .= get_string('noapiuser',constants::M_COMPONENT) . '<br>';
        }
@@ -601,8 +601,8 @@ class utils{
         $cache = \cache::make_from_params(\cache_store::MODE_APPLICATION, constants::M_COMPONENT, 'token');
         $tokenobject = $cache->get('recentpoodlltoken');
         $tokenuser = $cache->get('recentpoodlluser');
-        $apiuser = \core_text::trim_utf8_bom($apiuser);
-        $apisecret = \core_text::trim_utf8_bom($apisecret);
+        $apiuser = self::super_trim($apiuser);
+        $apisecret = self::super_trim($apisecret);
         $now = time();
 
         //if we got a token and its less than expiry time
@@ -1121,6 +1121,15 @@ class utils{
             constants::SKIN_FRESH => get_string("skinfresh", constants::M_COMPONENT),
             constants::SKIN_UPLOAD => get_string("skinupload", constants::M_COMPONENT));
         return $rec_options;
+    }
+
+    public static function super_trim($str){
+        if($str==null){
+            return '';
+        }else{
+            $str = trim($str);
+            return $str;
+        }
     }
 
 }

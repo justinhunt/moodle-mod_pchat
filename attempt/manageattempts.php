@@ -110,8 +110,8 @@ switch($type){
 
     case constants::STEP_AUDIORECORDING:
         $targetwords = $attempt ? $attempt->topictargetwords : '';
-        if($attempt && !empty(\core_text::trim_utf8_bom($attempt->mywords))){
-            $targetwords .= $attempt ? PHP_EOL . \core_text::trim_utf8_bom($attempt->mywords) : '';
+        if($attempt && !empty(utils::super_trim($attempt->mywords))){
+            $targetwords .= $attempt ? PHP_EOL . utils::super_trim($attempt->mywords) : '';
         }
         $topic=false;
         if($attempt) {
