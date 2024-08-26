@@ -54,7 +54,7 @@ $PAGE->set_url('/mod/pchat/attempt/manageattempts.php', array('attemptid'=>$atte
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
-$PAGE->set_pagelayout('course');
+$PAGE->set_pagelayout('incourse');
 $PAGE->force_settings_menu(true);
 
 //Set up the attempt type specific parts of the form data

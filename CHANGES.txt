@@ -1,10 +1,13 @@
-- fixed calculate stats to not return a boolean
+1.0.25 (Build 2024082600)
+
 
 1.0.25 (Build xxxxx)
 - Set default page size to 50
 - Requireselfreview was added to wrong table in install.xml
 - added check for empty turn on countwords
 - php 8 fix
+- fixed calculate stats to not return a boolean
+- Fix for layout(display of introduction) issue on Adaptable theme
 
 1.0.24 (Build 2022062700)
 - Fixed issue with grades with decimals not working
