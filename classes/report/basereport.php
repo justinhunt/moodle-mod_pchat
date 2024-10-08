@@ -50,6 +50,13 @@ abstract class basereport {
     protected $fields = array();
     protected $dbcache=array();
     protected $gradelabelcache = array();
+    protected $exportfields = array();
+    protected $cm;
+    protected $moduleinstance;
+    protected $context;
+
+
+
 
 
     abstract function process_raw_data($formdata);

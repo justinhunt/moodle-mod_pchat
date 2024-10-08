@@ -14,6 +14,10 @@ class userselectionsform extends baseform
 {
     public $type = constants::STEP_USERSELECTIONS;
     public $typestring = constants::T_USERSELECTIONS;
+    public $users;
+    public $targetwords;
+    public $topics;
+
     public function custom_definition() {
         $this->topics = $this->_customdata['topics'];
         $this->moduleinstance = $this->_customdata['moduleinstance'];

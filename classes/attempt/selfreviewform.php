@@ -15,6 +15,12 @@ class selfreviewform extends baseform
 
     public $type = constants::STEP_SELFREVIEW;
     public $typestring = constants::T_SELFREVIEW;
+    public $selftranscript;
+    public $autotranscript;
+    public $attempt;
+    public $aidata;
+    public $stats;
+
     public function custom_definition() {
         $this->moduleinstance = $this->_customdata['moduleinstance'];
         $this->selftranscript = $this->_customdata['selftranscript'];

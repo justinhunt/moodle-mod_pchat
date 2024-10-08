@@ -15,6 +15,8 @@ class selftranscribeform extends baseform
 
     public $type = constants::STEP_SELFTRANSCRIBE;
     public $typestring = constants::T_SELFTRANSCRIBE;
+    public $filename;
+    
     public function custom_definition() {
         //we need the filename to make a player for the transcribing
         $this->filename = $this->_customdata['filename'];

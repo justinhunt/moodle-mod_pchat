@@ -1,5 +1,5 @@
-1.0.25 (Build 2024082600)
-
+1.0.26 (Build 2024100700)
+- fixes for PHP8.2 and 8.3
 
 1.0.25 (Build xxxxx)
 - Set default page size to 50
