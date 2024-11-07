@@ -20,11 +20,11 @@ class aitranscript
     private $modulecontextid;
     private $attemptdata;
     private $activitydata;
-    private $aidata;
+    private $aidata = null;
     private $recordid;
     
 
-    function __construct($attemptid, $modulecontextid=0, $passage=false,$transcript=false, $jsontranscript=false) {
+    function __construct($attemptid, $modulecontextid=0, $passage=false, $transcript=false, $jsontranscript=false) {
         global $DB;
         $this->attemptid = $attemptid;
         $this->modulecontextid = $modulecontextid;
@@ -305,4 +305,7 @@ class aitranscript
        }
     }
 
+    public function get_aidata() {
+        return $this->aidata;
+    }
 }

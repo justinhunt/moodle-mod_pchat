@@ -175,7 +175,7 @@ switch($type){
                             $context->id, $selftranscript,
                             $attempt_with_transcripts->transcript,
                             $attempt_with_transcripts->jsontranscript);
-                    $aidata = $aitranscript->aidata;
+                    $aidata = $aitranscript->get_aidata();
                 }
             }else{
                 $autotranscript=$attempt->transcript;
