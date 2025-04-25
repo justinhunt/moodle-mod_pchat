@@ -178,7 +178,7 @@ function pchat_get_editornames(){
  * @param mod_pchat_mod_form $mform
  * @return int The id of the newly inserted module record
  */
-function pchat_add_instance(stdClass $moduleinstance, mod_pchat_mod_form $mform = null) {
+function pchat_add_instance(stdClass $moduleinstance,?mod_pchat_mod_form $mform = null) {
     global $DB;
 
     $moduleinstance->timecreated = time();
@@ -195,7 +195,7 @@ function pchat_add_instance(stdClass $moduleinstance, mod_pchat_mod_form $mform 
 }
 
 
-function pchat_process_editors(stdClass $moduleinstance, mod_pchat_mod_form $mform = null) {
+function pchat_process_editors(stdClass $moduleinstance,?mod_pchat_mod_form $mform = null) {
 	global $DB;
     $cmid = $moduleinstance->coursemodule;
     $context = context_module::instance($cmid);
@@ -225,7 +225,7 @@ function pchat_filemanager_options($context){
  * @param mod_pchat_mod_form $mform
  * @return boolean Success/Fail
  */
-function pchat_update_instance(stdClass $moduleinstance, mod_pchat_mod_form $mform = null) {
+function pchat_update_instance(stdClass $moduleinstance,?mod_pchat_mod_form $mform = null) {
     global $DB;
 
 
@@ -493,7 +493,7 @@ function pchat_extend_navigation(navigation_node $navref, stdclass $course, stdc
  * @param settings_navigation $settingsnav {@link settings_navigation}
  * @param navigation_node $moduleinstancenode {@link navigation_node}
  */
-function pchat_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $moduleinstancenode=null) {
+function pchat_extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $moduleinstancenode = null) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
