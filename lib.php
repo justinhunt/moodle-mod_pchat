@@ -46,19 +46,43 @@ use mod_pchat\utils;
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed true if the feature is supported, null if unknown
  */
-function pchat_supports($feature) {
-    switch($feature) {
-        case FEATURE_MOD_INTRO:         return true;
-        case FEATURE_SHOW_DESCRIPTION:  return true;
-		case FEATURE_COMPLETION_HAS_RULES: return false;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return false;
-        case FEATURE_GRADE_HAS_GRADE:         return true;
-        case FEATURE_ADVANCED_GRADING:        return true;
-        case FEATURE_GRADE_OUTCOMES:          return false;
-        case FEATURE_BACKUP_MOODLE2:          return true;
+function pchat_supports($feature)
+{
+    switch ($feature) {
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return false;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return false;
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_ADVANCED_GRADING:
+            return true;
+        case FEATURE_GRADE_OUTCOMES:
+            return false;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
         case FEATURE_GROUPS:
             return true;
-        default:                        return null;
+        // FEATURE_MOD_PURPOSE  - wont be defined for < 4.0. so we hard code it.
+        case "mod_purpose":
+            if (defined('MOD_PURPOSE_COLLABORATION')) {
+                return "collaboration";
+            } else if (defined('MOD_PURPOSE_ASSESSMENT')) {
+                return "assessment";
+            } else {
+                return null;
+            }
+        // FEATURE_MOD_OTHERPURPOSE  - wont be defined for < 5.1. so we hard code it. 
+        // If it is defined then collaboration and assessment will also be defined.   
+        case "mod_otherpurpose":
+            return "assessment";
+
+        default:
+            return null;
     }
 }
 
@@ -68,9 +92,10 @@ function pchat_supports($feature) {
  *
  * @param $mform form passed by reference
  */
-function pchat_reset_course_form_definition(&$mform) {
+function pchat_reset_course_form_definition(&$mform)
+{
     $mform->addElement('header', constants::M_MODNAME . 'header', get_string('modulenameplural', constants::M_COMPONENT));
-    $mform->addElement('advcheckbox', 'reset_' . constants::M_MODNAME , get_string('deletealluserdata',constants::M_COMPONENT));
+    $mform->addElement('advcheckbox', 'reset_' . constants::M_MODNAME, get_string('deletealluserdata', constants::M_COMPONENT));
 }
 
 /**
@@ -78,22 +103,35 @@ function pchat_reset_course_form_definition(&$mform) {
  * @param object $course
  * @return array
  */
-function pchat_reset_course_form_defaults($course) {
-    return array('reset_' . constants::M_MODNAME =>1);
+function pchat_reset_course_form_defaults($course)
+{
+    return array('reset_' . constants::M_MODNAME => 1);
 }
 
 
-function pchat_editor_with_files_options($context){
-	return array('maxfiles' => EDITOR_UNLIMITED_FILES,
-               'noclean' => true, 'context' => $context, 'subdirs' => true);
+function pchat_editor_with_files_options($context)
+{
+    return array(
+        'maxfiles' => EDITOR_UNLIMITED_FILES,
+        'noclean' => true,
+        'context' => $context,
+        'subdirs' => true
+    );
 }
 
-function pchat_editor_no_files_options($context){
-	return array('maxfiles' => 0, 'noclean' => true,'context'=>$context);
+function pchat_editor_no_files_options($context)
+{
+    return array('maxfiles' => 0, 'noclean' => true, 'context' => $context);
 }
-function pchat_picturefile_options($context){
-    return array('maxfiles' => EDITOR_UNLIMITED_FILES,
-        'noclean' => true, 'context' => $context, 'subdirs' => true, 'accepted_types' => array('image'));
+function pchat_picturefile_options($context)
+{
+    return array(
+        'maxfiles' => EDITOR_UNLIMITED_FILES,
+        'noclean' => true,
+        'context' => $context,
+        'subdirs' => true,
+        'accepted_types' => array('image')
+    );
 }
 
 /**
@@ -104,14 +142,15 @@ function pchat_picturefile_options($context){
  * @param int $courseid
  * @param string optional type
  */
-function pchat_reset_gradebook($courseid, $type='') {
+function pchat_reset_gradebook($courseid, $type = '')
+{
     global $CFG, $DB;
 
     $sql = "SELECT l.*, cm.idnumber as cmidnumber, l.course as courseid
               FROM {" . constants::M_TABLE . "} l, {course_modules} cm, {modules} m
              WHERE m.name='" . constants::M_MODNAME . "' AND m.id=cm.module AND cm.instance=l.id AND l.course=:course";
-    $params = array ("course" => $courseid);
-    if ($moduleinstances = $DB->get_records_sql($sql,$params)) {
+    $params = array("course" => $courseid);
+    if ($moduleinstances = $DB->get_records_sql($sql, $params)) {
         foreach ($moduleinstances as $moduleinstance) {
             pchat_grade_item_update($moduleinstance, 'reset');
         }
@@ -127,7 +166,8 @@ function pchat_reset_gradebook($courseid, $type='') {
  * @param object $data the data submitted from the reset course.
  * @return array status array
  */
-function pchat_reset_userdata($data) {
+function pchat_reset_userdata($data)
+{
     global $CFG, $DB;
 
     $componentstr = get_string('modulenameplural', constants::M_COMPONENT);
@@ -135,10 +175,10 @@ function pchat_reset_userdata($data) {
 
     if (!empty($data->{'reset_' . constants::M_MODNAME})) {
         $sql = "SELECT l.id
-                         FROM {".constants::M_TABLE."} l
+                         FROM {" . constants::M_TABLE . "} l
                         WHERE l.course=:course";
 
-        $params = array ("course" => $data->courseid);
+        $params = array("course" => $data->courseid);
         $DB->delete_records_select(constants::M_ATTEMPTSTABLE, constants::M_MODNAME . " IN ($sql)", $params);
         $DB->delete_records_select(constants::M_STATSTABLE, constants::M_MODNAME . " IN ($sql)", $params);
         $DB->delete_records_select(constants::M_AITABLE, "moduleid IN ($sql)", $params);
@@ -148,13 +188,13 @@ function pchat_reset_userdata($data) {
             pchat_reset_gradebook($data->courseid);
         }
 
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deletealluserdata', constants::M_COMPONENT), 'error'=>false);
+        $status[] = array('component' => $componentstr, 'item' => get_string('deletealluserdata', constants::M_COMPONENT), 'error' => false);
     }
 
     /// updating dates - shift may be negative too
     if ($data->timeshift) {
         shift_course_mod_dates(constants::M_MODNAME, array('available', 'deadline'), $data->timeshift, $data->courseid);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
     }
 
     return $status;
@@ -162,8 +202,9 @@ function pchat_reset_userdata($data) {
 
 
 
-function pchat_get_editornames(){
-	return array('tips');
+function pchat_get_editornames()
+{
+    return array('tips');
 }
 
 /**
@@ -178,40 +219,48 @@ function pchat_get_editornames(){
  * @param mod_pchat_mod_form $mform
  * @return int The id of the newly inserted module record
  */
-function pchat_add_instance(stdClass $moduleinstance,?mod_pchat_mod_form $mform = null) {
+function pchat_add_instance(stdClass $moduleinstance, ?mod_pchat_mod_form $mform = null)
+{
     global $DB;
 
     $moduleinstance->timecreated = time();
-	$moduleinstance = pchat_process_editors($moduleinstance,$mform);
+    $moduleinstance = pchat_process_editors($moduleinstance, $mform);
     $moduleinstance->id = $DB->insert_record(constants::M_TABLE, $moduleinstance);
     pchat_grade_item_update($moduleinstance);
 
-    $cm         = get_coursemodule_from_instance(constants::M_MODNAME, $moduleinstance->id);
+    $cm = get_coursemodule_from_instance(constants::M_MODNAME, $moduleinstance->id);
     $completiontimeexpected = !empty($moduleinstance->completionexpected) ? $moduleinstance->completionexpected : null;
-    if($cm) {
+    if ($cm) {
         \core_completion\api::update_completion_date_event($cm->id, constants::M_MODNAME, $moduleinstance->id, $completiontimeexpected);
     }
-	return $moduleinstance->id;
+    return $moduleinstance->id;
 }
 
 
-function pchat_process_editors(stdClass $moduleinstance,?mod_pchat_mod_form $mform = null) {
-	global $DB;
+function pchat_process_editors(stdClass $moduleinstance, ?mod_pchat_mod_form $mform = null)
+{
+    global $DB;
     $cmid = $moduleinstance->coursemodule;
     $context = context_module::instance($cmid);
-	$editors = pchat_get_editornames();
-	$itemid=0;
-	$edoptions = pchat_editor_no_files_options($context);
-	foreach($editors as $editor){
-		$moduleinstance = file_postupdate_standard_editor( $moduleinstance, $editor, $edoptions,$context,constants::M_COMPONENT,$editor,$itemid);
-	}
+    $editors = pchat_get_editornames();
+    $itemid = 0;
+    $edoptions = pchat_editor_no_files_options($context);
+    foreach ($editors as $editor) {
+        $moduleinstance = file_postupdate_standard_editor($moduleinstance, $editor, $edoptions, $context, constants::M_COMPONENT, $editor, $itemid);
+    }
 
-	return $moduleinstance;
+    return $moduleinstance;
 }
 
-function pchat_filemanager_options($context){
-    return array('maxfiles' => 3,
-        'noclean' => true, 'context' => $context, 'subdirs' => true, 'accepted_types' => array('image','audio','video'));
+function pchat_filemanager_options($context)
+{
+    return array(
+        'maxfiles' => 3,
+        'noclean' => true,
+        'context' => $context,
+        'subdirs' => true,
+        'accepted_types' => array('image', 'audio', 'video')
+    );
 }
 
 /**
@@ -225,7 +274,8 @@ function pchat_filemanager_options($context){
  * @param mod_pchat_mod_form $mform
  * @return boolean Success/Fail
  */
-function pchat_update_instance(stdClass $moduleinstance,?mod_pchat_mod_form $mform = null) {
+function pchat_update_instance(stdClass $moduleinstance, ?mod_pchat_mod_form $mform = null)
+{
     global $DB;
 
 
@@ -235,8 +285,8 @@ function pchat_update_instance(stdClass $moduleinstance,?mod_pchat_mod_form $mfo
     $moduleinstance->timemodified = time();
     $moduleinstance->id = $moduleinstance->instance;
 
-	$moduleinstance = pchat_process_editors($moduleinstance,$mform);
-	$success = $DB->update_record(constants::M_TABLE, $moduleinstance);
+    $moduleinstance = pchat_process_editors($moduleinstance, $mform);
+    $success = $DB->update_record(constants::M_TABLE, $moduleinstance);
     pchat_grade_item_update($moduleinstance);
 
     $update_grades = ($moduleinstance->grade === $oldmoduleinstance->grade ? false : true);
@@ -244,7 +294,7 @@ function pchat_update_instance(stdClass $moduleinstance,?mod_pchat_mod_form $mfo
         pchat_update_grades($moduleinstance, 0, false);
     }
 
-    $cm         = get_coursemodule_from_instance(constants::M_MODNAME, $moduleinstance->id);
+    $cm = get_coursemodule_from_instance(constants::M_MODNAME, $moduleinstance->id);
     $completiontimeexpected = !empty($moduleinstance->completionexpected) ? $moduleinstance->completionexpected : null;
     \core_completion\api::update_completion_date_event($cm->id, constants::M_MODNAME, $moduleinstance->id, $completiontimeexpected);
 
@@ -261,10 +311,11 @@ function pchat_update_instance(stdClass $moduleinstance,?mod_pchat_mod_form $mfo
  * @param int $id Id of the module instance
  * @return boolean Success/Failure
  */
-function pchat_delete_instance($id) {
+function pchat_delete_instance($id)
+{
     global $DB;
 
-    if (! $moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $id))) {
+    if (!$moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $id))) {
         return false;
     }
     if (!$cm = get_coursemodule_from_instance(constants::M_MODNAME, $id)) {
@@ -278,9 +329,11 @@ function pchat_delete_instance($id) {
     $DB->delete_records(constants::M_STATSTABLE, array(constants::M_MODNAME => $moduleinstance->id));
     $DB->delete_records(constants::M_AITABLE, array('moduleid' => $moduleinstance->id));
     $DB->delete_records(constants::M_SELECTEDTOPIC_TABLE, array('moduleid' => $moduleinstance->id));
-    $DB->delete_records_select(constants::M_SELECTEDTOPIC_TABLE,
-            "topicid IN (SELECT id FROM {".constants::M_TOPIC_TABLE."} t WHERE t.moduleid = ?)",
-            array('moduleid' => $moduleinstance->id));
+    $DB->delete_records_select(
+        constants::M_SELECTEDTOPIC_TABLE,
+        "topicid IN (SELECT id FROM {" . constants::M_TOPIC_TABLE . "} t WHERE t.moduleid = ?)",
+        array('moduleid' => $moduleinstance->id)
+    );
     $DB->delete_records(constants::M_TOPIC_TABLE, array('moduleid' => $moduleinstance->id));
 
     \core_completion\api::update_completion_date_event($cm->id, constants::M_MODNAME, $id, null);
@@ -297,7 +350,8 @@ function pchat_delete_instance($id) {
  *
  * @return stdClass|null
  */
-function pchat_user_outline($course, $user, $mod, $moduleinstance) {
+function pchat_user_outline($course, $user, $mod, $moduleinstance)
+{
 
     $return = new stdClass();
     $return->time = 0;
@@ -315,7 +369,8 @@ function pchat_user_outline($course, $user, $mod, $moduleinstance) {
  * @param stdClass $moduleinstance the module instance record
  * @return void, is supposed to echp directly
  */
-function pchat_user_complete($course, $user, $mod, $moduleinstance) {
+function pchat_user_complete($course, $user, $mod, $moduleinstance)
+{
 }
 
 /**
@@ -325,7 +380,8 @@ function pchat_user_complete($course, $user, $mod, $moduleinstance) {
  *
  * @return boolean
  */
-function pchat_print_recent_activity($course, $viewfullnames, $timestart) {
+function pchat_print_recent_activity($course, $viewfullnames, $timestart)
+{
     return false;  //  True if anything was printed, otherwise false
 }
 
@@ -345,7 +401,8 @@ function pchat_print_recent_activity($course, $viewfullnames, $timestart) {
  * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  * @return void adds items into $activities and increases $index
  */
-function pchat_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
+function pchat_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid = 0, $groupid = 0)
+{
 }
 
 /**
@@ -353,7 +410,8 @@ function pchat_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
 
  * @return void
  */
-function pchat_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
+function pchat_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames)
+{
 }
 
 /**
@@ -378,7 +436,8 @@ function pchat_cron () {
  * @example return array('moodle/site:accessallgroups');
  * @return array
  */
-function pchat_get_extra_capabilities() {
+function pchat_get_extra_capabilities()
+{
     return array();
 }
 
@@ -398,7 +457,8 @@ function pchat_get_extra_capabilities() {
  * @param stdClass $context
  * @return array of [(string)filearea] => (string)description
  */
-function pchat_get_file_areas($course, $cm, $context) {
+function pchat_get_file_areas($course, $cm, $context)
+{
     return pchat_get_editornames();
 }
 
@@ -419,7 +479,8 @@ function pchat_get_file_areas($course, $cm, $context) {
  * @param string $filename
  * @return file_info instance or null if not found
  */
-function pchat_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+function pchat_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename)
+{
     return null;
 }
 
@@ -437,8 +498,9 @@ function pchat_get_file_info($browser, $areas, $course, $cm, $context, $filearea
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  */
-function pchat_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
-       global $DB, $CFG;
+function pchat_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = array())
+{
+    global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         send_file_not_found();
@@ -446,7 +508,7 @@ function pchat_pluginfile($course, $cm, $context, $filearea, array $args, $force
 
     require_login($course, true, $cm);
 
-	$itemid = (int)array_shift($args);
+    $itemid = (int) array_shift($args);
 
     require_course_login($course, true, $cm);
 
@@ -455,16 +517,16 @@ function pchat_pluginfile($course, $cm, $context, $filearea, array $args, $force
     }
 
 
-        $fs = get_file_storage();
-        $relativepath = implode('/', $args);
-        $fullpath = "/$context->id/mod_pchat/$filearea/$itemid/$relativepath";
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/mod_pchat/$filearea/$itemid/$relativepath";
 
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-          return false;
-        }
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
 
-        // finally send the file
-        send_stored_file($file, null, 0, $forcedownload, $options);
+    // finally send the file
+    send_stored_file($file, null, 0, $forcedownload, $options);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -481,7 +543,8 @@ function pchat_pluginfile($course, $cm, $context, $filearea, array $args, $force
  * @param stdClass $module
  * @param cm_info $cm
  */
-function pchat_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
+function pchat_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm)
+{
 }
 
 /**
@@ -493,7 +556,8 @@ function pchat_extend_navigation(navigation_node $navref, stdclass $course, stdc
  * @param settings_navigation $settingsnav {@link settings_navigation}
  * @param navigation_node $moduleinstancenode {@link navigation_node}
  */
-function pchat_extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $moduleinstancenode = null) {
+function pchat_extend_settings_navigation(settings_navigation $settingsnav, ?navigation_node $moduleinstancenode = null)
+{
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -510,12 +574,13 @@ function pchat_extend_settings_navigation(settings_navigation $settingsnav, ?nav
  * @param array|object $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
-function pchat_grade_item_update($moduleinstance, $grades=null) {
+function pchat_grade_item_update($moduleinstance, $grades = null)
+{
     global $CFG;
-    require_once($CFG->dirroot.'/lib/gradelib.php');
+    require_once($CFG->dirroot . '/lib/gradelib.php');
 
     $params = array('itemname' => $moduleinstance->name);
-    if (array_key_exists('cmidnumber', (array)$moduleinstance)) {
+    if (array_key_exists('cmidnumber', (array) $moduleinstance)) {
         $params['idnumber'] = $moduleinstance->cmidnumber;
     }
 
@@ -529,7 +594,7 @@ function pchat_grade_item_update($moduleinstance, $grades=null) {
 
         // Make sure current grade fetched correctly from $grades
         $currentgrade = null;
-        if (! empty($grades)) {
+        if (!empty($grades)) {
             if (is_array($grades)) {
                 $currentgrade = reset($grades);
             } else {
@@ -538,7 +603,7 @@ function pchat_grade_item_update($moduleinstance, $grades=null) {
         }
 
         // When converting a score to a scale, use scale's grade maximum to calculate it.
-        if (! empty($currentgrade) && $currentgrade->rawgrade !== null) {
+        if (!empty($currentgrade) && $currentgrade->rawgrade !== null) {
             $grade = grade_get_grades($moduleinstance->course, 'mod', 'pchat', $moduleinstance->id, $currentgrade->userid);
             $params['grademax'] = reset($grade->items)->grademax;
         }
@@ -546,7 +611,7 @@ function pchat_grade_item_update($moduleinstance, $grades=null) {
         $params['gradetype'] = GRADE_TYPE_NONE;
     }
 
-    if ($grades  === 'reset') {
+    if ($grades === 'reset') {
         $params['reset'] = true;
         $grades = null;
     } else if (!empty($grades)) {
@@ -587,16 +652,17 @@ function pchat_grade_item_update($moduleinstance, $grades=null) {
  * @param int $userid specific user only, 0 means all
  * @param bool $nullifnone
  */
-function pchat_update_grades($moduleinstance, $userid=0, $nullifnone=true) {
+function pchat_update_grades($moduleinstance, $userid = 0, $nullifnone = true)
+{
     global $CFG, $DB;
-    require_once($CFG->dirroot.'/lib/gradelib.php');
+    require_once($CFG->dirroot . '/lib/gradelib.php');
 
     if (empty($moduleinstance->grade)) {
         $grades = null;
     } else if ($grades = pchat_get_user_grades($moduleinstance, $userid)) {
         // do nothing
     } else if ($userid && $nullifnone) {
-        $grades = (object)array('userid' => $userid, 'rawgrade' => null);
+        $grades = (object) array('userid' => $userid, 'rawgrade' => null);
     } else {
         $grades = null;
     }
@@ -613,7 +679,8 @@ function pchat_update_grades($moduleinstance, $userid=0, $nullifnone=true) {
  * @param int $userid optional user id, 0 means all users
  * @return array array of grades, false if none
  */
-function pchat_get_user_grades($moduleinstance, $userid=0) {
+function pchat_get_user_grades($moduleinstance, $userid = 0)
+{
 
     global $CFG, $DB;
 
@@ -622,17 +689,16 @@ function pchat_get_user_grades($moduleinstance, $userid=0) {
     if (!empty($userid)) {
         $params["userid"] = $userid;
         $user = "AND u.id = :userid";
-    }
-    else {
-        $user="";
+    } else {
+        $user = "";
     }
 
     //grade_sql
     //the max is just to pass the postgre need for an aggregate function when using group by
     //we probably do not need the group by anyway. the result is still the latest attempt because of the subquery
     $grade_sql = "SELECT u.id, u.id AS userid, MAX(grade) AS rawgrade
-                      FROM {user} u, {". constants::M_ATTEMPTSTABLE ."} a
-                     WHERE a.id= (SELECT max(id) FROM {". constants::M_ATTEMPTSTABLE ."} ia WHERE ia.userid=u.id AND ia.pchat = a.pchat)  AND u.id = a.userid AND a.pchat = :moduleid
+                      FROM {user} u, {" . constants::M_ATTEMPTSTABLE . "} a
+                     WHERE a.id= (SELECT max(id) FROM {" . constants::M_ATTEMPTSTABLE . "} ia WHERE ia.userid=u.id AND ia.pchat = a.pchat)  AND u.id = a.userid AND a.pchat = :moduleid
                            $user
                   GROUP BY u.id";
 
@@ -652,7 +718,8 @@ function pchat_get_user_grades($moduleinstance, $userid=0) {
  * @param int $moduleid ID of an instance of this module
  * @return bool true if the scale is used by the given instance
  */
-function pchat_scale_used($moduleid, $scaleid) {
+function pchat_scale_used($moduleid, $scaleid)
+{
     global $DB;
 
     /** @example */
@@ -671,7 +738,8 @@ function pchat_scale_used($moduleid, $scaleid) {
  * @param $scaleid int
  * @return boolean true if the scale is used by any module instance
  */
-function pchat_scale_used_anywhere($scaleid) {
+function pchat_scale_used_anywhere($scaleid)
+{
     global $DB;
 
     /** @example */
@@ -682,7 +750,8 @@ function pchat_scale_used_anywhere($scaleid) {
     }
 }
 
-function mod_pchat_grading_areas_list() {
+function mod_pchat_grading_areas_list()
+{
     return [
         'pchat' => 'pchat',
     ];
@@ -695,19 +764,20 @@ function mod_pchat_grading_areas_list() {
  * @return string
  * @throws dml_exception
  */
-function mod_pchat_output_fragment_rubric_grade_form($args) {
+function mod_pchat_output_fragment_rubric_grade_form($args)
+{
     global $DB;
 
     require_once('rubric_grade_form.php');
 
-    $args = (object)$args;
+    $args = (object) $args;
     $o = '';
 
     // Get form data for the form if parsed to push to mform.
     $formdata = [];
     if (!empty($args->jsonformdata)) {
         $serialiseddata = json_decode($args->jsonformdata);
-        if(is_string($serialiseddata)) {
+        if (is_string($serialiseddata)) {
             parse_str($serialiseddata, $formdata);
         }
     }
@@ -760,19 +830,20 @@ function mod_pchat_output_fragment_rubric_grade_form($args) {
  * @return string
  * @throws dml_exception
  */
-function mod_pchat_output_fragment_simple_grade_form($args) {
+function mod_pchat_output_fragment_simple_grade_form($args)
+{
     global $DB;
 
     require_once('simple_grade_form.php');
 
-    $args = (object)$args;
+    $args = (object) $args;
     $o = '';
 
     // Get form data for the form if parsed to push to mform.
     $formdata = [];
     if (!empty($args->jsonformdata)) {
         $serialiseddata = json_decode($args->jsonformdata);
-        if(is_string($serialiseddata)) {
+        if (is_string($serialiseddata)) {
             parse_str($serialiseddata, $formdata);
         }
     }
@@ -790,7 +861,7 @@ function mod_pchat_output_fragment_simple_grade_form($args) {
         return "";
     }
 
-    $mform = new simple_grade_form(null, array('scaleid'=>$attempt->scaleid), 'post', '', null, true, $formdata);
+    $mform = new simple_grade_form(null, array('scaleid' => $attempt->scaleid), 'post', '', null, true, $formdata);
 
     if ($mform->is_cancelled()) {
         // Window closes.
@@ -825,19 +896,20 @@ function mod_pchat_output_fragment_simple_grade_form($args) {
  * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
  * @return bool True if completed, false if not, $type if conditions not set.
  */
-function pchat_get_completion_state($course,$cm,$userid,$type) {
-    global $CFG,$DB;
+function pchat_get_completion_state($course, $cm, $userid, $type)
+{
+    global $CFG, $DB;
 
     // Get  module details
     $moduleinstance = $DB->get_record(constants::M_TABLE, array('id' => $cm->instance), '*', MUST_EXIST);
     $attempthelper = new \mod_pchat\attempthelper($cm);
 
     // If completion option is enabled, evaluate it and return true/false
-    if($moduleinstance->completionallsteps) {
+    if ($moduleinstance->completionallsteps) {
         $latestattempt = $attempthelper->fetch_latest_attempt($userid);
-        if ($latestattempt && $latestattempt->completedsteps == constants::STEP_SELFREVIEW){
+        if ($latestattempt && $latestattempt->completedsteps == constants::STEP_SELFREVIEW) {
             return true;
-        }else{
+        } else {
             return false;
         }
     } else {
