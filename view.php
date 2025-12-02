@@ -122,9 +122,9 @@ if($start_or_continue) {
 
     $attempt = $attempthelper->fetch_latest_complete_attempt();
     if($attempt) {
-        $stats=utils::fetch_stats($attempt);
-        $aidata = $DB->get_record(constants::M_AITABLE,array('attemptid'=>$attempt->id));
-        echo $attempt_renderer->show_summary($moduleinstance,$attempt,$aidata, $stats);
+        $stats = utils::fetch_stats($attempt);
+        $aidata = $DB->get_record(constants::M_AITABLE, array('attemptid' => $attempt->id));
+        echo $attempt_renderer->show_summary($moduleinstance, $attempt, $aidata, $stats);
     }
 
     //necessary for M3.3
