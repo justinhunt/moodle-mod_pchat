@@ -1,3 +1,6 @@
+1.0.27 (Build 2026042000)
+- Updates for Moodle 5.2 (now requires Moodle 4.3)
+
 1.0.26 (Build 2024100700)
 - fixes for PHP8.2 and 8.3
 
