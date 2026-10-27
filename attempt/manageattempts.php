@@ -66,7 +66,7 @@ $attempt=false;
 if ($attemptid) {
     $attempt = $DB->get_record(constants::M_ATTEMPTSTABLE, array('id'=>$attemptid,constants::M_MODNAME => $cm->instance), '*', MUST_EXIST);
     if(!$attempt){
-        print_error('could not find attempt of id:' . $attemptid);
+        throw new \moodle_exception('could not find attempt of id:' . $attemptid);
     }
     //This wopuld force a step, if we needed to
     $lateststep = $attempt->completedsteps;
@@ -203,7 +203,7 @@ switch($type){
 
     case constants::STEP_NONE:
     default:
-        print_error('No attempt type specifified');
+        throw new \moodle_exception('No attempt type specifified');
 }
 
 //if the cancel button was pressed, we are out of here
@@ -236,7 +236,7 @@ if ($data = $mform->get_data()) {
 
         //try to insert it
         if (!$newattempt->id = $DB->insert_record(constants::M_ATTEMPTSTABLE,$newattempt)){
-            print_error("Could not insert pchat attempt!");
+            throw new \moodle_exception("Could not insert pchat attempt!");
             redirect($redirecturl);
         }
     }
@@ -317,7 +317,7 @@ if ($data = $mform->get_data()) {
 
     //now update the db
     if (!$DB->update_record(constants::M_ATTEMPTSTABLE,$newattempt)){
-        print_error("Could not update pchat attempt!");
+        throw new \moodle_exception("Could not update pchat attempt!");
         redirect($redirecturl);
     }
 

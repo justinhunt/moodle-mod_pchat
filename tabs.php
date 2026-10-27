@@ -32,7 +32,7 @@ use \mod_pchat\constants;
 /// This file to be included so we can assume config.php has already been included.
 global $DB;
 if (empty($moduleinstance)) {
-    print_error('cannotcallscript');
+    throw new \moodle_exception('cannotcallscript');
 }
 if (!isset($currenttab)) {
     $currenttab = '';

@@ -47,7 +47,7 @@ class helper
 
         //remove records
         if (!$DB->delete_records(constants::M_ATTEMPTSTABLE, array('id' => $attemptid))) {
-            print_error("Could not delete attempt");
+            throw new \moodle_exception("Could not delete attempt");
             return $ret;
         }
 

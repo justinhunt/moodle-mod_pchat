@@ -58,7 +58,7 @@ $PAGE->set_pagelayout('incourse');
 if ($id) {
     $topic = $DB->get_record(constants::M_TOPIC_TABLE, array('id'=>$id), '*', MUST_EXIST);
     if(!$topic){
-        print_error('could not find topic of id:' . $topicid);
+        throw new \moodle_exception('could not find topic of id:' . $topicid);
     }
     $edit = true;
 } else {
@@ -121,7 +121,7 @@ if ($data = $mform->get_data()) {
 
         //try to insert it
         if (!$thetopic->id = $DB->insert_record(constants::M_TOPIC_TABLE,$thetopic)){
-            print_error("Could not insert pchat topic!");
+            throw new \moodle_exception("Could not insert pchat topic!");
             redirect($redirecturl);
         }else{
             //lets select it , because everyine seems to forget to otherwise
@@ -130,7 +130,7 @@ if ($data = $mform->get_data()) {
     }else{
         //now update the db once we have saved files and stuff
         if (!$DB->update_record(constants::M_TOPIC_TABLE,$thetopic)){
-            print_error("Could not update pchat topic!");
+            throw new \moodle_exception("Could not update pchat topic!");
             redirect($redirecturl);
         }
     }
