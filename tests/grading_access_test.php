@@ -184,7 +184,13 @@ final class grading_access_test extends \advanced_testcase {
         global $DB;
         $this->setUser($this->teacher);
         $contextid = \context_module::instance($this->cm->id)->id;
-        $formdata = json_encode(http_build_query(['grade' => 99, 'feedback' => 'changed'], '', '&'));
+        // A complete, valid submission, so that only the permission check can stop the write.
+        $formdata = json_encode(http_build_query(
+            ['grade' => 99, 'feedback' => 'changed', 'sesskey' => sesskey(), '_qf__simple_grade_form' => 1],
+            '',
+            '&'
+        ));
+        $_POST['sesskey'] = sesskey();
         try {
             \mod_pchat_external::submit_simple_grade_form($contextid, $formdata, $this->otherstudent->id, $this->othercm->id);
             $this->fail('A grade was written to another course');
