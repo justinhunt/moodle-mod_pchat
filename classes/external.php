@@ -9,7 +9,6 @@
 
 global $CFG;
 
-require_once($CFG->libdir . '/externallib.php');
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_value;
@@ -72,8 +71,16 @@ class mod_pchat_external extends external_api {
     }
 
     public static function get_grade_submission($userid,  $cmid) {
+        $params = self::validate_parameters(self::get_grade_submission_parameters(), ['userid' => $userid, 'cmid' => $cmid]);
+
+        // This returns a student's transcripts and grades, so only graders may call it.
+        $cm = get_coursemodule_from_id(constants::M_MODNAME, $params['cmid'], 0, false, MUST_EXIST);
+        $modulecontext = context_module::instance($cm->id);
+        self::validate_context($modulecontext);
+        require_capability('mod/pchat:grades', $modulecontext);
+
         $gradesubmissions = new gradesubmissions();
-            return ['response' => $gradesubmissions->getSubmissionData($userid,$cmid)];
+        return ['response' => $gradesubmissions->getSubmissionData($params['userid'], $params['cmid'])];
     }
 
     public static function get_grade_submission_returns() {
@@ -165,6 +172,10 @@ class mod_pchat_external extends external_api {
 
         $modulecontext = context_module::instance($cmid);
         $cm = get_coursemodule_from_id(constants::M_MODNAME, $cmid, 0, false, MUST_EXIST);
+        // The grade is written to this activity, so check the grading permission here.
+        $gradedcontext = context_module::instance($cm->id);
+        self::validate_context($gradedcontext);
+        require_capability('mod/pchat:grades', $gradedcontext);
         $attempthelper = new \mod_pchat\attempthelper($cm);
         $attempt= $attempthelper->fetch_latest_complete_attempt($studentid);
 
@@ -275,6 +286,10 @@ class mod_pchat_external extends external_api {
         parse_str($serialiseddata, $data);
 
         $cm = get_coursemodule_from_id(constants::M_MODNAME, $cmid, 0, false, MUST_EXIST);
+        // The grade is written to this activity, so check the grading permission here.
+        $gradedcontext = context_module::instance($cm->id);
+        self::validate_context($gradedcontext);
+        require_capability('mod/pchat:grades', $gradedcontext);
         $attempthelper = new \mod_pchat\attempthelper($cm);
         $attempt= $attempthelper->fetch_latest_complete_attempt($studentid);
 

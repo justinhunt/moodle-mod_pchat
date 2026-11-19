@@ -131,19 +131,30 @@ class classprogress extends basereport
 
         $emptydata = array();
 
+        // The selected activities arrive as a comma separated list of ids from the URL,
+        // so keep only the positive integers and pass them to the query as parameters.
+        $selectedids = [];
         $selectedactivities = $formdata->selectedactivities;
-        if(!empty($selectedactivities) && $selectedactivities !='*'){
-            //sometimes commas do not get through
+        if (!empty($selectedactivities) && $selectedactivities != '*') {
+            // Sometimes commas do not get through.
             $selectedactivities = urldecode($selectedactivities);
-            $selectedactivities_where = ' AND p.id IN ('  . $selectedactivities . ') ';
-        }else{
-            $selectedactivities_where = '';
+            $selectedids = array_values(array_filter(array_map('intval', explode(',', $selectedactivities))));
+            if (empty($selectedids)) {
+                // Nothing valid was selected, so match no activities rather than all of them.
+                $selectedids = [0];
+            }
         }
 
         //if we need to show just one group
         if($formdata->groupid > 0){
 
             list($groupswhere, $allparams) = $DB->get_in_or_equal($formdata->groupid);
+            $selectedactivities_where = '';
+            if ($selectedids) {
+                list($selectedin, $selectedparams) = $DB->get_in_or_equal($selectedids);
+                $selectedactivities_where = ' AND p.id ' . $selectedin;
+                $allparams = array_merge($allparams, $selectedparams);
+            }
 
             $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.targetwords)avtw, AVG(st.questions) avq ,AVG(st.aiaccuracy) avacc';
             $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
@@ -163,11 +174,18 @@ class classprogress extends basereport
             $sql = 'SELECT p.id, p.name pchatname, AVG(st.turns) avturns, AVG(st.avturn) avatl, AVG(st.longestturn) avltl, AVG(st.words) avw, AVG(st.targetwords)avtw, AVG(st.questions) avq ,AVG(st.aiaccuracy) avacc';
             $sql .= '  FROM {' . constants::M_ATTEMPTSTABLE . '} at INNER JOIN {' . constants::M_STATSTABLE .  '} st ON at.id = st.attemptid ';
             $sql .= '  INNER JOIN {' . constants::M_TABLE .  '} p ON p.id = at.pchat ';
+            $params = ['courseid' => $this->cm->course];
+            $selectedactivities_where = '';
+            if ($selectedids) {
+                list($selectedin, $selectedparams) = $DB->get_in_or_equal($selectedids, SQL_PARAMS_NAMED, 'act');
+                $selectedactivities_where = ' AND p.id ' . $selectedin;
+                $params = array_merge($params, $selectedparams);
+            }
             $sql .= ' WHERE p.course = :courseid';
             $sql .= $selectedactivities_where;
             $sql .= ' GROUP BY p.id, p.name';
             $sql .= ' ORDER BY p.name, p.id';
-            $alldata = $DB->get_records_sql($sql,array('courseid'=>$this->cm->course));
+            $alldata = $DB->get_records_sql($sql, $params);
 
         }
 

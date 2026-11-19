@@ -1,4 +1,5 @@
 1.0.28 (Build 2026102700)
+- Tightened permission checks on grading and the class progress report
 - Fixed the course page listing all P-Chat activities, which stopped with an error
 - Tested with Moodle 5.3
 - Replaced calls to print_error() and error(), which no longer exist in Moodle, so error pages show their message instead of a fatal error

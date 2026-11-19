@@ -773,6 +773,9 @@ function mod_pchat_output_fragment_rubric_grade_form($args)
     $args = (object) $args;
     $o = '';
 
+    // This shows a student's grade and feedback, so only graders of that activity may see it.
+    require_capability('mod/pchat:grades', context_module::instance($args->cmid));
+
     // Get form data for the form if parsed to push to mform.
     $formdata = [];
     if (!empty($args->jsonformdata)) {
@@ -838,6 +841,9 @@ function mod_pchat_output_fragment_simple_grade_form($args)
 
     $args = (object) $args;
     $o = '';
+
+    // This shows a student's grade and feedback, so only graders of that activity may see it.
+    require_capability('mod/pchat:grades', context_module::instance($args->cmid));
 
     // Get form data for the form if parsed to push to mform.
     $formdata = [];
