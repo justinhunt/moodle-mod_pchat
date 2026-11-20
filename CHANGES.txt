@@ -1,3 +1,6 @@
+1.0.29 (Build 2026112000)
+- Fixed a few security things
+
 1.0.28 (Build 2026102700)
 - Tightened permission checks on grading and the class progress report
 - Fixed the course page listing all P-Chat activities, which stopped with an error

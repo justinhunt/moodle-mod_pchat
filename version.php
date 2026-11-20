@@ -33,4 +33,4 @@ $plugin->version = 2026102700;
 $plugin->requires = 2023100900; // Requires Moodle 4.3
 $plugin->component = 'mod_pchat';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.0.28 (Build 2026102700)';
+$plugin->release = '1.0.29 (Build 2026112000)';
